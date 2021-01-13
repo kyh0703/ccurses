@@ -14,9 +14,9 @@ public:
     ~Palette();
 
 public:
-    void Init(void);
-    void AttachWidget(Widget *pWidget);
-    bool DrawWidget();
+    void Init();
+    void Attach(Widget *pWidget);
+    bool Render();
 
 private:
     vector<Widget *> mWidgets;

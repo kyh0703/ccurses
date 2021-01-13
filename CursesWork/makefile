@@ -19,11 +19,6 @@ else
 IPRON_SRC       = $(IPRON_BASE)/src
 endif
 
-ifdef ICORE_BASE
-CO_SRC					= $(ICORE_BASE)
-else
-$(error [41m >>>> ICORE_BASE is not defined. <<<<[0m)
-endif
 CO_INC					= $(CO_SRC)/inc
 CO_LIB					= $(CO_SRC)/lib
 IL_SRC          = $(IPRON_SRC)/LIB
@@ -52,7 +47,7 @@ LIB_PATHS       = -L$(CO_LIB) -L$(IL_LIB)
 #----------------------------------------#
 DEFINE					=
 CFLAGS					= -g -O0 -fPIC -Wall -std=c++11
-LFLAGS					= -lstdc++ -liCores -lncursesw
+LFLAGS					= -lstdc++ -lncursesw
 
 ############################
 # Unit Testing for library #

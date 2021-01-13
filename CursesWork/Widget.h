@@ -5,86 +5,92 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "Window.h"
 
 using namespace std;
 
-struct Border
-{
-    chtype ls, rs, ts, bs;
-    chtype tl, tr, bl, br;
-};
-
-struct Color
-{
-    short bg, fg;
-};
-
-struct Rect
-{
-    short h, w, x, y;
-};
-
-struct Pos
-{
-    short y, x;
-    Pos(short y, short x)
-    {
-        this->y = y;
-        this->x = x;
-    }
-};
-
-class Widget
+class Widget : public Window
 {
 public:
     Widget();
-    virtual ~Widget();
+    ~Widget();
 
-public:
-    static void Log(const char *format, ...);
-
-public:
-    Rect GetRect();
-    void SetRect(short h, short w, short x, short y);
-    void SetColor(short bg, short fg);
-    void SetTitle(string title);
-    void DrawBase();
-    void Erase();
-
-public:
     virtual void Draw() = 0;
-
-protected:
-    Rect mRect;
-    Border mBorder;
-    Color mColor;
-    string mTitle;
 };
 
 class Basic : public Widget
 {
 public:
-    Basic(void);
-    ~Basic(void);
+    Basic();
+    ~Basic();
 
-public:
-    void SetText(string text);
-
-public:
     void Draw() override;
 
-private:
-    string mText;
-    bool mIsWrap;
+public:
+    int textColor;
+    string text;
 };
 
-class Input : public Widget
+class Button : public Widget
 {
 public:
+    Button();
+    ~Button();
+
     void Draw() override;
+
+public:
+    Style active;
+    Style inactive;
+    bool IsActive;
+    string text;
+};
+
+class TabPane : public Widget
+{
+public:
+    TabPane();
+    ~TabPane();
+
+    void Draw() override;
+    void ForcusLeft();
+    void ForcusRight();
+
+public:
+    vector<string> tabs;
+    int activeIdx;
+    Style active;
+    Style inactive;
+};
+
+class Tab : public Widget
+{
+public:
+    Tab();
+    ~Tab();
+
+    void Draw() override;
+    void ForcusLeft();
+    void ForcusRight();
+
+public:
+    vector<string> tabs;
+    int activeIdx;
 };
 
 class Menu : public Widget
+{
+public:
+    Menu();
+    ~Menu();
+
+    void Draw() override;
+
+public:
+    vector<string> items;
+};
+
+class Input : public Widget
 {
 public:
     void Draw() override;

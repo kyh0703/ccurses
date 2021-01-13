@@ -5,26 +5,45 @@
 int main(void)
 {
     Palette p;
-    printf("\033[?1000h");
-    fflush(stdout);
     p.Init();
 
     Basic *pW = new Basic;
-    pW->SetRect(10, 10, 0, 0);
-    // pW->SetColor();
-    pW->SetTitle("test");
-    pW->SetText("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    pW->Draw();
+    pW->SetRect(15, 15, 0, 3);
+    pW->SetColor(COLOR_BLACK, COLOR_RED);
+    pW->SetTitle("I love youngkyoung");
+    pW->textColor = COLOR_BLUE;
+    pW->text = "Good Morning!!!!!!!!!!!\n!!!!!!!!";
+    p.Attach(pW);
 
-    // Basic *pW2 = new Basic;
-    // pW2->SetRect(10, 10, 11, 11);
-    // // pW->SetColor();
-    // pW2->SetTitle("test");
+    Button *pBtn = new Button;
+    pBtn->SetRect(2, 4, 10, 10);
+    pBtn->IsActive = true;
+    pBtn->active = {COLOR_WHITE, COLOR_BLACK, A_BOLD};
+    pBtn->inactive = {COLOR_BLACK, COLOR_WHITE};
+    pBtn->text = "YES";
+    p.Attach(pBtn);
 
-    // p.AttachWidget(pW);
-    // p.AttachWidget(pW2);
+    Tab *pTab = new Tab;
+    pTab->SetRect(2, 50, 0, 0);
+    pTab->tabs = {"test", "test1", "test2"};
+    p.Attach(pTab);
 
-    // p.DrawWidget();
+    // Menu *pM = new Menu;
+    // pM->SetRect(15, 15, 10, 10);
+    // pM->SetTitle("Menu");
+    // pM->items = {"test", "test", "test2"};
+
+    // TabPane *pTab = new TabPane;
+    // pTab->SetRect(2, 50, 0, 0);
+    // pTab->active = {COLOR_BLUE, COLOR_BLACK, A_BLINK};
+    // pTab->inactive = {COLOR_BLACK, COLOR_WHITE};
+    // pTab->tabs = {"test", "test1", "test2", "pardsadfsereradsd", "adfasdfasdfasdfasdfasdf"};
+    // p.Attach(pTab);
+
+
+    // p.Attach(pM);
+    p.Render();
+
     MEVENT event;
     while (int ch = getchar())
     {
@@ -33,6 +52,12 @@ int main(void)
         case 'q':
             return 1;
         case 'd':
+            break;
+        case 'l':
+            // pTab->ForcusLeft();
+            break;
+        case 'h':
+            // pTab->ForcusRight();
             break;
         case KEY_MOUSE:
             if (getmouse(&event) == OK)
