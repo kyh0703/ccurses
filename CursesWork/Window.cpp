@@ -1,11 +1,9 @@
 #include "Window.h"
 #include "Paint.h"
+#include "Theme.h"
 
 Window::Window()
 {
-
-    mColor.fg = COLOR_WHITE;
-    mColor.bg = COLOR_BLACK;
 }
 
 Window::~Window()

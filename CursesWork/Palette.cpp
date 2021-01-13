@@ -29,15 +29,10 @@ void Palette::Init()
     refresh();
 }
 
-void Palette::Attach(Widget *pWidget)
-{
-    mWidgets.push_back(pWidget);
-}
-
-bool Palette::Render()
+bool Palette::Render(vector<Widget *> widgets)
 {
     vector<Widget *>::iterator iter;
-    for (iter = mWidgets.begin(); iter != mWidgets.end(); ++iter)
+    for (iter = widgets.begin(); iter != widgets.end(); ++iter)
     {
         (*iter)->DrawBase();
         (*iter)->Draw();

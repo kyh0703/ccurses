@@ -7,26 +7,25 @@ int main(void)
     Palette p;
     p.Init();
 
-    Basic *pW = new Basic;
-    pW->SetRect(15, 15, 0, 3);
-    pW->SetColor(COLOR_BLACK, COLOR_RED);
-    pW->SetTitle("I love youngkyoung");
-    pW->textColor = COLOR_BLUE;
-    pW->text = "Good Morning!!!!!!!!!!!\n!!!!!!!!";
-    p.Attach(pW);
+    Basic basic;
+    basic.SetRect(15, 15, 0, 3);
+    basic.SetColor(COLOR_BLACK, COLOR_RED);
+    basic.SetTitle("I love youngkyoung");
+    basic.textColor = COLOR_BLUE;
+    basic.text = "Good Morning!!!!!!!!!!!\n!!!!!!!!";
 
-    Button *pBtn = new Button;
-    pBtn->SetRect(2, 4, 10, 10);
-    pBtn->IsActive = true;
-    pBtn->active = {COLOR_WHITE, COLOR_BLACK, A_BOLD};
-    pBtn->inactive = {COLOR_BLACK, COLOR_WHITE};
-    pBtn->text = "YES";
-    p.Attach(pBtn);
+    // Button *pBtn = new Button;
+    // pBtn->SetRect(2, 4, 10, 10);
+    // pBtn->IsActive = true;
+    // pBtn->active = {COLOR_WHITE, COLOR_BLACK, A_BOLD};
+    // pBtn->inactive = {COLOR_BLACK, COLOR_WHITE};
+    // pBtn->text = "YES";
+    // p.Attach(pBtn);
 
-    Tab *pTab = new Tab;
-    pTab->SetRect(2, 50, 0, 0);
-    pTab->tabs = {"test", "test1", "test2"};
-    p.Attach(pTab);
+    // Tab *pTab = new Tab;
+    // pTab->SetRect(2, 50, 0, 0);
+    // pTab->tabs = {"test", "test1", "test2"};
+    // p.Attach(pTab);
 
     // Menu *pM = new Menu;
     // pM->SetRect(15, 15, 10, 10);
@@ -42,7 +41,7 @@ int main(void)
 
 
     // p.Attach(pM);
-    p.Render();
+    p.Render({&basic});
 
     MEVENT event;
     while (int ch = getchar())

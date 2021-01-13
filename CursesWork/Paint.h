@@ -32,12 +32,14 @@ protected:
     Paint &operator=(Paint &&) = delete;
 
 public:
-    bool IsColorSet(short color);
     short FindIndex(short fg, short bg);
-    short AppendColorSet(short fg, short bg);
+
+private:
+    bool IsColorSet(short color);
+    short AddColorSet(short fg, short bg);
     short FindColorSet(short fg, short bg);
 
 private:
-    int mColorCnt;
-    COLOR_TABLE mColorTable[64];
+    int _colorCnt;
+    COLOR_TABLE _colorTable[64];
 };

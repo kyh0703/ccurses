@@ -15,9 +15,5 @@ public:
 
 public:
     void Init();
-    void Attach(Widget *pWidget);
-    bool Render();
-
-private:
-    vector<Widget *> mWidgets;
+    bool Render(vector<Widget *> pWidgets);
 };

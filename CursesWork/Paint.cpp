@@ -9,8 +9,21 @@ Paint &Paint::Get()
 
 Paint::Paint()
 {
-    mColorCnt = 0;
-    memset(mColorTable, 0x00, sizeof(mColorTable));
+    _colorCnt = 0;
+    memset(_colorTable, 0x00, sizeof(_colorTable));
+}
+
+short Paint::FindIndex(short fg, short bg)
+{
+    short idx = FindColorSet(fg, bg);
+    if (idx <= 0)
+    {
+        idx = AddColorSet(fg, bg);
+        if (idx <= 0)
+            return 0;
+    }
+
+    return idx;
 }
 
 bool Paint::IsColorSet(short color)
@@ -31,33 +44,20 @@ bool Paint::IsColorSet(short color)
     }
 }
 
-short Paint::FindIndex(short fg, short bg)
+short Paint::AddColorSet(short fg, short bg)
 {
-    short nIndex = FindColorSet(fg, bg);
-    if (nIndex <= 0)
-    {
-        nIndex = AppendColorSet(fg, bg);
-        if (nIndex <= 0)
-            return 0;
-    }
+    short ret = FindColorSet(fg, bg);
+    if (ret > 0)
+        return ret;
 
-    return nIndex;
-}
-
-short Paint::AppendColorSet(short fg, short bg)
-{
-    short nResult = FindColorSet(fg, bg);
-    if (nResult > 0)
-        return nResult;
-
-    if (mColorCnt >= 64)
+    if (_colorCnt >= 64)
         return -1;
 
-    mColorTable[mColorCnt].no = mColorCnt + 1;
-    mColorTable[mColorCnt].fg = fg;
-    mColorTable[mColorCnt].bg = bg;
+    _colorTable[_colorCnt].no = _colorCnt + 1;
+    _colorTable[_colorCnt].fg = fg;
+    _colorTable[_colorCnt].bg = bg;
 
-    if (mColorCnt <= 0)
+    if (_colorCnt <= 0)
     {
         start_color();
         init_color(COLOR_RED, 500, 0, 0);
@@ -68,22 +68,22 @@ short Paint::AppendColorSet(short fg, short bg)
         init_color(COLOR_CYAN, 500, 0, 0);
     }
 
-    init_pair(mColorTable[mColorCnt].no,
-              mColorTable[mColorCnt].fg,
-              mColorTable[mColorCnt].bg);
+    init_pair(_colorTable[_colorCnt].no,
+              _colorTable[_colorCnt].fg,
+              _colorTable[_colorCnt].bg);
 
-    nResult = mColorTable[mColorCnt].no;
-    mColorCnt++;
-    return nResult;
+    ret = _colorTable[_colorCnt].no;
+    _colorCnt++;
+    return ret;
 }
 
 short Paint::FindColorSet(short fg, short bg)
 {
-    for (int nColor = 0; nColor < mColorCnt; nColor++)
+    for (int colorIdx = 0; colorIdx < _colorCnt; colorIdx++)
     {
-        if (mColorTable[nColor].fg == fg &&
-            mColorTable[nColor].bg == bg)
-            return mColorTable[nColor].no;
+        if (_colorTable[colorIdx].fg == fg &&
+            _colorTable[colorIdx].bg == bg)
+            return _colorTable[colorIdx].no;
     }
 
     return -1;
