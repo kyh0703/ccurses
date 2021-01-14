@@ -4,6 +4,8 @@
 
 Window::Window()
 {
+    mColor.bg = th::Get()._default.bg;
+    mColor.fg = th::Get()._default.fg;
 }
 
 Window::~Window()
@@ -29,12 +31,12 @@ Rect Window::GetRect()
     return mRect;
 }
 
-void Window::SetRect(int h, int w, int x, int y)
+void Window::SetRect(int h, int w, int y, int x)
 {
     mRect.h = h;
     mRect.w = w;
-    mRect.x = x;
     mRect.y = y;
+    mRect.x = x;
 }
 
 void Window::SetColor(int bg, int fg)
@@ -60,7 +62,8 @@ void Window::AttachCells(map<Pos, Rune> cells)
     {
         Pos pos((*iter).first);
         Rune r((*iter).second);
-        mCells[pos] = r;
+        if (mCells.find(pos) != mCells.end())
+            mCells[pos] = r;
     }
 }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "Attribute.h"
 #include <iostream>
 #include <map>
 #include <ncurses.h>
@@ -19,7 +20,7 @@ public:
 
 public:
     Rect GetRect();
-    void SetRect(int h, int w, int x, int y);
+    void SetRect(int h, int w, int y, int x);
     void SetColor(int bg, int fg);
     void SetTitle(string title);
     const map<Pos, Rune> &GetCells(void);

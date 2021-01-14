@@ -1,4 +1,5 @@
 #include "Widget.h"
+#include "Theme.h"
 
 Widget::Widget()
 {
@@ -10,8 +11,8 @@ Widget::~Widget()
 
 Basic::Basic()
 {
-    text.clear();
-    textColor = COLOR_WHITE;
+    _text.clear();
+    _textColor = th::Get()._basic;
 }
 
 Basic::~Basic()
@@ -20,15 +21,15 @@ Basic::~Basic()
 
 void Basic::Draw()
 {
-    if (text.empty())
+    if (_text.empty())
         return;
 
     Rect rect = GetRect();
     Pos pos(rect.y + 1, rect.x + 1);
 
-    for (size_t idx = 0; idx < text.size(); ++idx)
+    for (size_t idx = 0; idx < _text.size(); ++idx)
     {
-        bool isEol = (text[idx] == '\n');
+        bool isEol = (_text[idx] == '\n');
         if (isEol || rect.w <= pos.x)
         {
             pos.y++;
@@ -40,13 +41,17 @@ void Basic::Draw()
         if (rect.h <= pos.y)
             break;
 
-        Rune r(mColor.bg, textColor, text[idx]);
+        int bg = th::Get()._default.bg;
+        Rune r(bg, _textColor, _text[idx]);
         AddCh(pos.y, pos.x++, r);
     }
 }
 
 Button::Button()
 {
+    _active = th::Get()._btn._active;
+    _inactive = th::Get()._btn._inactive;
+    _isActive = false;
 }
 
 Button::~Button()
@@ -55,25 +60,25 @@ Button::~Button()
 
 void Button::Draw()
 {
-    if (text.empty())
+    if (_text.empty())
         return;
 
     Rect rect = GetRect();
     Pos pos(rect.y + 1, rect.x + 1);
 
-    for (size_t idx = 0; idx < text.size(); ++idx)
+    for (size_t idx = 0; idx < _text.size(); ++idx)
     {
         if (mRect.x + mRect.w <= pos.x)
             return;
 
-        if (IsActive)
+        if (_isActive)
         {
-            Rune r(active, text[idx]);
+            Rune r(_active, _text[idx]);
             AddCh(pos.y, pos.x++, r);
         }
         else
         {
-            Rune r(inactive, text[idx]);
+            Rune r(_inactive, _text[idx]);
             AddCh(pos.y, pos.x++, r);
         }
     }
@@ -81,6 +86,9 @@ void Button::Draw()
 
 TabPane::TabPane()
 {
+    _activeIdx = 0;
+    _active = th::Get()._tab._active;
+    _inactive = th::Get()._tab._inactive;
 }
 
 TabPane::~TabPane()
@@ -89,40 +97,40 @@ TabPane::~TabPane()
 
 void TabPane::ForcusLeft()
 {
-    if (0 < activeIdx)
-        activeIdx--;
+    if (0 < _activeIdx)
+        _activeIdx--;
 }
 
 void TabPane::ForcusRight()
 {
-    if (activeIdx < (int)(tabs.size() - 1))
-        activeIdx++;
+    if (_activeIdx < (int)(_tabs.size() - 1))
+        _activeIdx++;
 }
 
 void TabPane::Draw()
 {
-    if (tabs.empty())
+    if (_tabs.empty())
         return;
 
     Rect rect = GetRect();
     Pos pos(rect.y + 1, rect.x + 1);
 
-    for (size_t tabIdx = 0; tabIdx < tabs.size(); ++tabIdx)
+    for (size_t tabIdx = 0; tabIdx < _tabs.size(); ++tabIdx)
     {
-        string text(tabs[tabIdx]);
+        string text(_tabs[tabIdx]);
         for (size_t idx = 0; idx < text.size(); ++idx)
         {
             if (mRect.x + mRect.w <= pos.x)
                 return;
 
-            if (activeIdx == (int)tabIdx)
+            if (_activeIdx == (int)tabIdx)
             {
-                Rune r(active, text[idx]);
+                Rune r(_active, text[idx]);
                 AddCh(pos.y, pos.x++, r);
             }
             else
             {
-                Rune r(inactive, text[idx]);
+                Rune r(_inactive, text[idx]);
                 AddCh(pos.y, pos.x++, r);
             }
         }
@@ -140,33 +148,33 @@ Tab::~Tab()
 
 void Tab::ForcusLeft()
 {
-    if (0 < activeIdx)
-        activeIdx--;
+    if (0 < _activeIdx)
+        _activeIdx--;
 }
 
 void Tab::ForcusRight()
 {
-    if (activeIdx < (int)(tabs.size() - 1))
-        activeIdx++;
+    if (_activeIdx < (int)(_tabs.size() - 1))
+        _activeIdx++;
 }
 
 void Tab::Draw()
 {
-    if (tabs.empty())
+    if (_tabs.empty())
         return;
 
     Rect rect = GetRect();
     Pos pos(rect.y, rect.x);
 
-    for (size_t tabIdx = 0; tabIdx < tabs.size(); ++tabIdx)
+    for (size_t tabIdx = 0; tabIdx < _tabs.size(); ++tabIdx)
     {
-        string text(tabs[tabIdx]);
+        string text(_tabs[tabIdx]);
         Button btn;
-        btn.SetRect(rect.h, text.size() + 1, pos.x, pos.y);
-        btn.text = text;
-        btn.active = {COLOR_WHITE, COLOR_BLUE, A_BOLD};
-        btn.inactive = {COLOR_BLACK, COLOR_WHITE};
-        btn.IsActive = (activeIdx == (int)tabIdx);
+        btn.SetRect(rect.h, text.size() + 1, pos.y, pos.x);
+        btn._text = text;
+        btn._active = th::Get()._tab._active;
+        btn._inactive = th::Get()._tab._inactive;
+        btn._isActive = (_activeIdx == (int)tabIdx);
         btn.Draw();
         AttachCells(btn.GetCells());
         Rect r = btn.GetRect();
@@ -183,8 +191,40 @@ Menu::~Menu()
 {
 }
 
+void Menu::ForcusUp()
+{
+    if (0 < _activeIdx)
+        _activeIdx--;
+}
+
+void Menu::ForcusDown()
+{
+    if (_activeIdx < (int)(_items.size() - 1))
+        _activeIdx++;
+}
+
 void Menu::Draw()
 {
+    if (_items.empty())
+        return;
+
+    Rect rect = GetRect();
+    Pos pos(rect.y, rect.x);
+
+    for (size_t itemIdx = 0; itemIdx < _items.size(); ++itemIdx)
+    {
+        string text(_items[itemIdx]);
+        Button btn;
+        btn.SetRect(2, rect.w, pos.y, pos.x);
+        btn._text = text;
+        btn._active = th::Get()._menu._active;
+        btn._inactive = th::Get()._menu._inactive;
+        btn._isActive = (_activeIdx == (int)itemIdx);
+        btn.Draw();
+        AttachCells(btn.GetCells());
+        pos.y += 2;
+        HLine(pos.y, pos.x + 1, rect.w - 1, ACS_HLINE);
+    }
 }
 
 void Input::Draw()

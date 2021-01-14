@@ -1,8 +1,28 @@
 #pragma once
-#include "Window.h"
+#include "Attribute.h"
 
+typedef class Theme th;
 class Theme
 {
+public:
+    struct Btn
+    {
+        Style _active;
+        Style _inactive;
+    };
+
+    struct Tab
+    {
+        Style _active;
+        Style _inactive;
+    };
+
+    struct Menu
+    {
+        Style _active;
+        Style _inactive;
+    };
+
 public:
     static Theme &Get();
 
@@ -15,4 +35,8 @@ protected:
 
 public:
     Color _default;
+    int _basic;
+    Btn _btn;
+    Tab _tab;
+    Menu _menu;
 };

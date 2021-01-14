@@ -27,8 +27,8 @@ public:
     void Draw() override;
 
 public:
-    int textColor;
-    string text;
+    int _textColor;
+    string _text;
 };
 
 class Button : public Widget
@@ -40,10 +40,10 @@ public:
     void Draw() override;
 
 public:
-    Style active;
-    Style inactive;
-    bool IsActive;
-    string text;
+    Style _active;
+    Style _inactive;
+    bool _isActive;
+    string _text;
 };
 
 class TabPane : public Widget
@@ -52,15 +52,15 @@ public:
     TabPane();
     ~TabPane();
 
-    void Draw() override;
     void ForcusLeft();
     void ForcusRight();
+    void Draw() override;
 
 public:
-    vector<string> tabs;
-    int activeIdx;
-    Style active;
-    Style inactive;
+    vector<string> _tabs;
+    int _activeIdx;
+    Style _active;
+    Style _inactive;
 };
 
 class Tab : public Widget
@@ -69,13 +69,13 @@ public:
     Tab();
     ~Tab();
 
-    void Draw() override;
     void ForcusLeft();
     void ForcusRight();
+    void Draw() override;
 
 public:
-    vector<string> tabs;
-    int activeIdx;
+    vector<string> _tabs;
+    int _activeIdx;
 };
 
 class Menu : public Widget
@@ -84,10 +84,13 @@ public:
     Menu();
     ~Menu();
 
+    void ForcusUp();
+    void ForcusDown();
     void Draw() override;
 
 public:
-    vector<string> items;
+    vector<string> _items;
+    int _activeIdx;
 };
 
 class Input : public Widget

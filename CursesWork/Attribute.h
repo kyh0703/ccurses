@@ -1,16 +1,18 @@
+#pragma once
+#include "ncurses.h"
 
 struct Border
 {
     Border()
     {
-        ls = ACS_VLINE;
-        rs = ACS_VLINE;
-        ts = ACS_HLINE;
-        bs = ACS_HLINE;
-        tl = ACS_ULCORNER;
-        tr = ACS_URCORNER;
-        bl = ACS_LLCORNER;
-        br = ACS_LRCORNER;
+        this->ls = ACS_VLINE;
+        this->rs = ACS_VLINE;
+        this->ts = ACS_HLINE;
+        this->bs = ACS_HLINE;
+        this->tl = ACS_ULCORNER;
+        this->tr = ACS_URCORNER;
+        this->bl = ACS_LLCORNER;
+        this->br = ACS_LRCORNER;
     }
 
     chtype ls, rs, ts, bs;
@@ -38,9 +40,9 @@ struct Style
 {
     Style()
     {
-        bg = COLOR_BLACK;
-        fg = COLOR_WHITE;
-        opt = A_NORMAL;
+        this->bg = COLOR_BLACK;
+        this->fg = COLOR_WHITE;
+        this->opt = A_NORMAL;
     }
 
     Style(int bg, int fg)
@@ -64,10 +66,10 @@ struct Rect
 {
     Rect()
     {
-        h = 0;
-        w = 0;
-        x = 0;
-        y = 0;
+        this->h = 0;
+        this->w = 0;
+        this->x = 0;
+        this->y = 0;
     }
 
     Rect(int h, int w, int x, int y)
@@ -91,9 +93,9 @@ struct Pos
 
     bool operator<(const Pos &rhs) const
     {
-        if (y != rhs.y)
-            return y < rhs.y;
-        return x < rhs.x;
+        if (this->y != rhs.y)
+            return this->y < rhs.y;
+        return this->x < rhs.x;
     }
 
     int y, x;

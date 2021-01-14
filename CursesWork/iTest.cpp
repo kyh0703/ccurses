@@ -1,5 +1,4 @@
 #include <unistd.h>
-#if 1
 #include "Palette.h"
 
 int main(void)
@@ -8,11 +7,10 @@ int main(void)
     p.Init();
 
     Basic basic;
-    basic.SetRect(15, 15, 0, 3);
-    basic.SetColor(COLOR_BLACK, COLOR_RED);
+    basic.SetRect(15, 15, 3, 0);
     basic.SetTitle("I love youngkyoung");
-    basic.textColor = COLOR_BLUE;
-    basic.text = "Good Morning!!!!!!!!!!!\n!!!!!!!!";
+    basic._textColor = COLOR_BLUE;
+    basic._text = "Good Morning!!!!!!!!!!!\n!!!!!!!!";
 
     // Button *pBtn = new Button;
     // pBtn->SetRect(2, 4, 10, 10);
@@ -22,26 +20,21 @@ int main(void)
     // pBtn->text = "YES";
     // p.Attach(pBtn);
 
-    // Tab *pTab = new Tab;
-    // pTab->SetRect(2, 50, 0, 0);
-    // pTab->tabs = {"test", "test1", "test2"};
-    // p.Attach(pTab);
+    // Tab tab;
+    // tab.SetRect(2, 50, 0, 0);
+    // tab._tabs = {"test", "test1", "test2"};
 
-    // Menu *pM = new Menu;
-    // pM->SetRect(15, 15, 10, 10);
-    // pM->SetTitle("Menu");
-    // pM->items = {"test", "test", "test2"};
+    Menu menu;
+    menu.SetRect(15, 15, 10, 10);
+    menu._items = {"test", "test", "test2"};
 
-    // TabPane *pTab = new TabPane;
-    // pTab->SetRect(2, 50, 0, 0);
-    // pTab->active = {COLOR_BLUE, COLOR_BLACK, A_BLINK};
-    // pTab->inactive = {COLOR_BLACK, COLOR_WHITE};
-    // pTab->tabs = {"test", "test1", "test2", "pardsadfsereradsd", "adfasdfasdfasdfasdfasdf"};
-    // p.Attach(pTab);
+    TabPane tab2;
+    tab2.SetRect(2, 50, 0, 0);
+    tab2._tabs = {"test", "test1", "test2", "pardsadfsereradsd", "adfasdfasdfasdfasdfasdf"};
 
 
     // p.Attach(pM);
-    p.Render({&basic});
+    p.Render({&basic, &tab2, &menu});
 
     MEVENT event;
     while (int ch = getchar())
@@ -70,20 +63,3 @@ int main(void)
     }
     return 0;
 }
-
-#else
-#include <curses.h>
-#include <locale.h>
-
-int main()
-{
-    setlocale(LC_CTYPE, "ko_KR.utf-8"); /* 로케일 설정을 했는데도 */
-    initscr();
-    printw("%s", "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n");
-    addstr("가나다라마바사아자차카타파하\n");
-    refresh();
-    sleep(1);
-    endwin();
-    return 0;
-}
-#endif
