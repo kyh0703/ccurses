@@ -37,6 +37,8 @@ protected:
     void VLine(int y, int x, int n, Rune c);
     void AddCh(int y, int x, Rune c);
     void AddStr(int y, int x, string s);
+    void GetCh(int y, int x, Rune c);
+    const string GetStr(int y, int x, int n);
 
 private:
     void InitCell();
@@ -44,9 +46,9 @@ private:
     void MakeTitle();
 
 protected:
-    Rect mRect;
-    Border mBorder;
-    Color mColor;
-    string mTitle;
-    map<Pos, Rune> mCells;
+    Rect _rect;
+    Border _border;
+    Color _color;
+    string _title;
+    map<Pos, Rune> _cells;
 };

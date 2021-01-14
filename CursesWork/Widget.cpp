@@ -68,7 +68,7 @@ void Button::Draw()
 
     for (size_t idx = 0; idx < _text.size(); ++idx)
     {
-        if (mRect.x + mRect.w <= pos.x)
+        if (_rect.x + _rect.w <= pos.x)
             return;
 
         if (_isActive)
@@ -80,6 +80,38 @@ void Button::Draw()
         {
             Rune r(_inactive, _text[idx]);
             AddCh(pos.y, pos.x++, r);
+        }
+    }
+}
+
+Input::Input()
+{
+    _active = th::Get()._btn._active;
+    _inactive = th::Get()._btn._inactive;
+    _isActive = false;
+}
+
+Input::~Input()
+{
+}
+
+void Input::Draw()
+{
+    Rect rect = GetRect();
+    Pos pos(rect.y, rect.x);
+
+    for (int col = rect.x; col < rect.x + rect.y; ++col)
+    {
+        AddCh(pos.y, col, ' ');
+        if (_isActive)
+        {
+            Rune r(_active, ACS_S1);
+            AddCh(pos.y + 1, col, r);
+        }
+        else
+        {
+            Rune r(_inactive, ACS_S1);
+            AddCh(pos.y + 1, col, r);
         }
     }
 }
@@ -120,7 +152,7 @@ void TabPane::Draw()
         string text(_tabs[tabIdx]);
         for (size_t idx = 0; idx < text.size(); ++idx)
         {
-            if (mRect.x + mRect.w <= pos.x)
+            if (_rect.x + _rect.w <= pos.x)
                 return;
 
             if (_activeIdx == (int)tabIdx)
@@ -183,37 +215,37 @@ void Tab::Draw()
     }
 }
 
-Menu::Menu()
+List::List()
 {
 }
 
-Menu::~Menu()
+List::~List()
 {
 }
 
-void Menu::ForcusUp()
+void List::ScrollUp()
 {
     if (0 < _activeIdx)
         _activeIdx--;
 }
 
-void Menu::ForcusDown()
+void List::ScrollDown()
 {
-    if (_activeIdx < (int)(_items.size() - 1))
+    if (_activeIdx < (int)(_rows.size() - 1))
         _activeIdx++;
 }
 
-void Menu::Draw()
+void List::Draw()
 {
-    if (_items.empty())
+    if (_rows.empty())
         return;
 
     Rect rect = GetRect();
     Pos pos(rect.y, rect.x);
 
-    for (size_t itemIdx = 0; itemIdx < _items.size(); ++itemIdx)
+    for (size_t itemIdx = 0; itemIdx < _rows.size(); ++itemIdx)
     {
-        string text(_items[itemIdx]);
+        string text(_rows[itemIdx]);
         Button btn;
         btn.SetRect(2, rect.w, pos.y, pos.x);
         btn._text = text;
@@ -222,11 +254,8 @@ void Menu::Draw()
         btn._isActive = (_activeIdx == (int)itemIdx);
         btn.Draw();
         AttachCells(btn.GetCells());
-        pos.y += 2;
-        HLine(pos.y, pos.x + 1, rect.w - 1, ACS_HLINE);
+        if (btn._isActive)
+            AddCh(pos.y + 1, rect.w + rect.x - 1, ACS_RARROW);
+        pos.y += 1;
     }
-}
-
-void Input::Draw()
-{
 }

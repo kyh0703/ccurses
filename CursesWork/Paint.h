@@ -32,12 +32,12 @@ protected:
     Paint &operator=(Paint &&) = delete;
 
 public:
-    short FindIndex(short fg, short bg);
+    short GetIndex(short bg, short fg);
 
 private:
     bool IsColorSet(short color);
-    short AddColorSet(short fg, short bg);
-    short FindColorSet(short fg, short bg);
+    short AddColorSet(short bg, short fg);
+    short FindColorSet(short bg, short fg);
 
 private:
     int _colorCnt;

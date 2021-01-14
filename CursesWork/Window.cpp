@@ -4,8 +4,8 @@
 
 Window::Window()
 {
-    mColor.bg = th::Get()._default.bg;
-    mColor.fg = th::Get()._default.fg;
+    _color.bg = th::Get()._default.bg;
+    _color.fg = th::Get()._default.fg;
 }
 
 Window::~Window()
@@ -28,42 +28,42 @@ void Window::Log(const char *format, ...)
 
 Rect Window::GetRect()
 {
-    return mRect;
+    return _rect;
 }
 
 void Window::SetRect(int h, int w, int y, int x)
 {
-    mRect.h = h;
-    mRect.w = w;
-    mRect.y = y;
-    mRect.x = x;
+    _rect.h = h;
+    _rect.w = w;
+    _rect.y = y;
+    _rect.x = x;
 }
 
 void Window::SetColor(int bg, int fg)
 {
-    mColor.bg = bg;
-    mColor.fg = fg;
+    _color.bg = bg;
+    _color.fg = fg;
 }
 
 void Window::SetTitle(string title)
 {
-    mTitle = title;
+    _title = title;
 }
 
 const map<Pos, Rune> &Window::GetCells(void)
 {
-    return mCells;
+    return _cells;
 }
 
 void Window::AttachCells(map<Pos, Rune> cells)
 {
-    map<Pos, Rune>::iterator iter;
-    for (iter = cells.begin(); iter != cells.end(); ++iter)
+    map<Pos, Rune>::iterator it;
+    for (it = cells.begin(); it != cells.end(); ++it)
     {
-        Pos pos((*iter).first);
-        Rune r((*iter).second);
-        if (mCells.find(pos) != mCells.end())
-            mCells[pos] = r;
+        Pos pos((*it).first);
+        Rune r((*it).second);
+        if (_cells.find(pos) != _cells.end())
+            _cells[pos] = r;
     }
 }
 
@@ -76,20 +76,20 @@ void Window::DrawBase()
 
 void Window::Erase()
 {
-    for (int i = mRect.y; i <= mRect.h + mRect.y; ++i)
-        for (int j = mRect.x; j <= mRect.x + mRect.w; ++j)
+    for (int i = _rect.y; i <= _rect.h + _rect.y; ++i)
+        for (int j = _rect.x; j <= _rect.x + _rect.w; ++j)
             mvdelch(i, j);
     refresh();
 }
 
 void Window::Print()
 {
-    for (int line = mRect.y; line <= mRect.h + mRect.y; ++line)
+    for (int line = _rect.y; line <= _rect.h + _rect.y; ++line)
     {
-        for (int col = mRect.x; col <= mRect.x + mRect.w; ++col)
+        for (int col = _rect.x; col <= _rect.x + _rect.w; ++col)
         {
-            Rune rune = mCells[{line, col}];
-            int idx = Paint::Get().FindIndex(rune.s.fg, rune.s.bg);
+            Rune rune = _cells[{line, col}];
+            int idx = Paint::Get().GetIndex(rune.s.bg, rune.s.fg);
             attron(COLOR_PAIR(idx) | rune.s.opt);
             mvaddch(line, col, rune.c);
             attroff(COLOR_PAIR(idx) | rune.s.opt);
@@ -100,46 +100,60 @@ void Window::Print()
 void Window::HLine(int y, int x, int n, Rune c)
 {
     for (int cols = x; cols < n + x; ++cols)
-        mCells[{y, cols}] = c;
+        _cells[{y, cols}] = c;
 }
 
 void Window::VLine(int y, int x, int n, Rune c)
 {
     for (int line = y; line < n + y; ++line)
-        mCells[{line, x}] = c;
+        _cells[{line, x}] = c;
 }
 
 void Window::AddCh(int y, int x, Rune c)
 {
-    mCells[{y, x}] = c;
+    _cells[{y, x}] = c;
 }
 
 void Window::AddStr(int y, int x, string s)
 {
     for (size_t idx = 0; idx < s.size(); idx++)
-        mCells[{y, x++}] = {mColor.bg, COLOR_WHITE, (chtype)s[idx]};
+        _cells[{y, x++}] = {_color.bg, COLOR_WHITE, (chtype)s[idx]};
+}
+
+void Window::GetCh(int y, int x, Rune c)
+{
+
+}
+
+const string Window::GetStr(int y, int x, int n)
+{
+    vector<chtype> runes;
+    for (int col = x; col < x + n; ++col)
+        runes.push_back(mvgetch(y, col));
+    string str(runes.begin(), runes.end());
+    return str;
 }
 
 void Window::InitCell()
 {
-    for (int line = mRect.y; line <= mRect.h + mRect.y; ++line)
-        for (int col = mRect.x; col <= mRect.x + mRect.w; ++col)
-            mCells[{line, col}] = {mColor.bg, mColor.bg, ' '};
+    for (int line = _rect.y; line <= _rect.h + _rect.y; ++line)
+        for (int col = _rect.x; col <= _rect.x + _rect.w; ++col)
+            _cells[{line, col}] = {_color.bg, _color.bg, ' '};
 }
 
 void Window::MakeBorder()
 {
-    mCells[{mRect.y, mRect.x}] = {mColor.bg, mColor.fg, mBorder.tl};
-    mCells[{mRect.y, mRect.x + mRect.w}] = {mColor.bg, mColor.fg, mBorder.tr};
-    mCells[{mRect.y + mRect.h, mRect.x}] = {mColor.bg, mColor.fg, mBorder.bl};
-    mCells[{mRect.y + mRect.h, mRect.x + mRect.w}] = {mColor.bg, mColor.fg, mBorder.br};
-    HLine(mRect.y + mRect.h, mRect.x + 1, mRect.w - 1, {mColor.bg, mColor.fg, mBorder.bs});
-    HLine(mRect.y, mRect.x + 1, mRect.w - 1, {mColor.bg, mColor.fg, mBorder.ts});
-    VLine(mRect.y + 1, mRect.x, mRect.h - 1, {mColor.bg, mColor.fg, mBorder.ls});
-    VLine(mRect.y + 1, mRect.x + mRect.w, mRect.h - 1, {mColor.bg, mColor.fg, mBorder.rs});
+    _cells[{_rect.y, _rect.x}] = {_color.bg, _color.fg, _border.tl};
+    _cells[{_rect.y, _rect.x + _rect.w}] = {_color.bg, _color.fg, _border.tr};
+    _cells[{_rect.y + _rect.h, _rect.x}] = {_color.bg, _color.fg, _border.bl};
+    _cells[{_rect.y + _rect.h, _rect.x + _rect.w}] = {_color.bg, _color.fg, _border.br};
+    HLine(_rect.y + _rect.h, _rect.x + 1, _rect.w - 1, {_color.bg, _color.fg, _border.bs});
+    HLine(_rect.y, _rect.x + 1, _rect.w - 1, {_color.bg, _color.fg, _border.ts});
+    VLine(_rect.y + 1, _rect.x, _rect.h - 1, {_color.bg, _color.fg, _border.ls});
+    VLine(_rect.y + 1, _rect.x + _rect.w, _rect.h - 1, {_color.bg, _color.fg, _border.rs});
 }
 
 void Window::MakeTitle()
 {
-    AddStr(mRect.y, mRect.x + 2, mTitle);
+    AddStr(_rect.y, _rect.x + 2, _title);
 }

@@ -46,6 +46,20 @@ public:
     string _text;
 };
 
+class Input : public Widget
+{
+public:
+    Input();
+    ~Input();
+
+    void Draw() override;
+
+public:
+    Style _active;
+    Style _inactive;
+    bool _isActive;
+};
+
 class TabPane : public Widget
 {
 public:
@@ -78,23 +92,22 @@ public:
     int _activeIdx;
 };
 
-class Menu : public Widget
+class List : public Widget
 {
 public:
-    Menu();
-    ~Menu();
+    List();
+    ~List();
 
-    void ForcusUp();
-    void ForcusDown();
+    void ScrollUp();
+    void ScrollDown();
     void Draw() override;
 
 public:
-    vector<string> _items;
+    vector<string> _rows;
     int _activeIdx;
 };
 
-class Input : public Widget
+class Form : public Widget
 {
-public:
-    void Draw() override;
+
 };
