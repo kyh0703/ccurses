@@ -31,6 +31,11 @@ Rect Window::GetRect()
     return _rect;
 }
 
+Rect Window::GetInner()
+{
+    return {_rect.h - 2, _rect.w - 2, _rect.y + 1, _rect.x + 1};
+}
+
 void Window::SetRect(int h, int w, int y, int x)
 {
     _rect.h = h;

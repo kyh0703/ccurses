@@ -68,19 +68,29 @@ struct Rect
     {
         this->h = 0;
         this->w = 0;
-        this->x = 0;
         this->y = 0;
+        this->x = 0;
     }
 
-    Rect(int h, int w, int x, int y)
+    Rect(int h, int w, int y, int x)
     {
         this->h = h;
         this->w = w;
-        this->x = x;
         this->y = y;
+        this->x = x;
     }
 
-    int h, w, x, y;
+    int Getwx()
+    {
+        return this->x + this->w;
+    }
+
+    int Gethy()
+    {
+        return this->y + this->h;
+    }
+
+    int h, w, y, x;
 };
 
 struct Pos

@@ -20,6 +20,7 @@ public:
 
 public:
     Rect GetRect();
+    Rect GetInner();
     void SetRect(int h, int w, int y, int x);
     void SetColor(int bg, int fg);
     void SetTitle(string title);

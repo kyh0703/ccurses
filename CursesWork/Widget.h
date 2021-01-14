@@ -60,23 +60,6 @@ public:
     bool _isActive;
 };
 
-class TabPane : public Widget
-{
-public:
-    TabPane();
-    ~TabPane();
-
-    void ForcusLeft();
-    void ForcusRight();
-    void Draw() override;
-
-public:
-    vector<string> _tabs;
-    int _activeIdx;
-    Style _active;
-    Style _inactive;
-};
-
 class Tab : public Widget
 {
 public:
@@ -90,6 +73,8 @@ public:
 public:
     vector<string> _tabs;
     int _activeIdx;
+    Style _active;
+    Style _inactive;
 };
 
 class List : public Widget
@@ -100,11 +85,19 @@ public:
 
     void ScrollUp();
     void ScrollDown();
+    void ScrollPageUp();
+    void ScrollPageDown();
+    void ScrollTop();
+    void ScrollBottom();
+    void ScrollAmount(int amount);
     void Draw() override;
 
 public:
     vector<string> _rows;
-    int _activeIdx;
+    int _curRow;
+    int _topRow;
+    Style _active;
+    Style _inactive;
 };
 
 class Form : public Widget

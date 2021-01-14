@@ -28,10 +28,10 @@ Theme::Theme()
     _tab._inactive.fg = COLOR_WHITE;
     _tab._inactive.opt = A_NORMAL;
 
-    _menu._active.bg = COLOR_WHITE;
-    _menu._active.fg = COLOR_BLUE;
-    _menu._active.opt = A_BLINK;
-    _menu._inactive.bg = COLOR_BLACK;
-    _menu._inactive.fg = COLOR_WHITE;
-    _menu._inactive.opt = A_NORMAL;
+    _list._active.bg = COLOR_WHITE;
+    _list._active.fg = COLOR_BLUE;
+    _list._active.opt = A_BLINK;
+    _list._inactive.bg = COLOR_BLACK;
+    _list._inactive.fg = COLOR_WHITE;
+    _list._inactive.opt = A_NORMAL;
 }

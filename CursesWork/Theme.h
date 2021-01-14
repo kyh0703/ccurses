@@ -17,7 +17,7 @@ public:
         Style _inactive;
     };
 
-    struct Menu
+    struct List
     {
         Style _active;
         Style _inactive;
@@ -38,5 +38,5 @@ public:
     int _basic;
     Btn _btn;
     Tab _tab;
-    Menu _menu;
+    List _list;
 };
