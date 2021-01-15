@@ -62,7 +62,7 @@ UTBIN           = iTest
 #--------------------------#
 SRCS            = $(subst $(UTSRC),,$(wildcard *.cpp))
 OBJS            = $(SRCS:.cpp=.o)
-TARGET          = libiCurses.a
+TARGET          = libiWidget.a
 ifdef IRELEASE
 INSTALLS				= $(TARGET)
 else

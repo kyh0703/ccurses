@@ -11,8 +11,8 @@ Widget::~Widget()
 
 Basic::Basic()
 {
-    _text.clear();
     _textColor = th::Get()._basic;
+    _text.clear();
 }
 
 Basic::~Basic()
@@ -21,21 +21,20 @@ Basic::~Basic()
 
 void Basic::Draw()
 {
-    Rect inner = GetInner();
-    Pos pos(inner.y, inner.x);
+    Pos pos(_inner.min.y, _inner.min.x);
 
     for (size_t idx = 0; idx < _text.size(); ++idx)
     {
         bool isEol = (_text[idx] == '\n');
-        if (isEol || inner.Getwx() < pos.x)
+        if (isEol || _inner.max.x < pos.x)
         {
             pos.y++;
-            pos.x = inner.x;
+            pos.x = _inner.min.x;
             if (isEol)
                 continue;
         }
 
-        if (inner.Gethy() < pos.y)
+        if (_inner.max.y < pos.y)
             break;
 
         int bg = th::Get()._default.bg;
@@ -57,12 +56,11 @@ Button::~Button()
 
 void Button::Draw()
 {
-    Rect inner = GetInner();
-    Pos pos(inner.y, inner.x);
+    Pos pos(_inner.min.y, _inner.min.x);
 
     for (size_t idx = 0; idx < _text.size(); ++idx)
     {
-        if (inner.Getwx() < pos.x)
+        if (_inner.max.x < pos.x)
             return;
 
         if (_isActive)
@@ -80,8 +78,8 @@ void Button::Draw()
 
 Input::Input()
 {
-    _active = th::Get()._btn._active;
-    _inactive = th::Get()._btn._inactive;
+    _activeStyle = th::Get()._btn._active;
+    _inactiveStyle = th::Get()._btn._inactive;
     _isActive = false;
 }
 
@@ -91,30 +89,29 @@ Input::~Input()
 
 void Input::Draw()
 {
-    Rect rect = GetRect();
-    Pos pos(rect.y, rect.x);
+    Pos pos(_rect.min.y, _rect.min.x);
 
-    for (int col = rect.x; col < rect.x + rect.y; ++col)
-    {
-        AddCh(pos.y, col, ' ');
-        if (_isActive)
-        {
-            Rune r(_active, ACS_S1);
-            AddCh(pos.y + 1, col, r);
-        }
-        else
-        {
-            Rune r(_inactive, ACS_S1);
-            AddCh(pos.y + 1, col, r);
-        }
-    }
+    // for (int x = _rect.min.x; x < _rect.max.x + _rect.y; ++x)
+    // {
+    //     AddCh(pos.y, x, ' ');
+    //     if (_isActive)
+    //     {
+    //         Rune r(_activeStyle, ACS_S1);
+    //         AddCh(pos.y + 1, x, r);
+    //     }
+    //     else
+    //     {
+    //         Rune r(_inactiveStyle, ACS_S1);
+    //         AddCh(pos.y + 1, x, r);
+    //     }
+    // }
 }
 
 Tab::Tab()
 {
+    _activeStyle = th::Get()._tab._active;
+    _inactiveStyle = th::Get()._tab._inactive;
     _activeIdx = 0;
-    _active = th::Get()._tab._active;
-    _inactive = th::Get()._tab._inactive;
 }
 
 Tab::~Tab()
@@ -135,27 +132,24 @@ void Tab::ForcusRight()
 
 void Tab::Draw()
 {
-    Rect inner = GetInner();
-    Pos pos(inner.y, inner.x);
+    Pos pos(_inner.min.y, _inner.min.x);
 
     for (size_t tabIdx = 0; tabIdx < _tabs.size(); ++tabIdx)
     {
         string text(_tabs[tabIdx]);
         for (size_t idx = 0; idx < text.size(); ++idx)
         {
-            if (inner.Getwx() < pos.x)
+            if (_inner.max.x < pos.x)
                 return;
 
+            Style style;
             if (_activeIdx == (int)tabIdx)
-            {
-                Rune r(_active, text[idx]);
-                AddCh(pos.y, pos.x++, r);
-            }
+                style = _activeStyle;
             else
-            {
-                Rune r(_inactive, text[idx]);
-                AddCh(pos.y, pos.x++, r);
-            }
+                style = _inactiveStyle;
+
+            Rune r(style, text[idx]);
+            AddCh(pos.y, pos.x++, r);
         }
         AddCh(pos.y, pos.x++, ACS_VLINE);
     }
@@ -163,10 +157,10 @@ void Tab::Draw()
 
 List::List()
 {
+    _activeStyle = th::Get()._list._active;
+    _inactiveStyle = th::Get()._list._inactive;
     _curRow = 0;
     _topRow = 0;
-    _active = th::Get()._list._active;
-    _inactive = th::Get()._list._inactive;
 }
 
 List::~List()
@@ -185,15 +179,15 @@ void List::ScrollDown()
 
 void List::ScrollPageUp()
 {
-    ScrollAmount(_rect.h - 2);
+    if (_topRow < _curRow)
+        _curRow = _topRow;
+    else
+        ScrollAmount(-_inner.h);
 }
 
 void List::ScrollPageDown()
 {
-    if (_topRow < _curRow)
-        _curRow = _topRow;
-    else
-        ScrollAmount(_rect.h - 2);
+    ScrollAmount(_inner.h);
 }
 
 void List::ScrollTop()
@@ -218,11 +212,10 @@ void List::ScrollAmount(int amount)
 
 void List::Draw()
 {
-    Rect inner = GetInner();
-    Pos pos(inner.y, inner.x);
+    Pos pos(_inner.min.y, _inner.min.x);
 
-    if (inner.h + _topRow <= _curRow)
-        _topRow = _curRow - inner.h;
+    if (_inner.h + _topRow <= _curRow)
+        _topRow = _curRow - _inner.h + 1;
     else if (_curRow < _topRow)
         _topRow = _curRow;
 
@@ -231,34 +224,92 @@ void List::Draw()
         string text(_rows[rowIdx]);
         for (size_t idx = 0; idx < text.size(); ++idx)
         {
-            if (inner.Getwx() < pos.x)
+            if (_inner.max.x < pos.x)
                 break;
 
             Style style;
             if ((int)rowIdx == _curRow)
-                style = _active;
+                style = _activeStyle;
             else
-                style = _inactive;
+                style = _inactiveStyle;
 
             Rune r(style, text[idx]);
             AddCh(pos.y, pos.x++, r);
         }
 
+        pos.x = _inner.min.x;
         pos.y++;
-        pos.x = inner.x;
-        if (inner.Gethy() < pos.y)
+        if (_inner.max.y < pos.y)
             break;
     }
 
     if (0 < _topRow)
     {
         Rune r(ACS_DIAMOND);
-        AddCh(inner.y, inner.Getwx(), r);
+        AddCh(_inner.min.y, _inner.max.x, r);
     }
 
-    if (_topRow + inner.h < (int)_rows.size() - 1)
+    if (_topRow + _inner.h < (int)_rows.size())
     {
         Rune r(ACS_DIAMOND);
-        AddCh(inner.Gethy(), inner.Getwx(), r);
+        AddCh(_inner.max.y, _inner.max.x, r);
+    }
+}
+
+Progress::Progress()
+{
+    _barStyle = th::Get()._tab._active;
+    _labelStyle = th::Get()._tab._inactive;
+    _percent = 0;
+}
+
+Progress::~Progress()
+{
+}
+
+void Progress::Draw()
+{
+    Pos pos(_inner.min.y, _inner.min.x);
+
+    if (_label.empty())
+        _label = to_string(_percent);
+
+    int barWidth = int(float(_percent * 0.01) * _inner.w);
+    Rune r(_barStyle, ACS_RARROW);
+    HLine(_inner.min.y, _inner.min.x, barWidth, r);
+}
+
+Table::Table()
+{
+    _alignment = LEFT;
+}
+
+Table::~Table()
+{
+}
+
+void Table::Draw()
+{
+    Pos pos(_inner.min.y, _inner.min.x);
+
+    int columnCnt = _rows[0].size();
+    int columnWidth = _inner.w / columnCnt;
+
+    for (size_t line = 0; line < _rows.size(); ++line)
+    {
+        vector<string> row(_rows[line]);
+        for (size_t col = 0; col < row.size(); ++col)
+        {
+            string column(row[col]);
+            if (_alignment == LEFT)
+                pos.x = _inner.min.x;
+            else if (_alignment == CENTER)
+                pos.x = (columnWidth - column.length()) / 2;
+            else if (_alignment == RIGHT)
+                pos.x = (_inner.min.x + col * columnWidth) - column.length();
+
+            for (size_t textIdx = 0; textIdx < column.size(); ++textIdx)
+                AddCh(pos.y, pos.x++, column[textIdx]);
+        }
     }
 }

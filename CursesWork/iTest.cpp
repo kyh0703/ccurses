@@ -1,37 +1,123 @@
+#include <iostream>
 #include <unistd.h>
 #include "Palette.h"
+
+#define TABLE
 
 int main(void)
 {
     Palette p;
-    p.Init();
+    if (!p.Init())
+    {
+        cout << "ncurses init Fail" << endl;
+        return 1;
+    }
 
-    // Basic basic;
-    // basic.SetRect(8, 15, 3, 0);
-    // basic.SetTitle("I love youngkyoung");
-    // basic._textColor = COLOR_BLUE;
-    // basic._text = "Good Moaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+#if (defined TABLE)
+    Table table;
+    table.SetRect(10, 10, 5, 10);
+    table._rows = {
+        {"test", "test1", "test2"},
+        {"test3", "test4", "test6"},
+        {"test3", "test4", "test7"},
+    };
+    p.Render({&table});
+    while (int ch = getchar())
+    {
+        switch (ch)
+        {
+        case 'q':
+            return 1;
+        default:
+            break;
+        }
+    }
+#elif (defined TAB)
+    Tab tab;
+    tab.SetRect(3, 40, 5, 5);
+    tab._tabs = {"test1", "test2", "test3", "test4"};
 
-    // Button btn;
-    // btn.SetRect(2, 4, 10, 10);
-    // btn._isActive = true;
-    // btn._text = "YES";
+    Button tab1;
+    tab1.SetRect(10, 10, 10, 10);
+    tab1.SetTitle("tab1111");
 
-    // Tab tab;
-    // tab.SetRect(2, 50, 0, 0);
-    // tab._tabs = {"test", "test1", "test2"};
+    Button tab2;
+    tab2.SetRect(10, 10, 10, 10);
+    tab2.SetTitle("tab2222");
 
+    switch (tab._activeIdx)
+    {
+    case 0:
+        p.Render({&tab, &tab1});
+        break;
+    case 1:
+        p.Render({&tab, &tab2});
+        break;
+    default:
+        break;
+    }
+
+    while (int ch = getchar())
+    {
+        switch (ch)
+        {
+        case 'q':
+            return 1;
+        case 'h':
+            tab.ForcusLeft();
+            switch (tab._activeIdx)
+            {
+            case 0:
+                p.Render({&tab, &tab1});
+                break;
+            case 1:
+                p.Render({&tab, &tab2});
+                break;
+            default:
+                p.Render({&tab});
+                break;
+            }
+            break;
+        case 'k':
+            tab.ForcusRight();
+            switch (tab._activeIdx)
+            {
+            case 0:
+                p.Render({&tab, &tab1});
+                break;
+            case 1:
+                p.Render({&tab, &tab2});
+                break;
+            default:
+                p.Render({&tab});
+                break;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+#elif (defined BASIC)
+    Basic basic;
+    basic.SetRect(5, 15, 10, 10);
+    basic.SetTitle("hello");
+    basic._text = "hihihi1111111111111111111111111111111111111111111";
+    p.Render({&basic});
+    while (int ch = getchar())
+    {
+    switch (ch)
+    {
+    case 'q':
+        return 1;
+    }
+    }
+#elif (defined LIST)
     List list;
     list.SetRect(5, 15, 10, 10);
-    list._rows = {"test", "test1", "test2", "test4", "test5", "test6", "test7"};
+    list._rows = {"test11111", "test2", "test3", "test4", "test5", "test6", "test7"};
 
-    // Input input;
-    // input.SetRect(1, 10, 20, 20);
+    p.Render({&list});
 
-    // p.Render({&basic, &tab, &list, /*&btn, &input*/});
-    p.Render({&list, /*&btn, &input*/});
-
-    MEVENT event;
     while (int ch = getchar())
     {
         switch (ch)
@@ -44,19 +130,44 @@ int main(void)
         case 'k':
             list.ScrollUp();
             break;
-        case 'h':
-            // pTab->ForcusRight();
+        case 't':
+            list.ScrollPageUp();
             break;
-        case KEY_MOUSE:
-            if (getmouse(&event) == OK)
-            {
-                Widget::Log("ch[%c]", ch);
-            }
+        case 'd':
+            list.ScrollPageDown();
             break;
         default:
             break;
         }
         p.Render({&list});
     }
-    return 0;
+#elif defined(PROGRESS)
+    Progress pro;
+    pro.SetRect(3, 10, 0, 0);
+    pro._percent = 100;
+    p.Render({&pro, /*&btn, &input*/});
+
+    while (int ch = getchar())
+    {
+        switch (ch)
+        {
+        case 'q':
+            return 1;
+        case 'j':
+            break;
+        case 'k':
+            break;
+        case 't':
+            break;
+        case 'd':
+            break;
+        case 'h':
+            break;
+        default:
+            break;
+        }
+        p.Render({&pro});
+    }
+#endif
+        return 0;
 }

@@ -3,143 +3,49 @@
 
 struct Border
 {
-    Border()
-    {
-        this->ls = ACS_VLINE;
-        this->rs = ACS_VLINE;
-        this->ts = ACS_HLINE;
-        this->bs = ACS_HLINE;
-        this->tl = ACS_ULCORNER;
-        this->tr = ACS_URCORNER;
-        this->bl = ACS_LLCORNER;
-        this->br = ACS_LRCORNER;
-    }
-
+    Border();
     chtype ls, rs, ts, bs;
     chtype tl, tr, bl, br;
 };
 
 struct Color
 {
-    Color()
-    {
-        this->bg = COLOR_BLACK;
-        this->fg = COLOR_WHITE;
-    }
-
-    Color(int bg, int fg)
-    {
-        this->bg = bg;
-        this->fg = fg;
-    }
-
+    Color();
+    Color(int bg, int fg);
     int bg, fg;
 };
 
 struct Style
 {
-    Style()
-    {
-        this->bg = COLOR_BLACK;
-        this->fg = COLOR_WHITE;
-        this->opt = A_NORMAL;
-    }
-
-    Style(int bg, int fg)
-    {
-        this->bg = bg;
-        this->fg = fg;
-        this->opt = A_NORMAL;
-    }
-
-    Style(int bg, int fg, int opt)
-    {
-        this->bg = bg;
-        this->fg = fg;
-        this->opt = opt;
-    }
-
+    Style();
+    Style(int bg, int fg);
+    Style(int bg, int fg, int opt);
     int bg, fg, opt;
-};
-
-struct Rect
-{
-    Rect()
-    {
-        this->h = 0;
-        this->w = 0;
-        this->y = 0;
-        this->x = 0;
-    }
-
-    Rect(int h, int w, int y, int x)
-    {
-        this->h = h;
-        this->w = w;
-        this->y = y;
-        this->x = x;
-    }
-
-    int Getwx()
-    {
-        return this->x + this->w;
-    }
-
-    int Gethy()
-    {
-        return this->y + this->h;
-    }
-
-    int h, w, y, x;
 };
 
 struct Pos
 {
-    Pos(int y, int x)
-    {
-        this->y = y;
-        this->x = x;
-    }
-
-    bool operator<(const Pos &rhs) const
-    {
-        if (this->y != rhs.y)
-            return this->y < rhs.y;
-        return this->x < rhs.x;
-    }
-
+    Pos();
+    Pos(int y, int x);
+    bool operator<(const Pos &rhs) const;
     int y, x;
+};
+
+struct Rect
+{
+    Rect();
+    Rect(int h, int w, int y, int x);
+    Pos min;
+    Pos max;
+    int h, w;
 };
 
 struct Rune
 {
-    Rune()
-    {
-        this->c = ' ';
-    }
-
-    Rune(chtype c)
-    {
-        this->s.bg = COLOR_BLACK;
-        this->s.fg = COLOR_WHITE;
-        this->s.opt = A_NORMAL;
-        this->c = c;
-    }
-
-    Rune(int bg, int fg, chtype c)
-    {
-        this->s.bg = bg;
-        this->s.fg = fg;
-        this->s.opt = A_NORMAL;
-        this->c = c;
-    }
-
-    Rune(Style s, chtype c)
-    {
-        this->s = s;
-        this->c = c;
-    }
-
+    Rune();
+    Rune(chtype c);
+    Rune(int bg, int fg, chtype c);
+    Rune(Style s, chtype c);
     Style s;
     chtype c;
 };

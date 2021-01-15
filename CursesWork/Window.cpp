@@ -26,22 +26,15 @@ void Window::Log(const char *format, ...)
     mvaddstr(LINES - 1, 0, line);
 }
 
-Rect Window::GetRect()
-{
-    return _rect;
-}
-
-Rect Window::GetInner()
-{
-    return {_rect.h - 2, _rect.w - 2, _rect.y + 1, _rect.x + 1};
-}
-
 void Window::SetRect(int h, int w, int y, int x)
 {
-    _rect.h = h;
-    _rect.w = w;
-    _rect.y = y;
-    _rect.x = x;
+    _rect = {h, w, y, x};
+    _inner.min.y = _rect.min.y + 1;
+    _inner.min.x = _rect.min.x + 1;
+    _inner.max.y = _rect.max.y - 1;
+    _inner.max.x = _rect.max.x - 1;
+    _inner.h = _rect.h - 2;
+    _inner.w = _rect.w - 2;
 }
 
 void Window::SetColor(int bg, int fg)
@@ -81,22 +74,22 @@ void Window::DrawBase()
 
 void Window::Erase()
 {
-    for (int i = _rect.y; i <= _rect.h + _rect.y; ++i)
-        for (int j = _rect.x; j <= _rect.x + _rect.w; ++j)
-            mvdelch(i, j);
+    for (int y = _rect.min.y; y <= _rect.max.y; ++y)
+        for (int x = _rect.min.x; x <= _rect.max.x; ++x)
+            mvdelch(y, x);
     refresh();
 }
 
 void Window::Print()
 {
-    for (int line = _rect.y; line <= _rect.h + _rect.y; ++line)
+    for (int y = _rect.min.y; y <= _rect.max.y; ++y)
     {
-        for (int col = _rect.x; col <= _rect.x + _rect.w; ++col)
+        for (int x = _rect.min.x; x <= _rect.max.x; ++x)
         {
-            Rune rune = _cells[{line, col}];
+            Rune rune = _cells[{y, x}];
             int idx = Paint::Get().GetIndex(rune.s.bg, rune.s.fg);
             attron(COLOR_PAIR(idx) | rune.s.opt);
-            mvaddch(line, col, rune.c);
+            mvaddch(y, x, rune.c);
             attroff(COLOR_PAIR(idx) | rune.s.opt);
         }
     }
@@ -141,24 +134,24 @@ const string Window::GetStr(int y, int x, int n)
 
 void Window::InitCell()
 {
-    for (int line = _rect.y; line <= _rect.h + _rect.y; ++line)
-        for (int col = _rect.x; col <= _rect.x + _rect.w; ++col)
-            _cells[{line, col}] = {_color.bg, _color.bg, ' '};
+    for (int y = _rect.min.y; y <= _rect.max.y; ++y)
+        for (int x = _rect.min.x; x <= _rect.max.x; ++x)
+            _cells[{y, x}] = {_color.bg, _color.bg, ' '};
 }
 
 void Window::MakeBorder()
 {
-    _cells[{_rect.y, _rect.x}] = {_color.bg, _color.fg, _border.tl};
-    _cells[{_rect.y, _rect.x + _rect.w}] = {_color.bg, _color.fg, _border.tr};
-    _cells[{_rect.y + _rect.h, _rect.x}] = {_color.bg, _color.fg, _border.bl};
-    _cells[{_rect.y + _rect.h, _rect.x + _rect.w}] = {_color.bg, _color.fg, _border.br};
-    HLine(_rect.y + _rect.h, _rect.x + 1, _rect.w - 1, {_color.bg, _color.fg, _border.bs});
-    HLine(_rect.y, _rect.x + 1, _rect.w - 1, {_color.bg, _color.fg, _border.ts});
-    VLine(_rect.y + 1, _rect.x, _rect.h - 1, {_color.bg, _color.fg, _border.ls});
-    VLine(_rect.y + 1, _rect.x + _rect.w, _rect.h - 1, {_color.bg, _color.fg, _border.rs});
+    _cells[{_rect.min.y, _rect.min.x}] = {_color.bg, _color.fg, _border.tl};
+    _cells[{_rect.min.y, _rect.max.x}] = {_color.bg, _color.fg, _border.tr};
+    _cells[{_rect.max.y, _rect.min.x}] = {_color.bg, _color.fg, _border.bl};
+    _cells[{_rect.max.y, _rect.max.x}] = {_color.bg, _color.fg, _border.br};
+    HLine(_rect.min.y, _rect.min.x + 1, _rect.w - 2, {_color.bg, _color.fg, _border.ts});
+    HLine(_rect.max.y, _rect.min.x + 1, _rect.w - 2 , {_color.bg, _color.fg, _border.bs});
+    VLine(_rect.min.y + 1, _rect.min.x, _rect.h - 2, {_color.bg, _color.fg, _border.ls});
+    VLine(_rect.min.y + 1, _rect.max.x, _rect.h - 2, {_color.bg, _color.fg, _border.rs});
 }
 
 void Window::MakeTitle()
 {
-    AddStr(_rect.y, _rect.x + 2, _title);
+    AddStr(_rect.min.y, _rect.min.x + 2, _title);
 }

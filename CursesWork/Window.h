@@ -19,8 +19,6 @@ public:
     static void Log(const char *format, ...);
 
 public:
-    Rect GetRect();
-    Rect GetInner();
     void SetRect(int h, int w, int y, int x);
     void SetColor(int bg, int fg);
     void SetTitle(string title);
@@ -29,6 +27,7 @@ public:
     void DrawBase();
     void Erase();
     void Print();
+
 
 public:
     virtual void Draw() = 0;
@@ -48,6 +47,7 @@ private:
 
 protected:
     Rect _rect;
+    Rect _inner;
     Border _border;
     Color _color;
     string _title;

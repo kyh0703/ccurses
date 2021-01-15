@@ -1,6 +1,4 @@
 #pragma once
-#include <iostream>
-#include <sstream>
 #include <ncurses.h>
 #include <string>
 #include <vector>
@@ -55,8 +53,8 @@ public:
     void Draw() override;
 
 public:
-    Style _active;
-    Style _inactive;
+    Style _activeStyle;
+    Style _inactiveStyle;
     bool _isActive;
 };
 
@@ -71,10 +69,10 @@ public:
     void Draw() override;
 
 public:
+    Style _activeStyle;
+    Style _inactiveStyle;
     vector<string> _tabs;
     int _activeIdx;
-    Style _active;
-    Style _inactive;
 };
 
 class List : public Widget
@@ -85,6 +83,8 @@ public:
 
     void ScrollUp();
     void ScrollDown();
+    void ScrollPageHalfUp();
+    void ScrollPageHalfDown();
     void ScrollPageUp();
     void ScrollPageDown();
     void ScrollTop();
@@ -93,11 +93,49 @@ public:
     void Draw() override;
 
 public:
-    vector<string> _rows;
+    Style _activeStyle;
+    Style _inactiveStyle;
     int _curRow;
     int _topRow;
-    Style _active;
-    Style _inactive;
+    vector<string> _rows;
+};
+
+class Progress : public Widget
+{
+public:
+    Progress();
+    ~Progress();
+
+    void Draw() override;
+
+public:
+    Style _barStyle;
+    Style _labelStyle;
+    int _percent;
+    string _label;
+};
+
+class Table : public Widget
+{
+public:
+    enum
+    {
+        CENTER,
+        LEFT,
+        RIGHT,
+    };
+
+public:
+    Table();
+    ~Table();
+
+    void Draw() override;
+
+public:
+    Style _textStyle;
+    int _alignment;
+    vector<int> _columnWidths;
+    vector<vector<string>> _rows;
 };
 
 class Form : public Widget

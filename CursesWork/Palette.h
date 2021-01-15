@@ -14,6 +14,6 @@ public:
     ~Palette();
 
 public:
-    void Init();
+    bool Init();
     bool Render(vector<Widget *> pWidgets);
 };

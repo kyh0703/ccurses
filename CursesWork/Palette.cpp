@@ -12,12 +12,16 @@ Palette::~Palette()
     endwin();
 }
 
-void Palette::Init()
+bool Palette::Init()
 {
-    initscr();
+    if (!initscr())
+        return false;
+    if (cbreak() == ERR)
+        return false;
+    if (noecho() == ERR)
+        return false;
+
     clear();
-    cbreak();
-    noecho();
     keypad(stdscr, TRUE);
     curs_set(0);
 
@@ -30,6 +34,7 @@ void Palette::Init()
     short idx = Paint::Get().GetIndex(color.bg, color.fg);
     wbkgd(stdscr, COLOR_PAIR(idx));
     refresh();
+    return true;
 }
 
 bool Palette::Render(vector<Widget *> widgets)
