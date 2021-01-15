@@ -15,11 +15,12 @@ int main(void)
 
 #if (defined TABLE)
     Table table;
-    table.SetRect(10, 10, 5, 10);
+    table.SetRect(9, 38, 5, 10);
     table._rows = {
         {"test", "test1", "test2"},
         {"test3", "test4", "test6"},
-        {"test3", "test4", "test7"},
+        // {"test3", "test4", "test7", "astest", "test2"},
+        // {"test3", "test4", "test7", "astest", "test2"},
     };
     p.Render({&table});
     while (int ch = getchar())

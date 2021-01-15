@@ -281,7 +281,7 @@ void Progress::Draw()
 
 Table::Table()
 {
-    _alignment = LEFT;
+    _alignment = CENTER;
 }
 
 Table::~Table()
@@ -292,24 +292,48 @@ void Table::Draw()
 {
     Pos pos(_inner.min.y, _inner.min.x);
 
-    int columnCnt = _rows[0].size();
-    int columnWidth = _inner.w / columnCnt;
+    int colCnt = _rows[0].size();
+    int colWidth = _inner.w / colCnt;
 
-    for (size_t line = 0; line < _rows.size(); ++line)
+    for (size_t row = 0; row < _rows.size(); ++row)
     {
-        vector<string> row(_rows[line]);
-        for (size_t col = 0; col < row.size(); ++col)
-        {
-            string column(row[col]);
-            if (_alignment == LEFT)
-                pos.x = _inner.min.x;
-            else if (_alignment == CENTER)
-                pos.x = (columnWidth - column.length()) / 2;
-            else if (_alignment == RIGHT)
-                pos.x = (_inner.min.x + col * columnWidth) - column.length();
+        if (_inner.max.y < pos.y)
+            break;
 
-            for (size_t textIdx = 0; textIdx < column.size(); ++textIdx)
-                AddCh(pos.y, pos.x++, column[textIdx]);
+        vector<string> cols(_rows[row]);
+        for (size_t col = 0; col < cols.size(); ++col)
+        {
+            string text(cols[col]);
+            if (colWidth < (int)text.length() || _alignment == LEFT)
+                pos.x = _inner.min.x + (col * colWidth);
+            else if (_alignment == CENTER)
+                pos.x += (colWidth - text.length()) / 2;
+            else if (_alignment == RIGHT)
+            {
+                if (pos.x + colWidth < _inner.max.x)
+                    pos.x += colWidth - text.length();
+                else
+                    pos.x = _inner.max.x - text.length() + 1;
+            }
+
+            int oneColMax = (_inner.min.x + (colWidth * (col + 1)));
+            for (size_t strIdx = 0; pos.x < oneColMax; ++pos.x)
+            {
+                if (text[strIdx] == 0x00)
+                    continue;
+                AddCh(pos.y, pos.x, text[strIdx++]);
+            }
+
+            if (col != cols.size() - 1)
+                AddCh(pos.y, pos.x - 1, ACS_VLINE);
+            else
+                pos.y++;
         }
+
+        for (int x = _inner.min.x; x <= _inner.max.x; ++x)
+            AddCh(pos.y, x, ACS_S3);
+
+        pos.y++;
+        pos.x = _inner.min.x;
     }
 }
