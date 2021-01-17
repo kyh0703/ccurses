@@ -100,16 +100,16 @@ public:
     vector<string> _rows;
 };
 
-class Progress : public Widget
+class ProgressBar : public Widget
 {
 public:
-    Progress();
-    ~Progress();
+    ProgressBar();
+    ~ProgressBar();
 
     void Draw() override;
 
 public:
-    Style _barStyle;
+    int _barColor;
     Style _labelStyle;
     int _percent;
     string _label;
@@ -134,7 +134,6 @@ public:
 public:
     Style _textStyle;
     int _alignment;
-    vector<int> _columnWidths;
     vector<vector<string>> _rows;
 };
 

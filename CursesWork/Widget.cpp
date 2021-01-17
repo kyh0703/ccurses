@@ -45,8 +45,8 @@ void Basic::Draw()
 
 Button::Button()
 {
-    _active = th::Get()._btn._active;
-    _inactive = th::Get()._btn._inactive;
+    _active = th::Get()._btn.active;
+    _inactive = th::Get()._btn.inactive;
     _isActive = false;
 }
 
@@ -78,8 +78,8 @@ void Button::Draw()
 
 Input::Input()
 {
-    _activeStyle = th::Get()._btn._active;
-    _inactiveStyle = th::Get()._btn._inactive;
+    _activeStyle = th::Get()._btn.active;
+    _inactiveStyle = th::Get()._btn.inactive;
     _isActive = false;
 }
 
@@ -109,8 +109,8 @@ void Input::Draw()
 
 Tab::Tab()
 {
-    _activeStyle = th::Get()._tab._active;
-    _inactiveStyle = th::Get()._tab._inactive;
+    _activeStyle = th::Get()._tab.active;
+    _inactiveStyle = th::Get()._tab.inactive;
     _activeIdx = 0;
 }
 
@@ -157,8 +157,8 @@ void Tab::Draw()
 
 List::List()
 {
-    _activeStyle = th::Get()._list._active;
-    _inactiveStyle = th::Get()._list._inactive;
+    _activeStyle = th::Get()._list.active;
+    _inactiveStyle = th::Get()._list.inactive;
     _curRow = 0;
     _topRow = 0;
 }
@@ -256,27 +256,46 @@ void List::Draw()
     }
 }
 
-Progress::Progress()
+ProgressBar::ProgressBar()
 {
-    _barStyle = th::Get()._tab._active;
-    _labelStyle = th::Get()._tab._inactive;
+    _barColor = th::Get()._progress.bar;
+    _labelStyle = th::Get()._progress.label;
     _percent = 0;
 }
 
-Progress::~Progress()
+ProgressBar::~ProgressBar()
 {
 }
 
-void Progress::Draw()
+void ProgressBar::Draw()
 {
     Pos pos(_inner.min.y, _inner.min.x);
 
     if (_label.empty())
-        _label = to_string(_percent);
+        _label = to_string(_percent) + "%";
 
     int barWidth = int(float(_percent * 0.01) * _inner.w);
-    Rune r(_barStyle, ACS_RARROW);
-    HLine(_inner.min.y, _inner.min.x, barWidth, r);
+    while (pos.y <= _inner.max.y)
+    {
+        Rune r(_barColor, _barColor, ' ');
+        HLine(pos.y, pos.x, barWidth, r);
+        pos.y++;
+    }
+
+    pos.y = _inner.min.y + ((_inner.h) / 2);
+    pos.x = _inner.min.x + (_inner.w / 2) - _label.length();
+    if (_inner.max.y < pos.y)
+        return;
+
+    for (size_t idx = 0; idx < _label.size(); ++idx)
+    {
+        // if (pos.x + idx + 1 <= _inner.max.x + barWidth)
+        // {
+
+        // }
+        Rune r(COLOR_BLUE, COLOR_RED,_label[idx]);
+        AddCh(pos.y, pos.x++, _label[idx]);
+    }
 }
 
 Table::Table()
@@ -297,9 +316,6 @@ void Table::Draw()
 
     for (size_t row = 0; row < _rows.size(); ++row)
     {
-        if (_inner.max.y < pos.y)
-            break;
-
         vector<string> cols(_rows[row]);
         for (size_t col = 0; col < cols.size(); ++col)
         {
@@ -329,6 +345,9 @@ void Table::Draw()
             else
                 pos.y++;
         }
+
+        if (_inner.max.y < pos.y)
+            break;
 
         for (int x = _inner.min.x; x <= _inner.max.x; ++x)
             AddCh(pos.y, x, ACS_S3);

@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "Palette.h"
 
-#define TABLE
+#define PROGRESS
 
 int main(void)
 {
@@ -19,8 +19,8 @@ int main(void)
     table._rows = {
         {"test", "test1", "test2"},
         {"test3", "test4", "test6"},
-        // {"test3", "test4", "test7", "astest", "test2"},
-        // {"test3", "test4", "test7", "astest", "test2"},
+        {"test3", "test4", "test7"},
+        {"test3", "test4", "test7"},
     };
     p.Render({&table});
     while (int ch = getchar())
@@ -143,9 +143,10 @@ int main(void)
         p.Render({&list});
     }
 #elif defined(PROGRESS)
-    Progress pro;
-    pro.SetRect(3, 10, 0, 0);
-    pro._percent = 100;
+    ProgressBar pro;
+    pro.SetRect(3, 50, 0, 0);
+    pro._percent = 20;
+    // pro._label = "1111";
     p.Render({&pro, /*&btn, &input*/});
 
     while (int ch = getchar())
@@ -155,8 +156,10 @@ int main(void)
         case 'q':
             return 1;
         case 'j':
+            pro._percent -= 1;
             break;
         case 'k':
+            pro._percent += 1;
             break;
         case 't':
             break;

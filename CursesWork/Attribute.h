@@ -45,6 +45,7 @@ struct Rune
     Rune();
     Rune(chtype c);
     Rune(int bg, int fg, chtype c);
+    Rune(int bg, int fg, int opt, chtype c);
     Rune(Style s, chtype c);
     Style s;
     chtype c;

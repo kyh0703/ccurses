@@ -103,6 +103,14 @@ Rune::Rune(int bg, int fg, chtype c)
     this->c = c;
 }
 
+Rune::Rune(int bg, int fg, int opt, chtype c)
+{
+    this->s.bg = bg;
+    this->s.fg = fg;
+    this->s.opt = opt;
+    this->c = c;
+}
+
 Rune::Rune(Style s, chtype c)
 {
     this->s = s;

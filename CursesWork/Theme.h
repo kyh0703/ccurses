@@ -7,20 +7,26 @@ class Theme
 public:
     struct Btn
     {
-        Style _active;
-        Style _inactive;
+        Style active;
+        Style inactive;
     };
 
     struct Tab
     {
-        Style _active;
-        Style _inactive;
+        Style active;
+        Style inactive;
     };
 
     struct List
     {
-        Style _active;
-        Style _inactive;
+        Style active;
+        Style inactive;
+    };
+
+    struct ProgressBar
+    {
+        int bar;
+        Style label;
     };
 
 public:
@@ -39,4 +45,5 @@ public:
     Btn _btn;
     Tab _tab;
     List _list;
+    ProgressBar _progress;
 };
