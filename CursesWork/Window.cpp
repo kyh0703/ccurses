@@ -118,9 +118,9 @@ void Window::AddStr(int y, int x, string s)
         _cells[{y, x++}] = {_color.bg, COLOR_WHITE, (chtype)s[idx]};
 }
 
-void Window::GetCh(int y, int x, Rune c)
+const Rune Window::GetCh(int y, int x)
 {
-
+    return _cells[{y, x}];
 }
 
 const string Window::GetStr(int y, int x, int n)

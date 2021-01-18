@@ -36,6 +36,7 @@ Theme::Theme()
     _list.inactive.opt = A_NORMAL;
 
     _progress.bar = COLOR_RED;
-    _progress.label.bg = COLOR_BLACK;
-    _progress.label.fg = COLOR_RED;
+    _progress.label.bg = _default.bg;
+    _progress.label.fg = _default.fg;
+    _progress.label.opt = A_NORMAL;
 }

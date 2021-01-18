@@ -1,5 +1,6 @@
 #pragma once
 #include <ncurses.h>
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <map>
@@ -37,7 +38,7 @@ public:
 
     void Draw() override;
 
-public:
+private:
     Style _active;
     Style _inactive;
     bool _isActive;
@@ -50,12 +51,14 @@ public:
     Input();
     ~Input();
 
+    void ClearText();
+    void DelText();
+    void AddText(chtype c);
+    const string GetText();
     void Draw() override;
 
 public:
-    Style _activeStyle;
-    Style _inactiveStyle;
-    bool _isActive;
+    vector<chtype> _text;
 };
 
 class Tab : public Widget
@@ -109,8 +112,9 @@ public:
     void Draw() override;
 
 public:
-    int _barColor;
     Style _labelStyle;
+    int _barColor;
+    bool _refresh;
     int _percent;
     string _label;
 };
@@ -123,7 +127,7 @@ public:
         CENTER,
         LEFT,
         RIGHT,
-    };
+    } ALIGNMENT;
 
 public:
     Table();
@@ -137,7 +141,17 @@ public:
     vector<vector<string>> _rows;
 };
 
-class Form : public Widget
+class BarChart : public Widget
 {
+public:
+    BarChart();
+    ~BarChart();
 
+    void Draw() override;
+
+public:
+    vector<vector<float>> _data;
+    int _barGap;
+    int _barWidth;
+    int _maxVal;
 };

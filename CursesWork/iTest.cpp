@@ -2,8 +2,7 @@
 #include <unistd.h>
 #include "Palette.h"
 
-#define PROGRESS
-
+#define BARCHART
 int main(void)
 {
     Palette p;
@@ -13,7 +12,59 @@ int main(void)
         return 1;
     }
 
-#if (defined TABLE)
+#if (defined BARCHART)
+    BarChart bar;
+    bar.SetRect(20, 50, 0, 0);
+    bar._data = {
+        {7, 6, 5, 4, 3, 2},
+    };
+    p.Render({&bar, /*&btn, &input*/});
+
+    while (int ch = getchar())
+    {
+        switch (ch)
+        {
+        case 'q':
+            return 1;
+        case 'j':
+            break;
+        case 'k':
+            break;
+        case 't':
+            break;
+        case 'd':
+            break;
+        case 'h':
+            break;
+        default:
+            break;
+        }
+        p.Render({&bar});
+    }
+#elif (defined INPUT)
+    Input input;
+    input.SetRect(2, 50, 0, 0);
+    p.Render({&input});
+    while (int ch = getch())
+    {
+        switch (ch)
+        {
+        case 'q':
+            printf("[%s]", input.GetText().c_str());
+            return 1;
+        case KEY_BACKSPACE:
+            input.DelText();
+            break;
+        case KEY_DC:
+            input.ClearText();
+            break;
+        default:
+            input.AddText(ch);
+            break;
+        }
+        p.Render({&input});
+    }
+#elif (defined TABLE)
     Table table;
     table.SetRect(9, 38, 5, 10);
     table._rows = {
@@ -145,8 +196,8 @@ int main(void)
 #elif defined(PROGRESS)
     ProgressBar pro;
     pro.SetRect(3, 50, 0, 0);
-    pro._percent = 20;
-    // pro._label = "1111";
+    pro._percent = 10;
+    // pro._label = "12341234";
     p.Render({&pro, /*&btn, &input*/});
 
     while (int ch = getchar())

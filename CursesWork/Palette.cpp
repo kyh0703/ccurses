@@ -37,6 +37,20 @@ bool Palette::Init()
     return true;
 }
 
+bool Palette::KbHit()
+{
+    nodelay(stdscr, TRUE);
+    bool ret = false;
+    int ch = getch();
+    if (ch != ERR)
+    {
+        ret = true;
+        ungetch(ch);
+    }
+    nodelay(stdscr, false);
+    return ret;
+}
+
 bool Palette::Render(vector<Widget *> widgets)
 {
     vector<Widget *>::iterator iter;

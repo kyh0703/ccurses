@@ -37,7 +37,7 @@ protected:
     void VLine(int y, int x, int n, Rune c);
     void AddCh(int y, int x, Rune c);
     void AddStr(int y, int x, string s);
-    void GetCh(int y, int x, Rune c);
+    const Rune GetCh(int y, int x);
     const string GetStr(int y, int x, int n);
 
 private:

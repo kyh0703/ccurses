@@ -15,5 +15,6 @@ public:
 
 public:
     bool Init();
+    bool KbHit();
     bool Render(vector<Widget *> pWidgets);
 };
