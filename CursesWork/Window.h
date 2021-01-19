@@ -50,6 +50,7 @@ protected:
     Rect _inner;
     Border _border;
     Color _color;
+    int _titleColor;
     string _title;
     map<Pos, Rune> _cells;
 };

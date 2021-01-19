@@ -30,7 +30,10 @@ bool Palette::Init()
 
     setlocale(LC_ALL, "ko_KR.utf8");
     mousemask(ALL_MOUSE_EVENTS, NULL);
-    Color color(th::Get()._default.bg, th::Get()._default.fg);
+
+    int bg = th::Get()._base.color.bg;
+    int fg = th::Get()._base.color.fg;
+    Color color(bg, fg);
     short idx = Paint::Get().GetIndex(color.bg, color.fg);
     wbkgd(stdscr, COLOR_PAIR(idx));
     refresh();

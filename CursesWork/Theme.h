@@ -5,7 +5,25 @@ typedef class Theme th;
 class Theme
 {
 public:
+
+    struct Base
+    {
+        Color color;
+        int tilte;
+    };
+
+    struct Basic
+    {
+        int textColor;
+    };
+
     struct Btn
+    {
+        Style active;
+        Style inactive;
+    };
+
+    struct Input
     {
         Style active;
         Style inactive;
@@ -29,6 +47,12 @@ public:
         Style label;
     };
 
+    struct BarChart
+    {
+        int bar;
+        Style label;
+    };
+
 public:
     static Theme &Get();
 
@@ -40,10 +64,12 @@ protected:
     Theme &operator=(Theme &&) = delete;
 
 public:
-    Color _default;
-    int _basic;
+    Base _base;
+    Basic _basic;
     Btn _btn;
+    Input _input;
     Tab _tab;
     List _list;
     ProgressBar _progress;
+    BarChart _bar;
 };

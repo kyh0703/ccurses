@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "Palette.h"
 
-#define BARCHART
+#define FORM
 int main(void)
 {
     Palette p;
@@ -12,13 +12,36 @@ int main(void)
         return 1;
     }
 
-#if (defined BARCHART)
+#if  (defined FORM)
+    // Input input;
+    // input.SetRect(2, 10, 10, 10);
+
+    Form form;
+    form.SetRect(10, 30, 0, 0);
+    form._query = {"test", "test2"};
+    form._default = {"                                                   ", "test2"};
+    p.Render({&form});
+    while (int ch = getchar())
+    {
+        switch (ch)
+        {
+        case 'q':
+            return 1;
+        case 'j':
+            break;
+        default:
+            break;
+        }
+        p.Render({&form});
+    }
+#elif (defined BARCHART)
     BarChart bar;
     bar.SetRect(20, 50, 0, 0);
-    bar._data = {
-        {7, 6, 5, 4, 3, 2},
-    };
-    p.Render({&bar, /*&btn, &input*/});
+    bar._data = { 7, 6, 5, 4, 3, 2};
+    bar._barColor = {COLOR_WHITE, COLOR_BLUE, COLOR_RED};
+    bar._labelStyle = {{COLOR_BLACK, COLOR_BLUE}, {COLOR_BLACK, COLOR_RED}};
+    bar._label = { "11", "22", "33", "44", "55", "66"};
+    p.Render({&bar});
 
     while (int ch = getchar())
     {
@@ -28,14 +51,6 @@ int main(void)
             return 1;
         case 'j':
             break;
-        case 'k':
-            break;
-        case 't':
-            break;
-        case 'd':
-            break;
-        case 'h':
-            break;
         default:
             break;
         }
@@ -43,14 +58,14 @@ int main(void)
     }
 #elif (defined INPUT)
     Input input;
-    input.SetRect(2, 50, 0, 0);
+    input.SetRect(3, 50, 0, 0);
+    input._isActive = true;
     p.Render({&input});
     while (int ch = getch())
     {
         switch (ch)
         {
         case 'q':
-            printf("[%s]", input.GetText().c_str());
             return 1;
         case KEY_BACKSPACE:
             input.DelText();
@@ -153,7 +168,7 @@ int main(void)
     Basic basic;
     basic.SetRect(5, 15, 10, 10);
     basic.SetTitle("hello");
-    basic._text = "hihihi1111111111111111111111111111111111111111111";
+    basic._text = "hihihi111111111111111111111111111111111111";
     p.Render({&basic});
     while (int ch = getchar())
     {
@@ -197,8 +212,8 @@ int main(void)
     ProgressBar pro;
     pro.SetRect(3, 50, 0, 0);
     pro._percent = 10;
-    // pro._label = "12341234";
-    p.Render({&pro, /*&btn, &input*/});
+    pro._label = "12341234";
+    p.Render({&pro});
 
     while (int ch = getchar())
     {
@@ -211,12 +226,6 @@ int main(void)
             break;
         case 'k':
             pro._percent += 1;
-            break;
-        case 't':
-            break;
-        case 'd':
-            break;
-        case 'h':
             break;
         default:
             break;

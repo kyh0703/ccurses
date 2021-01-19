@@ -23,9 +23,11 @@ public:
     Basic();
     ~Basic();
 
+    void SetTextColor(int textColor);
+    void SetText(string text);
     void Draw() override;
 
-public:
+private:
     int _textColor;
     string _text;
 };
@@ -51,13 +53,17 @@ public:
     Input();
     ~Input();
 
-    void ClearText();
-    void DelText();
-    void AddText(chtype c);
     const string GetText();
+    void SetText(string s);
+    void AddText(chtype c);
+    void DelText();
+    void ClearText();
     void Draw() override;
 
 public:
+    Style _active;
+    Style _inactive;
+    bool _isActive;
     vector<chtype> _text;
 };
 
@@ -136,7 +142,6 @@ public:
     void Draw() override;
 
 public:
-    Style _textStyle;
     int _alignment;
     vector<vector<string>> _rows;
 };
@@ -149,9 +154,34 @@ public:
 
     void Draw() override;
 
+private:
+    Rune GetBarColor(int idx);
+    Rune GetLabelStyle(int idx);
+    Rune GetNumberStyle(int idx);
+
 public:
-    vector<vector<float>> _data;
     int _barGap;
     int _barWidth;
     int _maxVal;
+    vector<int> _barColor;
+    vector<Style> _labelStyle;
+    vector<string> _label;
+    vector<float> _data;
+};
+
+class Form : public Widget
+{
+public:
+    Form();
+    ~Form();
+
+    vector<string> GetItems();
+    void Draw() override;
+
+public:
+    Style _active;
+    Style _inactive;
+    vector<string> _query;
+    vector<string> _default;
+    map<string, Input *> _items;
 };

@@ -4,8 +4,9 @@
 
 Window::Window()
 {
-    _color.bg = th::Get()._default.bg;
-    _color.fg = th::Get()._default.fg;
+    _color.bg = th::Get()._base.color.bg;
+    _color.fg = th::Get()._base.color.fg;
+    _titleColor = th::Get()._base.tilte;
 }
 
 Window::~Window()
