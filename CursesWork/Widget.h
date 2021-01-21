@@ -1,11 +1,10 @@
 #pragma once
 #include <ncurses.h>
 #include <algorithm>
-#include <string>
 #include <vector>
+#include <string>
 #include <map>
 #include "Window.h"
-
 using namespace std;
 
 class Widget : public Window
@@ -20,11 +19,9 @@ public:
     TextBox();
     ~TextBox();
 
-    void SetStyle(Style style);
-    void SetText(string text);
     void Draw() override;
 
-private:
+public:
     Style _style;
     string _text;
 };
@@ -35,13 +32,10 @@ public:
     Popup();
     ~Popup();
 
-    void SetBtnStyle(Style button);
-    void SetTextColor(int textColor);
-    void SetText(string text);
     void Draw() override;
 
-private:
-    Style _button;
+public:
+    Style _btnStyle;
     int _textColor;
     string _text;
 };
@@ -54,14 +48,9 @@ public:
 
     void ForcusLeft();
     void ForcusRight();
-    void SetActiveStyle(Style active);
-    void SetInActiveStyle(Style inactive);
-    void SetTextColor(int textColor);
-    const bool IsYes();
-    void SetText(string text);
     void Draw() override;
 
-private:
+public:
     Style _active;
     Style _inactive;
     int _textColor;
@@ -77,13 +66,9 @@ public:
 
     void ForcusLeft();
     void ForcusRight();
-    void SetActiveStyle(Style active);
-    void SetInActiveStyle(Style inactive);
-    const int GetActive();
-    void SetTabs(vector<string> tabs);
     void Draw() override;
 
-private:
+public:
     Style _activeStyle;
     Style _inactiveStyle;
     int _activeIdx;
@@ -96,6 +81,7 @@ public:
     List();
     ~List();
 
+    void ScrollAmount(int amount);
     void ScrollUp();
     void ScrollDown();
     void ScrollPageHalfUp();
@@ -104,15 +90,9 @@ public:
     void ScrollPageDown();
     void ScrollTop();
     void ScrollBottom();
-    void SetActiveStyle(Style active);
-    void SetInActiveStyle(Style inactive);
-    const int GetCurrent();
-    void SetRows(vector<string> rows);
     void Draw() override;
 
-private:
-    void ScrollAmount(int amount);
-
+public:
     Style _activeStyle;
     Style _inactiveStyle;
     int _curRow;
@@ -126,13 +106,9 @@ public:
     ProgressBar();
     ~ProgressBar();
 
-    void SetLabelStyle(Style label);
-    void SetBarColor(int color);
-    void SetPercent(int percent);
-    void SetLabel(string label);
     void Draw() override;
 
-private:
+public:
     Style _labelStyle;
     int _barColor;
     int _percent;
@@ -152,11 +128,9 @@ public:
     Table();
     ~Table();
 
-    void SetAlignment(unsigned int alignment);
-    void SetRows(vector<vector<string>> rows);
     void Draw() override;
 
-private:
+public:
     int _alignment;
     vector<vector<string>> _rows;
 };
@@ -167,13 +141,6 @@ public:
     BarChart();
     ~BarChart();
 
-    void SetBarGap(int gap);
-    void SetBarWidth(int width);
-    void SetMaxVal(int value);
-    void SetBarColor(vector<int> barColor);
-    void SetLabelStyle(vector<Style> label);
-    void SetLabel(vector<string> label);
-    void SetData(vector<float> data);
     void Draw() override;
 
 private:
@@ -181,20 +148,22 @@ private:
     Rune GetLabelStyle(int idx);
     Rune GetNumberStyle(int idx);
 
+public:
     int _barGap;
     int _barWidth;
     int _maxVal;
+    int _numColor;
     vector<int> _barColor;
     vector<Style> _labelStyle;
     vector<string> _label;
     vector<float> _data;
 };
 
-class Form : public Widget
+class Input : public Widget
 {
 public:
-    Form();
-    ~Form();
+    Input();
+    ~Input();
 
     vector<string> GetItems();
     void Draw() override;

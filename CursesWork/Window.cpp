@@ -4,6 +4,7 @@
 
 Window::Window()
 {
+    _isBox = true;
     _color.bg = th::Get()._base.color.bg;
     _color.fg = th::Get()._base.color.fg;
     _titleColor = th::Get()._base.tilte;
@@ -26,6 +27,11 @@ void Window::Log(const char *format, ...)
     va_end(Marker);
     mvaddstr(LINES - 1, 0, line);
 }
+
+void Window::SetBox(bool isBox)
+{
+    _isBox = isBox;
+};
 
 void Window::SetRect(int h, int w, int y, int x)
 {
@@ -64,13 +70,6 @@ void Window::AttachCells(map<Pos, Rune> cells)
         if (_cells.find(pos) != _cells.end())
             _cells[pos] = r;
     }
-}
-
-void Window::DrawBase()
-{
-    InitCell();
-    MakeBorder();
-    MakeTitle();
 }
 
 void Window::Erase()
@@ -133,11 +132,49 @@ const string Window::GetStr(int y, int x, int n)
     return str;
 }
 
-void Window::InitCell()
+Rect Window::InitCell()
 {
     for (int y = _rect.min.y; y <= _rect.max.y; ++y)
         for (int x = _rect.min.x; x <= _rect.max.x; ++x)
             _cells[{y, x}] = {_color.bg, _color.bg, ' '};
+
+    Rect rect;
+    if (_isBox)
+    {
+        rect = _inner;
+        DrawBase();
+    }
+    else
+    {
+        rect = _rect;
+        EraseBase();
+    }
+
+    return rect;
+}
+
+void Window::DrawBase()
+{
+    MakeBorder();
+    MakeTitle();
+}
+
+void Window::EraseBase()
+{
+    for (int y = _rect.min.y; y <= _rect.max.y; ++y)
+    {
+        for (int x = _rect.min.x; x <= _rect.max.x; ++x)
+        {
+            Rune r = _cells[{y, x}];
+            if (r.c == ACS_VLINE ||
+                r.c == ACS_HLINE ||
+                r.c == ACS_ULCORNER ||
+                r.c == ACS_URCORNER ||
+                r.c == ACS_LLCORNER ||
+                r.c == ACS_LRCORNER)
+                _cells[{y, x}] = ' ';
+        }
+    }
 }
 
 void Window::MakeBorder()

@@ -54,15 +54,19 @@ bool Palette::KbHit()
     return ret;
 }
 
-bool Palette::Render(vector<Widget *> widgets)
+void Palette::Render(vector<Widget *> widgets)
 {
-    vector<Widget *>::iterator iter;
-    for (iter = widgets.begin(); iter != widgets.end(); ++iter)
+    vector<Widget *>::iterator it;
+    for (it = widgets.begin(); it != widgets.end(); ++it)
     {
-        (*iter)->DrawBase();
-        (*iter)->Draw();
-        (*iter)->Print();
+        Widget *pWidget = *it;
+        pWidget->Draw();
+        pWidget->Print();
     }
     refresh();
-    return true;
+}
+
+void Palette::PollEvent()
+{
+
 }

@@ -1,12 +1,11 @@
 #pragma once
-#include "Attribute.h"
 #include <iostream>
 #include <map>
 #include <ncurses.h>
 #include <sstream>
 #include <string>
 #include <vector>
-
+#include "Attribute.h"
 using namespace std;
 
 class Window
@@ -15,20 +14,17 @@ public:
     Window();
     virtual ~Window();
 
-public:
     static void Log(const char *format, ...);
 
-public:
+    void SetBox(bool isBox);
     void SetRect(int h, int w, int y, int x);
     void SetColor(int bg, int fg);
     void SetTitle(string title);
     const map<Pos, Rune> &GetCells(void);
     void AttachCells(map<Pos, Rune> cells);
-    void DrawBase();
     void Erase();
     void Print();
 
-public:
     virtual void Draw() = 0;
 
 protected:
@@ -38,13 +34,14 @@ protected:
     void AddStr(int y, int x, string s);
     const Rune GetCh(int y, int x);
     const string GetStr(int y, int x, int n);
-
-private:
-    void InitCell();
+    Rect InitCell();
+    void DrawBase();
+    void EraseBase();
     void MakeBorder();
     void MakeTitle();
 
 protected:
+    bool _isBox;
     Rect _rect;
     Rect _inner;
     Border _border;

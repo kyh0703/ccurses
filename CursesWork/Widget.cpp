@@ -10,32 +10,23 @@ TextBox::~TextBox()
 {
 }
 
-void TextBox::SetStyle(Style style)
-{
-    _style = style;
-}
-
-void TextBox::SetText(string text)
-{
-    _text = text;
-}
-
 void TextBox::Draw()
 {
-    Pos pos(_inner.min.y, _inner.min.x);
+    Rect rect = InitCell();
+    Pos pos(rect.min.y, rect.min.x);
 
     for (size_t idx = 0; idx < _text.size(); ++idx)
     {
         bool isEol = (_text[idx] == '\n');
-        if (isEol || _inner.max.x < pos.x)
+        if (isEol || rect.max.x < pos.x)
         {
             pos.y++;
-            pos.x = _inner.min.x;
+            pos.x = rect.min.x;
             if (isEol)
                 continue;
         }
 
-        if (_inner.max.y < pos.y)
+        if (rect.max.y < pos.y)
             break;
 
         Rune r(_style, _text[idx]);
@@ -45,7 +36,7 @@ void TextBox::Draw()
 
 Popup::Popup()
 {
-    _button = th::Get()._popup.button;
+    _btnStyle = th::Get()._popup.button;
     _textColor = th::Get()._popup.textColor;
 }
 
@@ -53,37 +44,23 @@ Popup::~Popup()
 {
 }
 
-void Popup::SetBtnStyle(Style button)
-{
-    _button = button;
-}
-
-void Popup::SetTextColor(int textColor)
-{
-    _textColor = textColor;
-}
-
-void Popup::SetText(string text)
-{
-    _text = text;
-}
-
 void Popup::Draw()
 {
-    Pos pos(_inner.min.y, _inner.min.x);
+    Rect rect = InitCell();
+    Pos pos(rect.min.y, rect.min.x);
 
     for (size_t idx = 0; idx < _text.size(); ++idx)
     {
         bool isEol = (_text[idx] == '\n');
-        if (isEol || _inner.max.x < pos.x)
+        if (isEol || rect.max.x < pos.x)
         {
             pos.y++;
-            pos.x = _inner.min.x;
+            pos.x = rect.min.x;
             if (isEol)
                 continue;
         }
 
-        if (_inner.max.y - 2 < pos.y)
+        if (rect.max.y - 2 < pos.y)
             break;
 
         int bg = th::Get()._base.color.bg;
@@ -92,11 +69,11 @@ void Popup::Draw()
     }
 
     string enter = "<ENTER >";
-    pos.x = _inner.min.x + ((_inner.w - enter.size()) / 2);
+    pos.x = rect.min.x + ((rect.w - enter.size()) / 2);
     for (size_t i = 0; i < enter.size(); ++i)
     {
-        Rune r(_button, enter[i]);
-        AddCh(_inner.max.y - 1, pos.x++, r);
+        Rune r(_btnStyle, enter[i]);
+        AddCh(rect.max.y - 1, pos.x++, r);
     }
 }
 
@@ -124,47 +101,23 @@ void YesNo::ForcusRight()
         _isYes = false;
 }
 
-void YesNo::SetActiveStyle(Style active)
-{
-    _active = active;
-}
-
-void YesNo::SetInActiveStyle(Style inactive)
-{
-    _inactive = inactive;
-}
-
-void YesNo::SetTextColor(int textColor)
-{
-    _textColor = textColor;
-}
-
-const bool YesNo::IsYes()
-{
-    return _isYes;
-}
-
-void YesNo::SetText(string text)
-{
-    _text = text;
-}
-
 void YesNo::Draw()
 {
-    Pos pos(_inner.min.y, _inner.min.x);
+    Rect rect = InitCell();
+    Pos pos(rect.min.y, rect.min.x);
 
     for (size_t idx = 0; idx < _text.size(); ++idx)
     {
         bool isEol = (_text[idx] == '\n');
-        if (isEol || _inner.max.x < pos.x)
+        if (isEol || rect.max.x < pos.x)
         {
             pos.y++;
-            pos.x = _inner.min.x;
+            pos.x = rect.min.x;
             if (isEol)
                 continue;
         }
 
-        if (_inner.max.y - 2 < pos.y)
+        if (rect.max.y - 2 < pos.y)
             break;
 
         int bg = th::Get()._base.color.bg;
@@ -172,24 +125,119 @@ void YesNo::Draw()
         AddCh(pos.y, pos.x++, r);
     }
 
-    int w = (_inner.w / 2);
+    int w = (rect.w / 2);
     string yes = "< YES >";
-    pos.x = _inner.min.x + ((w - yes.size()) / 2);
+    pos.x = rect.min.x + ((w - yes.size()) / 2);
     for (size_t i = 0; i < yes.size(); ++i)
     {
         Style style = (_isYes ? _active : _inactive);
         Rune r(style, yes[i]);
-        AddCh(_inner.max.y - 1, pos.x++, r);
+        AddCh(rect.max.y - 1, pos.x++, r);
     }
 
     string no = "< NO >";
-    pos.x = _inner.max.x - ((w + no.size()) / 2);
+    pos.x = rect.max.x - ((w + no.size()) / 2);
     for (size_t i = 0; i < no.size(); ++i)
     {
         Style style = (_isYes ? _inactive : _active);
         Rune r(style, no[i]);
-        AddCh(_inner.max.y - 1, pos.x++, r);
+        AddCh(rect.max.y - 1, pos.x++, r);
     }
+}
+
+Input::Input()
+{
+    _textGap = 1;
+}
+
+Input::~Input()
+{
+}
+
+vector<string> Input::GetItems()
+{
+}
+
+void Input::Draw()
+{
+    Rect rect = InitCell();
+    Pos pos(rect.min.y, rect.min.x);
+
+    int rowCnt = _query.size();
+    int rowWidth = rect.h / rowCnt;
+    int colWidth = rect.w / 2;
+
+    for (size_t row = 0; row < _query.size(); ++row)
+    {
+        string query(_query[row]);
+
+        pos.y = rect.min.y + (row * rowWidth);
+        pos.x = rect.min.x;
+
+        for (size_t idx = 0; pos.x < rect.min.x + colWidth; pos.x++)
+        {
+            if (query[idx] == 0x00)
+                AddCh(pos.y, pos.x, ' ');
+            else
+                AddCh(pos.y, pos.x, query[idx++]);
+        }
+
+        AddCh(pos.y, pos.x, ':');
+    }
+
+    // int textY = _inner.min.y + 1;
+    // for (size_t row = 0; row < _query.size(); ++row)
+    // {
+    //     int textX = _inner.min.x + 1;
+
+    //     // 1. Draw Query
+    //     string query(_query[row]);
+    //     for (int i = 0; i < query.size(); ++i)
+    //         AddCh(textY, textX++, query[i]);
+
+    //     // 2. Draw :
+    //     textX = _inner.w / 2;
+    //     AddCh(textY, textX++, ':');
+
+    //     if (row < _default.size())
+    //     {
+    //         string def(_default[row]);
+    //         for (size_t i = 0; i < def.size(); ++i)
+    //             AddCh(textY, textX++, def[i]);
+    //     }
+    // }
+
+    // 2. Draw UnderLine
+    // 3. Default Text
+    // 4. button
+
+    // pos.x += (colWidth - text.length()) / 2;
+    // for (size_t idx = 0; idx < _default.size(); ++idx)
+    // {
+    //     string text(_default[idx]);
+    //     int w = (_inner.w / 2);
+    //     int h = text.size() / w;
+    //     if (h < (float)text.size() / w)
+    //         h += 1;
+    //     Input input;
+    //     input.SetRect(h, w, _inner.min.y, w + 1);
+    //     input.SetText("hihihi");
+    //     input.Draw();
+    //     AttachCells(input.GetCells());
+
+    //     for (size_t i = 0; i < text.size(); i++)
+    //     {
+    //     }
+
+    //     // input.SetRect(pos.y, w, pos.y, center + 1);
+    //     // input.Draw();
+    //     // AttachCells(input.GetCells());
+    //     // Log("[%s]", input.GetText().c_str());
+    // }
+
+    // for (size_t def = 0; def < _default.size(); ++def)
+    // {
+    // }
 }
 
 // Input::Input()
@@ -270,6 +318,7 @@ void YesNo::Draw()
 
 Tab::Tab()
 {
+    _isBox = false;
     _activeStyle = th::Get()._tab.active;
     _inactiveStyle = th::Get()._tab.inactive;
     _activeIdx = 0;
@@ -291,36 +340,17 @@ void Tab::ForcusRight()
         _activeIdx++;
 }
 
-void Tab::SetActiveStyle(Style active)
-{
-    _activeStyle = active;
-}
-
-void Tab::SetInActiveStyle(Style inactive)
-{
-    _inactiveStyle = inactive;
-}
-
-const int Tab::GetActive()
-{
-    return _activeIdx;
-}
-
-void Tab::SetTabs(vector<string> tabs)
-{
-    _tabs = tabs;
-}
-
 void Tab::Draw()
 {
-    Pos pos(_inner.min.y, _inner.min.x);
+    Rect rect = InitCell();
+    Pos pos(rect.min.y, rect.min.x);
 
     for (size_t tabIdx = 0; tabIdx < _tabs.size(); ++tabIdx)
     {
         string text(_tabs[tabIdx]);
         for (size_t idx = 0; idx < text.size(); ++idx)
         {
-            if (_inner.max.x < pos.x)
+            if (rect.max.x < pos.x)
                 return;
 
             Style style;
@@ -346,6 +376,16 @@ List::List()
 
 List::~List()
 {
+}
+
+void List::ScrollAmount(int amount)
+{
+    if ((int)_rows.size() - _curRow <= amount)
+        _curRow = _rows.size() - 1;
+    else if (_curRow + amount < 0)
+        _curRow = 0;
+    else
+        _curRow += amount;
 }
 
 void List::ScrollUp()
@@ -381,32 +421,13 @@ void List::ScrollBottom()
     _curRow = _rows.size() - 1;
 }
 
-void List::SetActiveStyle(Style active)
-{
-    _activeStyle = active;
-}
-
-void List::SetInActiveStyle(Style inactive)
-{
-    _inactiveStyle = inactive;
-}
-
-const int List::GetCurrent()
-{
-    return _curRow;
-}
-
-void List::SetRows(vector<string> rows)
-{
-    _rows = rows;
-}
-
 void List::Draw()
 {
-    Pos pos(_inner.min.y, _inner.min.x);
+    Rect rect = InitCell();
+    Pos pos(rect.min.y, rect.min.x);
 
-    if (_inner.h + _topRow <= _curRow)
-        _topRow = _curRow - _inner.h + 1;
+    if (rect.h + _topRow <= _curRow)
+        _topRow = _curRow - rect.h + 1;
     else if (_curRow < _topRow)
         _topRow = _curRow;
 
@@ -415,7 +436,7 @@ void List::Draw()
         string text(_rows[rowIdx]);
         for (size_t idx = 0; idx < text.size(); ++idx)
         {
-            if (_inner.max.x < pos.x)
+            if (rect.max.x < pos.x)
                 break;
 
             Style style;
@@ -428,33 +449,23 @@ void List::Draw()
             AddCh(pos.y, pos.x++, r);
         }
 
-        pos.x = _inner.min.x;
+        pos.x = rect.min.x;
         pos.y++;
-        if (_inner.max.y < pos.y)
+        if (rect.max.y < pos.y)
             break;
     }
 
     if (0 < _topRow)
     {
         Rune r(ACS_DIAMOND);
-        AddCh(_inner.min.y, _inner.max.x, r);
+        AddCh(rect.min.y, rect.max.x, r);
     }
 
-    if (_topRow + _inner.h < (int)_rows.size())
+    if (_topRow + rect.h < (int)_rows.size())
     {
         Rune r(ACS_DIAMOND);
-        AddCh(_inner.max.y, _inner.max.x, r);
+        AddCh(rect.max.y, rect.max.x, r);
     }
-}
-
-void List::ScrollAmount(int amount)
-{
-    if ((int)_rows.size() - _curRow <= amount)
-        _curRow = _rows.size() - 1;
-    else if (_curRow + amount < 0)
-        _curRow = 0;
-    else
-        _curRow += amount;
 }
 
 ProgressBar::ProgressBar()
@@ -467,29 +478,10 @@ ProgressBar::~ProgressBar()
 {
 }
 
-void ProgressBar::SetLabelStyle(Style label)
-{
-    _labelStyle = label;
-}
-
-void ProgressBar::SetBarColor(int color)
-{
-    _barColor = color;
-}
-
-void ProgressBar::SetPercent(int percent)
-{
-    _percent = percent;
-}
-
-void ProgressBar::SetLabel(string label)
-{
-    _label = label;
-}
-
 void ProgressBar::Draw()
 {
-    Pos pos(_inner.min.y, _inner.min.x);
+    Rect rect = InitCell();
+    Pos pos(rect.min.y, rect.min.x);
 
     string label;
     if (_label.empty())
@@ -497,30 +489,30 @@ void ProgressBar::Draw()
     else
         label = _label;
 
-    int barWidth = int(float(_percent * 0.01) * _inner.w);
-    while (pos.y <= _inner.max.y)
+    int barWidth = int(float(_percent * 0.01) * rect.w);
+    while (pos.y <= rect.max.y)
     {
         Rune r(_barColor, COLOR_BLACK, ' ');
-        while (pos.x <= _inner.min.x + barWidth)
+        while (pos.x <= rect.min.x + barWidth)
         {
-            if (_inner.max.x < pos.x)
+            if (rect.max.x < pos.x)
                 break;
             AddCh(pos.y, pos.x, r);
             pos.x++;
         }
         pos.y++;
-        pos.x = _inner.min.x;
+        pos.x = rect.min.x;
     }
 
-    pos.y = _inner.min.y + (_inner.h / 2);
-    pos.x = _inner.min.x + (_inner.w / 2) - (label.length() / 2);
-    if (_inner.max.y < pos.y)
+    pos.y = rect.min.y + (rect.h / 2);
+    pos.x = rect.min.x + (rect.w / 2) - (label.length() / 2);
+    if (rect.max.y < pos.y)
         return;
 
     for (size_t idx = 0; idx < label.size(); ++idx)
     {
         Style style(_labelStyle);
-        if (pos.x + (int)idx <= _inner.min.x + barWidth)
+        if (pos.x + (int)idx <= rect.min.x + barWidth)
             style = {COLOR_BLACK, _barColor, A_REVERSE};
         Rune r(style, label[idx]);
         AddCh(pos.y, pos.x + idx, r);
@@ -536,22 +528,13 @@ Table::~Table()
 {
 }
 
-void Table::SetAlignment(unsigned int alignment)
-{
-    _alignment = alignment;
-}
-
-void Table::SetRows(vector<vector<string>> rows)
-{
-    _rows = rows;
-}
-
 void Table::Draw()
 {
-    Pos pos(_inner.min.y, _inner.min.x);
+    Rect rect = InitCell();
+    Pos pos(rect.min.y, rect.min.x);
 
     int colCnt = _rows[0].size();
-    int colWidth = _inner.w / colCnt;
+    int colWidth = rect.w / colCnt;
 
     for (size_t row = 0; row < _rows.size(); ++row)
     {
@@ -560,18 +543,18 @@ void Table::Draw()
         {
             string text(cols[col]);
             if (colWidth < (int)text.length() || _alignment == LEFT)
-                pos.x = _inner.min.x + (col * colWidth);
+                pos.x = rect.min.x + (col * colWidth);
             else if (_alignment == CENTER)
                 pos.x += (colWidth - text.length()) / 2;
             else if (_alignment == RIGHT)
             {
-                if (pos.x + colWidth < _inner.max.x)
+                if (pos.x + colWidth < rect.max.x)
                     pos.x += colWidth - text.length();
                 else
-                    pos.x = _inner.max.x - text.length() + 1;
+                    pos.x = rect.max.x - text.length() + 1;
             }
 
-            int oneColMax = (_inner.min.x + (colWidth * (col + 1)));
+            int oneColMax = (rect.min.x + (colWidth * (col + 1)));
             for (size_t strIdx = 0; pos.x < oneColMax; ++pos.x)
             {
                 if (text[strIdx] == 0x00)
@@ -585,19 +568,20 @@ void Table::Draw()
                 pos.y++;
         }
 
-        if (_inner.max.y < pos.y)
+        if (rect.max.y < pos.y)
             break;
 
-        for (int x = _inner.min.x; x <= _inner.max.x; ++x)
+        for (int x = rect.min.x; x <= rect.max.x; ++x)
             AddCh(pos.y, x, ACS_S3);
 
         pos.y++;
-        pos.x = _inner.min.x;
+        pos.x = rect.min.x;
     }
 }
 
 BarChart::BarChart()
 {
+    _numColor = th::Get()._bar.number;
     _barColor.push_back(th::Get()._bar.bar);
     _labelStyle.push_back(th::Get()._bar.label);
     _barGap = 1;
@@ -609,59 +593,26 @@ BarChart::~BarChart()
 {
 }
 
-void BarChart::SetBarGap(int gap)
-{
-    _barGap = gap;
-}
-
-void BarChart::SetBarWidth(int width)
-{
-    _barWidth = width;
-}
-
-void BarChart::SetMaxVal(int value)
-{
-    _maxVal = value;
-}
-
-void BarChart::SetBarColor(vector<int> barColor)
-{
-    _barColor = barColor;
-}
-
-void BarChart::SetLabelStyle(vector<Style> label)
-{
-    _labelStyle = label;
-}
-
-void BarChart::SetLabel(vector<string> label)
-{
-    _label = label;
-}
-
-void BarChart::SetData(vector<float> data)
-{
-    _data = data;
-}
-
 void BarChart::Draw()
 {
+    Rect rect = InitCell();
+
     int maxVal = _maxVal;
     if (maxVal == 0)
         maxVal = *max_element(_data.begin(), _data.end());
 
-    int barX = _inner.min.x + 1;
+    int barX = rect.min.x + 1;
     for (size_t col = 0; col < _data.size(); ++col)
     {
         float val = _data[col];
-        int h = (((float)(val / maxVal)) * (_inner.h - 2));
+        int h = (((float)(val / maxVal)) * (rect.h - 2));
         int w = 0;
-        if (barX + _barWidth < _inner.max.x)
+        if (barX + _barWidth < rect.max.x)
             w = barX + _barWidth;
         else
-            w = _inner.max.x;
+            w = rect.max.x;
 
-        for (int y = _inner.max.y - 2; (_inner.max.y - 2) - h < y; y--)
+        for (int y = rect.max.y - 2; (rect.max.y - 2) - h < y; y--)
         {
             for (int x = barX; x < w; x++)
             {
@@ -680,19 +631,19 @@ void BarChart::Draw()
             {
                 Rune r(GetLabelStyle(col));
                 r.c = label[i];
-                AddCh(_inner.max.y - 1, labalX++, r);
+                AddCh(rect.max.y - 1, labalX++, r);
             }
         }
 
         int numX = barX + (float)(_barWidth / 2);
-        if (numX <= _inner.max.x)
+        if (numX <= rect.max.x)
         {
             string num(to_string((int)val));
             for (size_t i = 0; i < num.size(); ++i)
             {
                 Rune r(GetNumberStyle(col));
                 r.c = num[i];
-                AddCh(_inner.max.y - 2, numX, r);
+                AddCh(rect.max.y - 2, numX, r);
             }
         }
 
@@ -721,98 +672,4 @@ Rune BarChart::GetNumberStyle(int idx)
     r.s.bg = COLOR_BLACK;
     r.s.opt = A_REVERSE;
     return r;
-}
-
-Form::Form()
-{
-    _textGap = 1;
-}
-
-Form::~Form()
-{
-}
-
-vector<string> Form::GetItems()
-{
-}
-
-void Form::Draw()
-{
-    Pos pos(_inner.min.y, _inner.min.x);
-
-    int rowCnt = _query.size();
-    int rowWidth = _inner.h / rowCnt;
-    int colWidth = _inner.w / 2;
-
-    for (size_t row = 0; row < _query.size(); ++row)
-    {
-        string query(_query[row]);
-
-        pos.y = _inner.min.y + (row * rowWidth);
-        pos.x = _inner.min.x;
-
-        for (size_t idx = 0; pos.x < _inner.min.x + colWidth; pos.x++)
-        {
-            if (query[idx] == 0x00)
-                AddCh(pos.y, pos.x, ' ');
-            else
-                AddCh(pos.y, pos.x, query[idx++]);
-        }
-
-        AddCh(pos.y, pos.x, ':');
-    }
-
-    // int textY = _inner.min.y + 1;
-    // for (size_t row = 0; row < _query.size(); ++row)
-    // {
-    //     int textX = _inner.min.x + 1;
-
-    //     // 1. Draw Query
-    //     string query(_query[row]);
-    //     for (int i = 0; i < query.size(); ++i)
-    //         AddCh(textY, textX++, query[i]);
-
-    //     // 2. Draw :
-    //     textX = _inner.w / 2;
-    //     AddCh(textY, textX++, ':');
-
-    //     if (row < _default.size())
-    //     {
-    //         string def(_default[row]);
-    //         for (size_t i = 0; i < def.size(); ++i)
-    //             AddCh(textY, textX++, def[i]);
-    //     }
-    // }
-
-    // 2. Draw UnderLine
-    // 3. Default Text
-    // 4. button
-
-    // pos.x += (colWidth - text.length()) / 2;
-    // for (size_t idx = 0; idx < _default.size(); ++idx)
-    // {
-    //     string text(_default[idx]);
-    //     int w = (_inner.w / 2);
-    //     int h = text.size() / w;
-    //     if (h < (float)text.size() / w)
-    //         h += 1;
-    //     Input input;
-    //     input.SetRect(h, w, _inner.min.y, w + 1);
-    //     input.SetText("hihihi");
-    //     input.Draw();
-    //     AttachCells(input.GetCells());
-
-    //     for (size_t i = 0; i < text.size(); i++)
-    //     {
-    //     }
-
-    //     // input.SetRect(pos.y, w, pos.y, center + 1);
-    //     // input.Draw();
-    //     // AttachCells(input.GetCells());
-    //     // Log("[%s]", input.GetText().c_str());
-    // }
-
-    // for (size_t def = 0; def < _default.size(); ++def)
-    // {
-    // }
 }
