@@ -1,35 +1,26 @@
 #include "Widget.h"
 #include "Theme.h"
 
-Widget::Widget()
+TextBox::TextBox()
+{
+    _style = th::Get()._textbox.style;
+}
+
+TextBox::~TextBox()
 {
 }
 
-Widget::~Widget()
+void TextBox::SetStyle(Style style)
 {
+    _style = style;
 }
 
-Basic::Basic()
-{
-    _textColor = th::Get()._basic.textColor;
-    _text.clear();
-}
-
-Basic::~Basic()
-{
-}
-
-void Basic::SetTextColor(int textColor)
-{
-    _textColor = textColor;
-}
-
-void Basic::SetText(string text)
+void TextBox::SetText(string text)
 {
     _text = text;
 }
 
-void Basic::Draw()
+void TextBox::Draw()
 {
     Pos pos(_inner.min.y, _inner.min.x);
 
@@ -47,120 +38,235 @@ void Basic::Draw()
         if (_inner.max.y < pos.y)
             break;
 
-        int bg = th::Get()._base.color.bg;
-        Rune r(bg, _textColor, _text[idx]);
+        Rune r(_style, _text[idx]);
         AddCh(pos.y, pos.x++, r);
     }
 }
 
-Button::Button()
+Popup::Popup()
 {
-    _active = th::Get()._btn.active;
-    _inactive = th::Get()._btn.inactive;
-    _isActive = false;
+    _button = th::Get()._popup.button;
+    _textColor = th::Get()._popup.textColor;
 }
 
-Button::~Button()
+Popup::~Popup()
 {
 }
 
-void Button::Draw()
+void Popup::SetBtnStyle(Style button)
+{
+    _button = button;
+}
+
+void Popup::SetTextColor(int textColor)
+{
+    _textColor = textColor;
+}
+
+void Popup::SetText(string text)
+{
+    _text = text;
+}
+
+void Popup::Draw()
 {
     Pos pos(_inner.min.y, _inner.min.x);
 
     for (size_t idx = 0; idx < _text.size(); ++idx)
     {
-        if (_inner.max.x < pos.x)
-            return;
+        bool isEol = (_text[idx] == '\n');
+        if (isEol || _inner.max.x < pos.x)
+        {
+            pos.y++;
+            pos.x = _inner.min.x;
+            if (isEol)
+                continue;
+        }
 
-        if (_isActive)
-        {
-            Rune r(_active, _text[idx]);
-            AddCh(pos.y, pos.x++, r);
-        }
-        else
-        {
-            Rune r(_inactive, _text[idx]);
-            AddCh(pos.y, pos.x++, r);
-        }
+        if (_inner.max.y - 2 < pos.y)
+            break;
+
+        int bg = th::Get()._base.color.bg;
+        Rune r(bg, _textColor, _text[idx]);
+        AddCh(pos.y, pos.x++, r);
+    }
+
+    string enter = "<ENTER >";
+    pos.x = _inner.min.x + ((_inner.w - enter.size()) / 2);
+    for (size_t i = 0; i < enter.size(); ++i)
+    {
+        Rune r(_button, enter[i]);
+        AddCh(_inner.max.y - 1, pos.x++, r);
     }
 }
 
-Input::Input()
+YesNo::YesNo()
 {
-    _active = th::Get()._input.active;
-    _inactive = th::Get()._input.inactive;
-    _isActive = false;
+    _textColor = th::Get()._yesno.textColor;
+    _active = th::Get()._yesno.active;
+    _inactive = th::Get()._yesno.inactive;
+    _isYes = true;
 }
 
-Input::~Input()
+YesNo::~YesNo()
 {
 }
 
-const string Input::GetText()
+void YesNo::ForcusLeft()
 {
-    string text(_text.begin(), _text.end());
-    return text;
+    if (!_isYes)
+        _isYes = true;
 }
 
-void Input::SetText(string s)
+void YesNo::ForcusRight()
 {
-    for (size_t i = 0; i < s.size(); ++i)
-        AddText(s[i]);
+    if (_isYes)
+        _isYes = false;
 }
 
-void Input::AddText(chtype c)
+void YesNo::SetActiveStyle(Style active)
 {
-    if ((int)_text.size() < ((_rect.max.y + 1) * _rect.w))
-        _text.push_back(c);
+    _active = active;
 }
 
-void Input::DelText()
+void YesNo::SetInActiveStyle(Style inactive)
 {
-    if (!_text.empty())
-        _text.pop_back();
+    _inactive = inactive;
 }
 
-void Input::ClearText()
+void YesNo::SetTextColor(int textColor)
 {
-    _text.clear();
+    _textColor = textColor;
 }
 
-void Input::Draw()
+const bool YesNo::IsYes()
 {
-    Pos pos(_rect.min.y, _rect.min.x);
+    return _isYes;
+}
 
-    for (int y = _rect.min.y; y <= _rect.max.y; ++y)
-        for (int x = _rect.min.x; x <= _rect.max.x; ++x)
-            AddCh(y, x, {COLOR_BLACK, COLOR_WHITE, A_UNDERLINE, ' '});
+void YesNo::SetText(string text)
+{
+    _text = text;
+}
+
+void YesNo::Draw()
+{
+    Pos pos(_inner.min.y, _inner.min.x);
 
     for (size_t idx = 0; idx < _text.size(); ++idx)
     {
-        if (_rect.max.x < pos.x)
+        bool isEol = (_text[idx] == '\n');
+        if (isEol || _inner.max.x < pos.x)
         {
             pos.y++;
-            pos.x = _rect.min.x;
+            pos.x = _inner.min.x;
+            if (isEol)
+                continue;
         }
 
-        if (_rect.max.y < pos.y)
+        if (_inner.max.y - 2 < pos.y)
             break;
 
-        Style style;
-        if (_isActive)
-            style = _active;
-        else
-            style = _inactive;
-        Rune r(style, _text[idx]);
+        int bg = th::Get()._base.color.bg;
+        Rune r(bg, _textColor, _text[idx]);
         AddCh(pos.y, pos.x++, r);
     }
 
-    if (pos.x < _rect.max.x && _isActive)
+    int w = (_inner.w / 2);
+    string yes = "< YES >";
+    pos.x = _inner.min.x + ((w - yes.size()) / 2);
+    for (size_t i = 0; i < yes.size(); ++i)
     {
-        Style style(COLOR_WHITE, COLOR_BLACK, A_UNDERLINE | A_BLINK);
-        Rune r(style, ' ');
-        AddCh(pos.y, pos.x++, r);
+        Style style = (_isYes ? _active : _inactive);
+        Rune r(style, yes[i]);
+        AddCh(_inner.max.y - 1, pos.x++, r);
+    }
+
+    string no = "< NO >";
+    pos.x = _inner.max.x - ((w + no.size()) / 2);
+    for (size_t i = 0; i < no.size(); ++i)
+    {
+        Style style = (_isYes ? _inactive : _active);
+        Rune r(style, no[i]);
+        AddCh(_inner.max.y - 1, pos.x++, r);
     }
 }
+
+// Input::Input()
+// {
+//     _active = th::Get()._input.active;
+//     _inactive = th::Get()._input.inactive;
+//     _isActive = false;
+// }
+
+// Input::~Input()
+// {
+// }
+
+// const string Input::GetText()
+// {
+//     string text(_text.begin(), _text.end());
+//     return text;
+// }
+
+// void Input::SetText(string s)
+// {
+//     for (size_t i = 0; i < s.size(); ++i)
+//         AddText(s[i]);
+// }
+
+// void Input::AddText(chtype c)
+// {
+//     if ((int)_text.size() < ((_rect.max.y + 1) * _rect.w))
+//         _text.push_back(c);
+// }
+
+// void Input::DelText()
+// {
+//     if (!_text.empty())
+//         _text.pop_back();
+// }
+
+// void Input::ClearText()
+// {
+//     _text.clear();
+// }
+
+// void Input::Draw()
+// {
+//     Pos pos(_rect.min.y, _rect.min.x);
+
+//     for (int y = _rect.min.y; y <= _rect.max.y; ++y)
+//         for (int x = _rect.min.x; x <= _rect.max.x; ++x)
+//             AddCh(y, x, {COLOR_BLACK, COLOR_WHITE, A_UNDERLINE, ' '});
+
+//     for (size_t idx = 0; idx < _text.size(); ++idx)
+//     {
+//         if (_rect.max.x < pos.x)
+//         {
+//             pos.y++;
+//             pos.x = _rect.min.x;
+//         }
+
+//         if (_rect.max.y < pos.y)
+//             break;
+
+//         Style style;
+//         if (_isActive)
+//             style = _active;
+//         else
+//             style = _inactive;
+//         Rune r(style, _text[idx]);
+//         AddCh(pos.y, pos.x++, r);
+//     }
+
+//     if (pos.x < _rect.max.x && _isActive)
+//     {
+//         Style style(COLOR_WHITE, COLOR_BLACK, A_UNDERLINE | A_BLINK);
+//         Rune r(style, ' ');
+//         AddCh(pos.y, pos.x++, r);
+//     }
+// }
 
 Tab::Tab()
 {
@@ -183,6 +289,26 @@ void Tab::ForcusRight()
 {
     if (_activeIdx < (int)(_tabs.size() - 1))
         _activeIdx++;
+}
+
+void Tab::SetActiveStyle(Style active)
+{
+    _activeStyle = active;
+}
+
+void Tab::SetInActiveStyle(Style inactive)
+{
+    _inactiveStyle = inactive;
+}
+
+const int Tab::GetActive()
+{
+    return _activeIdx;
+}
+
+void Tab::SetTabs(vector<string> tabs)
+{
+    _tabs = tabs;
 }
 
 void Tab::Draw()
@@ -255,14 +381,24 @@ void List::ScrollBottom()
     _curRow = _rows.size() - 1;
 }
 
-void List::ScrollAmount(int amount)
+void List::SetActiveStyle(Style active)
 {
-    if ((int)_rows.size() - _curRow <= amount)
-        _curRow = _rows.size() - 1;
-    else if (_curRow + amount < 0)
-        _curRow = 0;
-    else
-        _curRow += amount;
+    _activeStyle = active;
+}
+
+void List::SetInActiveStyle(Style inactive)
+{
+    _inactiveStyle = inactive;
+}
+
+const int List::GetCurrent()
+{
+    return _curRow;
+}
+
+void List::SetRows(vector<string> rows)
+{
+    _rows = rows;
 }
 
 void List::Draw()
@@ -311,15 +447,44 @@ void List::Draw()
     }
 }
 
+void List::ScrollAmount(int amount)
+{
+    if ((int)_rows.size() - _curRow <= amount)
+        _curRow = _rows.size() - 1;
+    else if (_curRow + amount < 0)
+        _curRow = 0;
+    else
+        _curRow += amount;
+}
+
 ProgressBar::ProgressBar()
 {
     _barColor = th::Get()._progress.bar;
-    _refresh = false;
     _percent = 0;
 }
 
 ProgressBar::~ProgressBar()
 {
+}
+
+void ProgressBar::SetLabelStyle(Style label)
+{
+    _labelStyle = label;
+}
+
+void ProgressBar::SetBarColor(int color)
+{
+    _barColor = color;
+}
+
+void ProgressBar::SetPercent(int percent)
+{
+    _percent = percent;
+}
+
+void ProgressBar::SetLabel(string label)
+{
+    _label = label;
 }
 
 void ProgressBar::Draw()
@@ -369,6 +534,16 @@ Table::Table()
 
 Table::~Table()
 {
+}
+
+void Table::SetAlignment(unsigned int alignment)
+{
+    _alignment = alignment;
+}
+
+void Table::SetRows(vector<vector<string>> rows)
+{
+    _rows = rows;
 }
 
 void Table::Draw()
@@ -432,6 +607,41 @@ BarChart::BarChart()
 
 BarChart::~BarChart()
 {
+}
+
+void BarChart::SetBarGap(int gap)
+{
+    _barGap = gap;
+}
+
+void BarChart::SetBarWidth(int width)
+{
+    _barWidth = width;
+}
+
+void BarChart::SetMaxVal(int value)
+{
+    _maxVal = value;
+}
+
+void BarChart::SetBarColor(vector<int> barColor)
+{
+    _barColor = barColor;
+}
+
+void BarChart::SetLabelStyle(vector<Style> label)
+{
+    _labelStyle = label;
+}
+
+void BarChart::SetLabel(vector<string> label)
+{
+    _label = label;
+}
+
+void BarChart::SetData(vector<float> data)
+{
+    _data = data;
 }
 
 void BarChart::Draw()
@@ -515,6 +725,7 @@ Rune BarChart::GetNumberStyle(int idx)
 
 Form::Form()
 {
+    _textGap = 1;
 }
 
 Form::~Form()
@@ -527,38 +738,79 @@ vector<string> Form::GetItems()
 
 void Form::Draw()
 {
-    // int centerX = (_inner.w / 2);
-    // for (int x = centerX + 1; x < _inner.max.w - 1; ++x)
-    // {
-    //     AddCh()
-    // };
-
     Pos pos(_inner.min.y, _inner.min.x);
-    int colWidth = (_inner.w / 2) / _query.size();
 
-    // pos.x += (colWidth - text.length()) / 2;
-    for (size_t idx = 0; idx < _default.size(); ++idx)
+    int rowCnt = _query.size();
+    int rowWidth = _inner.h / rowCnt;
+    int colWidth = _inner.w / 2;
+
+    for (size_t row = 0; row < _query.size(); ++row)
     {
-        string text(_default[idx]);
-        int w = (_inner.w / 2);
-        int h = text.size() / w;
-        if (h < (float)text.size() / w)
-            h += 1;
-        Input input;
-        input.SetRect(h, w, _inner.min.y, w + 1);
-        input.SetText("hihihi");
-        input.Draw();
-        AttachCells(input.GetCells());
+        string query(_query[row]);
 
-        for (size_t i = 0; i < text.size(); i++)
+        pos.y = _inner.min.y + (row * rowWidth);
+        pos.x = _inner.min.x;
+
+        for (size_t idx = 0; pos.x < _inner.min.x + colWidth; pos.x++)
         {
+            if (query[idx] == 0x00)
+                AddCh(pos.y, pos.x, ' ');
+            else
+                AddCh(pos.y, pos.x, query[idx++]);
         }
 
-        // input.SetRect(pos.y, w, pos.y, center + 1);
-        // input.Draw();
-        // AttachCells(input.GetCells());
-        // Log("[%s]", input.GetText().c_str());
+        AddCh(pos.y, pos.x, ':');
     }
+
+    // int textY = _inner.min.y + 1;
+    // for (size_t row = 0; row < _query.size(); ++row)
+    // {
+    //     int textX = _inner.min.x + 1;
+
+    //     // 1. Draw Query
+    //     string query(_query[row]);
+    //     for (int i = 0; i < query.size(); ++i)
+    //         AddCh(textY, textX++, query[i]);
+
+    //     // 2. Draw :
+    //     textX = _inner.w / 2;
+    //     AddCh(textY, textX++, ':');
+
+    //     if (row < _default.size())
+    //     {
+    //         string def(_default[row]);
+    //         for (size_t i = 0; i < def.size(); ++i)
+    //             AddCh(textY, textX++, def[i]);
+    //     }
+    // }
+
+    // 2. Draw UnderLine
+    // 3. Default Text
+    // 4. button
+
+    // pos.x += (colWidth - text.length()) / 2;
+    // for (size_t idx = 0; idx < _default.size(); ++idx)
+    // {
+    //     string text(_default[idx]);
+    //     int w = (_inner.w / 2);
+    //     int h = text.size() / w;
+    //     if (h < (float)text.size() / w)
+    //         h += 1;
+    //     Input input;
+    //     input.SetRect(h, w, _inner.min.y, w + 1);
+    //     input.SetText("hihihi");
+    //     input.Draw();
+    //     AttachCells(input.GetCells());
+
+    //     for (size_t i = 0; i < text.size(); i++)
+    //     {
+    //     }
+
+    //     // input.SetRect(pos.y, w, pos.y, center + 1);
+    //     // input.Draw();
+    //     // AttachCells(input.GetCells());
+    //     // Log("[%s]", input.GetText().c_str());
+    // }
 
     // for (size_t def = 0; def < _default.size(); ++def)
     // {

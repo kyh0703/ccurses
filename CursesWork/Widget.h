@@ -11,60 +11,62 @@ using namespace std;
 class Widget : public Window
 {
 public:
-    Widget();
-    ~Widget();
-
     virtual void Draw() = 0;
 };
 
-class Basic : public Widget
+class TextBox : public Widget
 {
 public:
-    Basic();
-    ~Basic();
+    TextBox();
+    ~TextBox();
 
+    void SetStyle(Style style);
+    void SetText(string text);
+    void Draw() override;
+
+private:
+    Style _style;
+    string _text;
+};
+
+class Popup : public Widget
+{
+public:
+    Popup();
+    ~Popup();
+
+    void SetBtnStyle(Style button);
     void SetTextColor(int textColor);
     void SetText(string text);
     void Draw() override;
 
 private:
+    Style _button;
     int _textColor;
     string _text;
 };
 
-class Button : public Widget
+class YesNo : public Widget
 {
 public:
-    Button();
-    ~Button();
+    YesNo();
+    ~YesNo();
 
+    void ForcusLeft();
+    void ForcusRight();
+    void SetActiveStyle(Style active);
+    void SetInActiveStyle(Style inactive);
+    void SetTextColor(int textColor);
+    const bool IsYes();
+    void SetText(string text);
     void Draw() override;
 
 private:
     Style _active;
     Style _inactive;
-    bool _isActive;
+    int _textColor;
+    bool _isYes;
     string _text;
-};
-
-class Input : public Widget
-{
-public:
-    Input();
-    ~Input();
-
-    const string GetText();
-    void SetText(string s);
-    void AddText(chtype c);
-    void DelText();
-    void ClearText();
-    void Draw() override;
-
-public:
-    Style _active;
-    Style _inactive;
-    bool _isActive;
-    vector<chtype> _text;
 };
 
 class Tab : public Widget
@@ -75,13 +77,17 @@ public:
 
     void ForcusLeft();
     void ForcusRight();
+    void SetActiveStyle(Style active);
+    void SetInActiveStyle(Style inactive);
+    const int GetActive();
+    void SetTabs(vector<string> tabs);
     void Draw() override;
 
-public:
+private:
     Style _activeStyle;
     Style _inactiveStyle;
-    vector<string> _tabs;
     int _activeIdx;
+    vector<string> _tabs;
 };
 
 class List : public Widget
@@ -98,10 +104,15 @@ public:
     void ScrollPageDown();
     void ScrollTop();
     void ScrollBottom();
-    void ScrollAmount(int amount);
+    void SetActiveStyle(Style active);
+    void SetInActiveStyle(Style inactive);
+    const int GetCurrent();
+    void SetRows(vector<string> rows);
     void Draw() override;
 
-public:
+private:
+    void ScrollAmount(int amount);
+
     Style _activeStyle;
     Style _inactiveStyle;
     int _curRow;
@@ -115,12 +126,15 @@ public:
     ProgressBar();
     ~ProgressBar();
 
+    void SetLabelStyle(Style label);
+    void SetBarColor(int color);
+    void SetPercent(int percent);
+    void SetLabel(string label);
     void Draw() override;
 
-public:
+private:
     Style _labelStyle;
     int _barColor;
-    bool _refresh;
     int _percent;
     string _label;
 };
@@ -133,15 +147,16 @@ public:
         CENTER,
         LEFT,
         RIGHT,
-    } ALIGNMENT;
+    };
 
-public:
     Table();
     ~Table();
 
+    void SetAlignment(unsigned int alignment);
+    void SetRows(vector<vector<string>> rows);
     void Draw() override;
 
-public:
+private:
     int _alignment;
     vector<vector<string>> _rows;
 };
@@ -152,6 +167,13 @@ public:
     BarChart();
     ~BarChart();
 
+    void SetBarGap(int gap);
+    void SetBarWidth(int width);
+    void SetMaxVal(int value);
+    void SetBarColor(vector<int> barColor);
+    void SetLabelStyle(vector<Style> label);
+    void SetLabel(vector<string> label);
+    void SetData(vector<float> data);
     void Draw() override;
 
 private:
@@ -159,7 +181,6 @@ private:
     Rune GetLabelStyle(int idx);
     Rune GetNumberStyle(int idx);
 
-public:
     int _barGap;
     int _barWidth;
     int _maxVal;
@@ -181,7 +202,8 @@ public:
 public:
     Style _active;
     Style _inactive;
+    int _textGap;
     vector<string> _query;
     vector<string> _default;
-    map<string, Input *> _items;
+    // map<string, Input *> _items;
 };

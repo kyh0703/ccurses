@@ -5,20 +5,26 @@ typedef class Theme th;
 class Theme
 {
 public:
-
     struct Base
     {
         Color color;
         int tilte;
     };
 
-    struct Basic
+    struct TextBox
     {
-        int textColor;
+        Style style;
     };
 
-    struct Btn
+    struct Popup
     {
+        int textColor;
+        Style button;
+    };
+
+    struct YesNo
+    {
+        int textColor;
         Style active;
         Style inactive;
     };
@@ -50,6 +56,7 @@ public:
     struct BarChart
     {
         int bar;
+        int number;
         Style label;
     };
 
@@ -65,8 +72,9 @@ protected:
 
 public:
     Base _base;
-    Basic _basic;
-    Btn _btn;
+    TextBox _textbox;
+    Popup _popup;
+    YesNo _yesno;
     Input _input;
     Tab _tab;
     List _list;

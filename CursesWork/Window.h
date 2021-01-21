@@ -28,7 +28,6 @@ public:
     void Erase();
     void Print();
 
-
 public:
     virtual void Draw() = 0;
 

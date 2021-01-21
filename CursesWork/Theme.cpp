@@ -13,14 +13,18 @@ Theme::Theme()
     _base.color.fg = COLOR_WHITE;
     _base.tilte = COLOR_WHITE;
 
-    _basic.textColor = COLOR_WHITE;
+    _textbox.style.bg = COLOR_BLACK;
+    _textbox.style.fg = COLOR_BLACK;
 
-    _btn.active.bg = COLOR_WHITE;
-    _btn.active.fg = COLOR_BLACK;
-    _btn.active.opt = A_BLINK;
-    _btn.inactive.bg = COLOR_BLACK;
-    _btn.inactive.fg = COLOR_WHITE;
-    _btn.inactive.opt = A_NORMAL;
+    _popup.textColor = COLOR_WHITE;
+    _popup.button.bg = COLOR_WHITE;
+    _popup.button.fg = COLOR_BLACK;
+
+    _yesno.textColor = COLOR_WHITE;
+    _yesno.active.bg = COLOR_WHITE;
+    _yesno.active.fg = COLOR_BLACK;
+    _yesno.inactive.bg = COLOR_BLACK;
+    _yesno.inactive.fg = COLOR_WHITE;
 
     _input.active.bg = COLOR_BLACK;
     _input.active.fg = COLOR_WHITE;
@@ -49,6 +53,7 @@ Theme::Theme()
     _progress.label.opt = A_NORMAL;
 
     _bar.bar = COLOR_WHITE;
+    _bar.number = COLOR_BLACK;
     _bar.label.bg = COLOR_BLACK;
     _bar.label.bg = COLOR_WHITE;
 }
