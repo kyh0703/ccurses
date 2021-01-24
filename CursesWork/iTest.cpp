@@ -18,42 +18,47 @@ class MyForm : public Form
 public:
     MyForm()
     {
-        TextBox *pHello = new TextBox;
-        pHello->SetRect(5, 10, 10, 10);
-        pHello->SetTitle("hello");
-        Add(pHello);
+        List *pList = new List;
+        pList->SetRect(30, 30, 10, 10);
+        pList->SetBox(true);
+        Add(pList);
+
+        // List *pList2 = new List;
+        // pList2->SetRect(20, 20, 5, 5);
+        // pList->SetBox(true);
+        // Add(pList2);
+
+        _pCurrent = pList;
     }
     ~MyForm() {}
+
+    void InputkeyEvent(int ch)
+    {
+    }
+
+    void OnKeyEvent(int ch)
+    {
+        printf("hihihi");
+    }
+
+private:
+    Widget *_pCurrent;
 };
 
 int main(void)
 {
     Palette ui;
+    printf("1");
     if (!ui.Init())
     {
         cout << "ncurses init Fail" << endl;
         return 1;
     }
 
-    // Tab tab1;
-    // tab1.SetRect(3, 100, 0, 0);
-    // tab1._tabs = {"myForm1", "MyForm2"};
-
-    // MyForm form1;
-    // form1.SetRect(40, 50, 3, 3);
-    // ui.Render({&tab1, & form1});
-    // while (int ch = getchar())
-    // {
-    //     switch (ch)
-    //     {
-    //     case 9:
-    //         ui.Render({&tab1, &form1});
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    // }
-
+    MyForm *pForm = new MyForm;
+    pForm->SetActive(true);
+    ui.Regist(pForm);
+    ui.PollEvent();
     return 0;
 }
 

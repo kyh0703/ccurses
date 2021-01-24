@@ -11,18 +11,20 @@ public:
     Form();
     ~Form();
 
+    bool IsActive();
+    void SetActive(bool isActive);
+    void Run();
+    void Stop();
+    void Draw();
+
 protected:
     void Add(Widget *pWidget);
     void Del(Widget *pWidget);
     void Clear();
-    void Draw();
-
-public:
-    void Run();
-    void Work();
-    void Stop();
+    virtual void OnKeyEvent(int ch);
 
 private:
+    bool _isActive;
     list<Widget *> _pWidgetes;
     Widget *_pCurrent;
 

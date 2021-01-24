@@ -1,11 +1,12 @@
 #pragma once
+#include "Attribute.h"
+#include <functional>
 #include <iostream>
 #include <map>
 #include <ncurses.h>
 #include <sstream>
 #include <string>
 #include <vector>
-#include "Attribute.h"
 using namespace std;
 
 class Window
@@ -24,7 +25,9 @@ public:
     void AttachCells(map<Pos, Rune> cells);
     void Erase();
     void Print();
-
+    void BindKeyEvent(function<void(int)> keyEvent);
+    bool HasKeyEvent(void);
+    void KeyEvent(int ch);
     virtual void Draw() = 0;
 
 protected:
@@ -48,5 +51,6 @@ protected:
     Color _color;
     int _titleColor;
     string _title;
+    function<void(int)> _keyEvent;
     map<Pos, Rune> _cells;
 };

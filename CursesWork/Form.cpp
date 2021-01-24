@@ -10,6 +10,31 @@ Form::~Form(void)
 {
 }
 
+bool Form::IsActive()
+{
+    return _isActive;
+}
+
+void Form::SetActive(bool isActive)
+{
+    _isActive = isActive;
+}
+
+void Form::Run()
+{
+    printf("hihihihi");
+    while (true)
+    {
+        this_thread::sleep_for(chrono::milliseconds(1000));
+    }
+}
+
+void Form::Stop()
+{
+    if (_worker.joinable())
+        _worker.join();
+}
+
 void Form::Add(Widget *pWidget)
 {
     _pWidgetes.push_back(pWidget);
@@ -47,32 +72,11 @@ void Form::Draw()
     for (it = _pWidgetes.begin(); it != _pWidgetes.end(); ++it)
     {
         Widget *pTemp = *it;
-        if (pTemp)
-            pTemp->Draw();
+        pTemp->Draw();
+        pTemp->Print();
     }
 }
 
-void Form::Run()
+void Form::OnKeyEvent(int ch)
 {
-    if (_worker.joinable())
-        Stop();
-
-    thread th = thread(bind(&Form::Work, this));
-    _worker.swap(th);
-
-    while (_isRun)
-    {
-
-    }
-}
-
-void Form::Work()
-{
-
-}
-
-void Form::Stop()
-{
-    if (_worker.joinable())
-        _worker.join();
 }

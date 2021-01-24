@@ -95,6 +95,22 @@ void Window::Print()
     }
 }
 
+void Window::BindKeyEvent(function<void(int)> keyEvent)
+{
+    _keyEvent = move(keyEvent);
+}
+
+bool Window::HasKeyEvent(void)
+{
+    return (_keyEvent ? true : false);
+}
+
+void Window::KeyEvent(int ch)
+{
+    if (_keyEvent)
+        _keyEvent(ch);
+}
+
 void Window::HLine(int y, int x, int n, Rune c)
 {
     for (int cols = x; cols < n + x; ++cols)

@@ -7,12 +7,6 @@ Paint &Paint::Get()
     return instance;
 }
 
-Paint::Paint()
-{
-    _colorCnt = 0;
-    memset(_colorTable, 0x00, sizeof(_colorTable));
-}
-
 short Paint::GetIndex(short bg, short fg)
 {
     short idx = FindColorSet(bg, fg);
@@ -24,6 +18,12 @@ short Paint::GetIndex(short bg, short fg)
     }
 
     return idx;
+}
+
+Paint::Paint()
+{
+    _colorCnt = 0;
+    memset(_colorTable, 0x00, sizeof(_colorTable));
 }
 
 bool Paint::IsColorSet(short color)

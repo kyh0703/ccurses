@@ -1,9 +1,11 @@
 #include "Paint.h"
+#include <unistd.h>
 #include "Theme.h"
 #include "Palette.h"
 
 Palette::Palette()
 {
+    _active = 0;
 }
 
 Palette::~Palette()
@@ -54,6 +56,76 @@ bool Palette::KbHit()
     return ret;
 }
 
+Form *Palette::GetActiveForm(Form *pForm)
+{
+    vector<Form *>::iterator it;
+    it = find(_pForms.begin(), _pForms.end(), pForm);
+    if (it == _pForms.end())
+        return NULL;
+    Form *pTemp = *it;
+    if (pTemp->IsActive())
+        return pTemp;
+    return NULL;
+}
+
+bool Palette::Regist(Form *pForm)
+{
+    vector<Form *>::iterator it;
+    it = find(_pForms.begin(), _pForms.end(), pForm);
+    if (it != _pForms.end())
+        return false;
+    _pForms.push_back(pForm);
+    return true;
+}
+
+void Palette::Remove(Form *pForm)
+{
+    vector<Form *>::iterator it;
+    for (it = _pForms.begin(); it != _pForms.end(); ++it)
+    {
+        if (*it == pForm)
+        {
+            Form *pTemp = *it;
+            delete pTemp;
+            _pForms.erase(it);
+        }
+    }
+}
+
+void Palette::DrawForm()
+{
+    for (size_t idx = 0; idx < _pForms.size(); ++idx)
+    {
+        if (idx == _active)
+        {
+            _pForms[idx]->Draw();
+            return;
+        }
+    }
+}
+
+void Palette::PollEvent(int millisecond)
+{
+    thread th(&Form::Run, _pForms[0]);
+    th.join();
+    DrawForm();
+    while (true)
+    {
+        if (KbHit())
+        {
+            int ch = getch();
+            if (ch == 'q')
+            {
+
+                return;
+            }
+        }
+        DrawForm();
+        this_thread::sleep_for(chrono::milliseconds(millisecond));
+        refresh();
+    }
+}
+
 void Palette::Render(vector<Widget *> widgets)
 {
     vector<Widget *>::iterator it;
@@ -64,9 +136,4 @@ void Palette::Render(vector<Widget *> widgets)
         pWidget->Print();
     }
     refresh();
-}
-
-void Palette::PollEvent()
-{
-
 }

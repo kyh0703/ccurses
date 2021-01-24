@@ -47,7 +47,7 @@ LIB_PATHS       = -L$(CO_LIB) -L$(IL_LIB)
 #----------------------------------------#
 DEFINE					=
 CFLAGS					= -g -O0 -fPIC -Wall -std=c++11
-LFLAGS					= -lstdc++ -lncursesw
+LFLAGS					= -lstdc++ -lncursesw -lpthread
 
 ############################
 # Unit Testing for library #

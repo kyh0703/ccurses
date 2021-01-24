@@ -1,6 +1,8 @@
 #pragma once
 #include <locale.h>
 #include <ncurses.h>
+#include <thread>
+#include <chrono>
 #include <vector>
 #include <string>
 #include "Form.h"
@@ -16,15 +18,17 @@ public:
 
     bool Init();
     bool KbHit();
+
+    Form *GetActiveForm(Form *pFrom);
+    bool Regist(Form *pForm);
+    void Remove(Form *pForm);
+
+    void DrawForm();
+    void PollEvent(int milliseconds = 500);
     void Render(vector<Widget *> pWidgets);
-    void Render(Form &form);
-
-    void AddForm(string id, Form *pForm);
-    void DelForm(string id);
-
-    int GetActiveForm();
-    void PollEvent();
 
 private:
-    int _actvieForm;
+    int _active;
+    Form *_pActvieForm;
+    vector<Form *> _pForms;
 };
