@@ -362,7 +362,9 @@ void Tab::Draw()
             Rune r(style, text[idx]);
             AddCh(pos.y, pos.x++, r);
         }
-        AddCh(pos.y, pos.x++, ACS_VLINE);
+
+        if (tabIdx != _tabs.size() - 1)
+            AddCh(pos.y, pos.x++, ACS_VLINE);
     }
 }
 

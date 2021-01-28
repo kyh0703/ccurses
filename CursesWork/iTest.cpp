@@ -78,7 +78,7 @@ int main(void)
     ui.Regist(pForm3);
 
     ui.SetKeyEvent(OnKeyEvent);
-    ui.PollEvent(200);
+    ui.PollEvent(100);
     return 0;
 }
 
