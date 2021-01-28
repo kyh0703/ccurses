@@ -9,7 +9,7 @@ class Form
 {
 public:
     Form();
-    ~Form();
+    virtual ~Form();
 
     bool IsActive();
     void SetActive(bool isActive);

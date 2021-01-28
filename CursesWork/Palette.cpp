@@ -5,7 +5,7 @@
 
 Palette::Palette()
 {
-    _active = 0;
+    _activeForm = 0;
 }
 
 Palette::~Palette()
@@ -42,18 +42,42 @@ bool Palette::Init()
     return true;
 }
 
-bool Palette::KbHit()
+void Palette::SetKeyEvent(MainEvt func)
 {
-    nodelay(stdscr, TRUE);
-    bool ret = false;
-    int ch = getch();
-    if (ch != ERR)
-    {
-        ret = true;
-        ungetch(ch);
-    }
-    nodelay(stdscr, false);
-    return ret;
+    _onKeyEvent = func;
+}
+
+void Palette::ForcusLeft()
+{
+    if (_pForms.size() == 0)
+        _activeForm = 0;
+    else if (_activeForm == 0)
+        _activeForm = _pForms.size() - 1;
+    else
+        _activeForm--;
+}
+
+void Palette::ForcusRight()
+{
+    if (_pForms.size() == 0)
+        _activeForm = 0;
+    else if (_activeForm < (int)(_pForms.size() - 1))
+        _activeForm++;
+    else
+        _activeForm = 0;
+}
+
+void Palette::ForcurFirst()
+{
+    _activeForm = 0;
+}
+
+void Palette::ForcurLast()
+{
+    if (_pForms.size() == 0)
+        _activeForm = 0;
+    else
+        _activeForm = _pForms.size() - 1;
 }
 
 Form *Palette::GetActiveForm(Form *pForm)
@@ -96,7 +120,7 @@ void Palette::DrawForm()
 {
     for (size_t idx = 0; idx < _pForms.size(); ++idx)
     {
-        if (idx == _active)
+        if ((int)idx == _activeForm)
         {
             _pForms[idx]->Draw();
             return;
@@ -104,26 +128,34 @@ void Palette::DrawForm()
     }
 }
 
-void Palette::PollEvent(int millisecond)
+void Palette::PollEvent(bool hasTab, int millisecond)
 {
-    thread th(&Form::Run, _pForms[0]);
-    th.join();
+    Tab tab;
+    tab.SetRect(3, COLS, 0, 0);
+    tab.SetBox(true);
+    tab._tabs = {"i", "love", "you"};
+    Render({&tab});
+
     DrawForm();
-    while (true)
+    do
     {
+        clear();
+        tab._activeIdx = _activeForm;
+        Render({&tab});
+        DrawForm();
+        refresh();
+
         if (KbHit())
         {
             int ch = getch();
-            if (ch == 'q')
-            {
-
-                return;
-            }
+            if (_onKeyEvent)
+                _onKeyEvent(ch);
+            continue;
         }
-        DrawForm();
+
         this_thread::sleep_for(chrono::milliseconds(millisecond));
-        refresh();
     }
+    while(true);
 }
 
 void Palette::Render(vector<Widget *> widgets)
@@ -136,4 +168,18 @@ void Palette::Render(vector<Widget *> widgets)
         pWidget->Print();
     }
     refresh();
+}
+
+bool Palette::KbHit()
+{
+    nodelay(stdscr, TRUE);
+    bool ret = false;
+    int ch = getch();
+    if (ch != ERR)
+    {
+        ret = true;
+        ungetch(ch);
+    }
+    nodelay(stdscr, false);
+    return ret;
 }

@@ -19,46 +19,66 @@ public:
     MyForm()
     {
         List *pList = new List;
-        pList->SetRect(30, 30, 10, 10);
+        pList->SetRect(10, 10, 10, 10);
         pList->SetBox(true);
         Add(pList);
-
-        // List *pList2 = new List;
-        // pList2->SetRect(20, 20, 5, 5);
-        // pList->SetBox(true);
-        // Add(pList2);
-
         _pCurrent = pList;
     }
     ~MyForm() {}
-
-    void InputkeyEvent(int ch)
-    {
-    }
-
-    void OnKeyEvent(int ch)
-    {
-        printf("hihihi");
-    }
 
 private:
     Widget *_pCurrent;
 };
 
+class MyForm2 : public Form
+{
+public:
+    MyForm2()
+    {
+        List *pList = new List;
+        pList->SetRect(30, 30, 10, 10);
+        pList->SetBox(true);
+        Add(pList);
+        _pCurrent = pList;
+    }
+    ~MyForm2() {}
+
+private:
+    Widget *_pCurrent;
+};
+
+void OnKeyEvent(int ch)
+{
+    switch (ch)
+    {
+    case 9: // TAB
+        ui.ForcusRight();
+        break;
+    case KEY_BTAB:
+        ui.ForcusLeft();
+        break;
+    }
+}
+
 int main(void)
 {
-    Palette ui;
-    printf("1");
     if (!ui.Init())
     {
         cout << "ncurses init Fail" << endl;
         return 1;
     }
 
-    MyForm *pForm = new MyForm;
-    pForm->SetActive(true);
-    ui.Regist(pForm);
-    ui.PollEvent();
+    MyForm *pForm1 = new MyForm;
+    ui.Regist(pForm1);
+
+    MyForm2 *pForm2 = new MyForm2;
+    ui.Regist(pForm2);
+
+    MyForm *pForm3 = new MyForm;
+    ui.Regist(pForm3);
+
+    ui.SetKeyEvent(OnKeyEvent);
+    ui.PollEvent(200);
     return 0;
 }
 
