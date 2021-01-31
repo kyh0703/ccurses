@@ -13,7 +13,7 @@ void TestTable();
 void TestBarChart();
 void TestInput();
 
-class MyForm : public Form
+class MyForm : public WinForm
 {
 public:
     MyForm()
@@ -26,11 +26,15 @@ public:
     }
     ~MyForm() {}
 
+    void OnKeyEvent(int ch) override
+    {
+    }
+
 private:
     Widget *_pCurrent;
 };
 
-class MyForm2 : public Form
+class MyForm2 : public WinForm
 {
 public:
     MyForm2()
@@ -42,6 +46,10 @@ public:
         _pCurrent = pList;
     }
     ~MyForm2() {}
+
+    void OnKeyEvent(int ch) override
+    {
+    }
 
 private:
     Widget *_pCurrent;
@@ -60,6 +68,16 @@ void OnKeyEvent(int ch)
     }
 }
 
+class buttonListner : public Listener
+{
+public:
+    buttonListner();
+    void HandleEvent()
+    {
+        cout << "button pressed" << endl;
+    }
+};
+
 int main(void)
 {
     if (!ui.Init())
@@ -68,14 +86,12 @@ int main(void)
         return 1;
     }
 
+
     MyForm *pForm1 = new MyForm;
     ui.Regist(pForm1);
 
     MyForm2 *pForm2 = new MyForm2;
     ui.Regist(pForm2);
-
-    MyForm *pForm3 = new MyForm;
-    ui.Regist(pForm3);
 
     ui.SetKeyEvent(OnKeyEvent);
     ui.PollEvent(100);

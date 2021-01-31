@@ -4,24 +4,22 @@
 #include <queue>
 #include <list>
 #include "Widget.h"
+#include "EventHandler.h"
 
-class Form
+class WinForm
 {
 public:
-    Form();
-    virtual ~Form();
+    WinForm();
+    virtual ~WinForm();
 
-    bool IsActive();
-    void SetActive(bool isActive);
-    void Run();
-    void Stop();
     void Draw();
+
+    virtual void OnKeyEvent(int ch) = 0;
 
 protected:
     void Add(Widget *pWidget);
     void Del(Widget *pWidget);
     void Clear();
-    virtual void OnKeyEvent(int ch);
 
 private:
     bool _isActive;

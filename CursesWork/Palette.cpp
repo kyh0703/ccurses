@@ -32,6 +32,7 @@ bool Palette::Init()
 
     setlocale(LC_ALL, "ko_KR.utf8");
     mousemask(ALL_MOUSE_EVENTS, NULL);
+    mousemask(BUTTON1_CLICKED | BUTTON3_CLICKED, NULL);
 
     int bg = th::Get()._base.color.bg;
     int fg = th::Get()._base.color.fg;
@@ -80,21 +81,9 @@ void Palette::ForcurLast()
         _activeForm = _pForms.size() - 1;
 }
 
-Form *Palette::GetActiveForm(Form *pForm)
+bool Palette::Regist(WinForm *pForm)
 {
-    vector<Form *>::iterator it;
-    it = find(_pForms.begin(), _pForms.end(), pForm);
-    if (it == _pForms.end())
-        return NULL;
-    Form *pTemp = *it;
-    if (pTemp->IsActive())
-        return pTemp;
-    return NULL;
-}
-
-bool Palette::Regist(Form *pForm)
-{
-    vector<Form *>::iterator it;
+    vector<WinForm *>::iterator it;
     it = find(_pForms.begin(), _pForms.end(), pForm);
     if (it != _pForms.end())
         return false;
@@ -102,14 +91,14 @@ bool Palette::Regist(Form *pForm)
     return true;
 }
 
-void Palette::Remove(Form *pForm)
+void Palette::Remove(WinForm *pForm)
 {
-    vector<Form *>::iterator it;
+    vector<WinForm *>::iterator it;
     for (it = _pForms.begin(); it != _pForms.end(); ++it)
     {
         if (*it == pForm)
         {
-            Form *pTemp = *it;
+            WinForm *pTemp = *it;
             delete pTemp;
             _pForms.erase(it);
         }
@@ -130,19 +119,19 @@ void Palette::DrawForm()
 
 void Palette::PollEvent(bool hasTab, int millisecond)
 {
-    Tab tab;
-    tab.SetRect(3, COLS, 0, 0);
-    tab.SetBox(true);
-    tab._tabs = {"i", "love", "you"};
-    Render({&tab});
+    // Tab tab;
+    // tab.SetRect(3, COLS, 0, 0);
+    // tab.SetBox(true);
+    // tab._tabs = {"i", "love", "you"};
+    // Render({&tab});
 
     DrawForm();
     do
     {
-        clear();
-        tab._activeIdx = _activeForm;
-        Render({&tab});
-        DrawForm();
+        // clear();
+        // tab._activeIdx = _activeForm;
+        // Render({&tab});
+        // DrawForm();
         refresh();
 
         if (KbHit())

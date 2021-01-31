@@ -5,7 +5,7 @@
 #include <chrono>
 #include <vector>
 #include <string>
-#include "Form.h"
+#include "WinForm.h"
 #include "Widget.h"
 
 using namespace std;
@@ -26,9 +26,8 @@ public:
     void ForcurFirst();
     void ForcurLast();
 
-    Form *GetActiveForm(Form *pFrom);
-    bool Regist(Form *pForm);
-    void Remove(Form *pForm);
+    bool Regist(WinForm *pForm);
+    void Remove(WinForm *pForm);
 
     void DrawForm();
     void PollEvent(bool hasTab, int milliseconds = 500);
@@ -39,6 +38,6 @@ private:
 
     MainEvt _onKeyEvent;
     int _activeForm;
-    Form *_pActvieForm;
-    vector<Form *> _pForms;
+    WinForm *_pActvieForm;
+    vector<WinForm *> _pForms;
 };

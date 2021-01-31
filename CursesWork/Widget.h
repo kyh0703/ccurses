@@ -6,6 +6,7 @@
 #include <map>
 #include "Window.h"
 using namespace std;
+typedef function<void(int)> Event;
 
 class Widget : public Window
 {
