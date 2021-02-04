@@ -36,11 +36,11 @@ public:
 protected:
     void VLine(int y, int x, int n, Rune c);
     void AddCh(int y, int x, Rune r);
+    void AddCh(int y, int x, Style s, chtype c);
     void AddStr(int y, int x, string s);
     const Rune GetCh(int y, int x);
     const string GetStr(int y, int x, int n);
     void DrawBase();
-
 
 protected:
     bool _isBox;

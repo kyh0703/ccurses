@@ -135,6 +135,14 @@ void Window::AddCh(int y, int x, Rune r)
     wattroff(_pWin, COLOR_PAIR(idx) | r.s.opt);
 }
 
+void Window::AddCh(int y, int x, Style s, chtype c)
+{
+    int idx = Paint::Get().GetIndex(s.bg, s.fg);
+    wattron(_pWin, COLOR_PAIR(idx) | s.opt);
+    mvwaddch(_pWin, y, x, c);
+    wattroff(_pWin, COLOR_PAIR(idx) | s.opt);
+}
+
 void Window::AddStr(int y, int x, string s)
 {
     for (size_t idx = 0; idx < s.size(); idx++)
@@ -157,7 +165,7 @@ const string Window::GetStr(int y, int x, int n)
 
 void Window::DrawBase()
 {
-    if (_pWin)
+    if (!_pWin)
         _pWin = newwin(_rect.h, _rect.w, _rect.min.y, _rect.min.x);
 
     werase(_pWin);

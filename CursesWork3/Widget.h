@@ -5,8 +5,8 @@
 #include <string>
 #include <map>
 #include "Window.h"
+#include "EventHandler.h"
 using namespace std;
-typedef function<void(int)> Event;
 
 class Widget : public Window
 {
@@ -25,6 +25,22 @@ public:
 public:
     Style _style;
     string _text;
+};
+
+class Button : public Widget
+{
+public:
+    Button();
+    ~Button();
+
+    void Draw() override;
+
+public:
+    bool _isActive;
+    string _text;
+    Style _active;
+    Style _inactive;
+    // function<void(EventType)> e;
 };
 
 class Popup : public Widget

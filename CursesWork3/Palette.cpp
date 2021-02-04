@@ -132,7 +132,6 @@ void Palette::PollEvent(bool hasTab, int millisecond)
         // tab._activeIdx = _activeForm;
         // Render({&tab});
         // DrawForm();
-        refresh();
 
         if (KbHit())
         {
@@ -141,7 +140,7 @@ void Palette::PollEvent(bool hasTab, int millisecond)
                 _onKeyEvent(ch);
             continue;
         }
-
+        refresh();
         this_thread::sleep_for(chrono::milliseconds(millisecond));
     }
     while(true);

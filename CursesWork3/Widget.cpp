@@ -38,6 +38,43 @@ void TextBox::Draw()
     Render();
 }
 
+Button::Button()
+{
+    // TODO 버튼테마필요
+    _active = th::Get()._list.active;
+    _inactive = th::Get()._list.inactive;
+    _isActive = false;
+}
+
+Button::~Button()
+{
+}
+
+void Button::Draw()
+{
+    DrawBase();
+    Rect rect = GetWinRect();
+    Pos pos(rect.min.y, rect.min.x);
+
+    for (size_t idx = 0; idx < _text.size(); ++idx)
+    {
+        if (rect.max.x < pos.x)
+            return;
+
+        if (_isActive)
+        {
+            Rune r(_active, _text[idx]);
+            AddCh(pos.y, pos.x++, r);
+        }
+        else
+        {
+            Rune r(_inactive, _text[idx]);
+            AddCh(pos.y, pos.x++, r);
+        }
+    }
+    Render();
+}
+
 Popup::Popup()
 {
     _btnStyle = th::Get()._popup.button;

@@ -21,7 +21,7 @@ int main(void)
         return 1;
     }
 
-    TestList();
+    TestText();
     return 1;
 }
 
