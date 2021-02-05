@@ -1,5 +1,6 @@
 #pragma once
 #include "Attribute.h"
+#include "EventHandler.h"
 #include <functional>
 #include <iostream>
 #include <map>
@@ -19,6 +20,7 @@ public:
 
     void SetBox(bool isBox);
     Rect GetWinRect(void);
+    Rect GetRect();
     void SetRect(int h, int w, int y, int x);
     void SetColor(int bg, int fg);
     void SetTitle(string title);
@@ -26,12 +28,13 @@ public:
     const map<Pos, Rune> &GetCells(void);
     void AttachCells(map<Pos, Rune> cells);
     void Erase();
-    void Print();
     void BindKeyEvent(function<void(int)> keyEvent);
     bool HasKeyEvent(void);
     void KeyEvent(int ch);
     virtual void Draw() = 0;
     void Render();
+
+    Event _clicked;
 
 protected:
     void VLine(int y, int x, int n, Rune c);
@@ -41,6 +44,7 @@ protected:
     const Rune GetCh(int y, int x);
     const string GetStr(int y, int x, int n);
     void DrawBase();
+    void DrawBase(WINDOW *pParent);
 
 protected:
     bool _isBox;

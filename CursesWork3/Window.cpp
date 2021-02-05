@@ -49,6 +49,11 @@ Rect Window::GetWinRect()
     return {_rect.h - 2, _rect.w - 2, minY, minX};
 }
 
+Rect Window::GetRect()
+{
+    return _rect;
+}
+
 void Window::SetRect(int h, int w, int y, int x)
 {
     _rect = {h, w, y, x};
@@ -88,21 +93,6 @@ void Window::Erase()
         for (int x = _rect.min.x; x <= _rect.max.x; ++x)
             mvdelch(y, x);
     refresh();
-}
-
-void Window::Print()
-{
-    for (int y = _rect.min.y; y <= _rect.max.y; ++y)
-    {
-        for (int x = _rect.min.x; x <= _rect.max.x; ++x)
-        {
-            Rune rune = _cells[{y, x}];
-            int idx = Paint::Get().GetIndex(rune.s.bg, rune.s.fg);
-            attron(COLOR_PAIR(idx) | rune.s.opt);
-            mvaddch(y, x, rune.c);
-            attroff(COLOR_PAIR(idx) | rune.s.opt);
-        }
-    }
 }
 
 void Window::BindKeyEvent(function<void(int)> keyEvent)
@@ -167,6 +157,19 @@ void Window::DrawBase()
 {
     if (!_pWin)
         _pWin = newwin(_rect.h, _rect.w, _rect.min.y, _rect.min.x);
+
+    werase(_pWin);
+
+    if (_isBox)
+        box(_pWin, 0, 0);
+
+    mvwaddstr(_pWin, 0, 2, _title.c_str());
+}
+
+void Window::DrawBase(WINDOW *pParent)
+{
+    if (!_pWin)
+        _pWin = subwin(pParent, _rect.h, _rect.w, _rect.min.y, _rect.min.x);
 
     werase(_pWin);
 

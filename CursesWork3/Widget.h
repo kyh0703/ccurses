@@ -40,7 +40,6 @@ public:
     string _text;
     Style _active;
     Style _inactive;
-    // function<void(EventType)> e;
 };
 
 class Popup : public Widget

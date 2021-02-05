@@ -21,7 +21,9 @@ protected:
     void Del(Widget *pWidget);
     void Clear();
 
-private:
+protected:
+    bool IsInner(int y, int x);
+
     bool _isActive;
     list<Widget *> _pWidgetes;
     Widget *_pCurrent;

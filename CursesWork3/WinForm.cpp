@@ -17,7 +17,6 @@ void WinForm::Draw()
     {
         Widget *pTemp = *it;
         pTemp->Draw();
-        pTemp->Print();
     }
 }
 

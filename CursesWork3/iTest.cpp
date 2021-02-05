@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include "Palette.h"
+#include "MyForm.h"
 
 Palette ui;
 void TestText();
@@ -13,6 +14,29 @@ void TestTable();
 void TestBarChart();
 void TestInput();
 
+void keykey()
+{
+    MEVENT event;
+    while (int ch = getch())
+    {
+        switch (ch)
+        {
+        case 'q':
+            return;
+        case KEY_MOUSE:
+            printw("I'm mouse [%d][%d]", event.y, event.x);
+            if (getmouse(&event) == OK)
+            {
+                printw("I'm mouse [%d][%d]", event.y, event.x);
+                if (event.bstate == BUTTON1_CLICKED)
+                {
+                }
+            }
+            break;
+        }
+    }
+}
+
 int main(void)
 {
     if (!ui.Init())
@@ -20,9 +44,11 @@ int main(void)
         cout << "ncurses init Fail" << endl;
         return 1;
     }
-
-    TestText();
-    return 1;
+    MyForm form;
+    form.Draw();
+    form.OnKeyEvent(1);
+    // ui.SetKeyEvent(bind(keykey));
+    // ui.PollEvent(false);
 }
 
 void TestText()

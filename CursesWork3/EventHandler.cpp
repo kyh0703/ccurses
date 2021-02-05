@@ -1,13 +1,52 @@
 #include "EventHandler.h"
+int EventHandler::counter = 0;
 
-void Event::AddHandler(const EventType &handler)
+EventHandler::EventHandler()
 {
-    _handlers.push_back(unique_ptr<EventType>(new EventType{handler}));
+    id = 0;
 }
 
-void Event::RemoveHandler(const EventType &handler)
+EventHandler::EventHandler(const Func &func)
 {
-    vector<unique_ptr<EventType>>::iterator it;
+    _func = func;
+    id = ++EventHandler::counter;
+}
+
+void EventHandler::operator()()
+{
+    _func();
+}
+
+void EventHandler::operator=(const Func &func)
+{
+    _func = func;
+    id = ++EventHandler::counter;
+
+    // if (_func == nullptr)
+    // {
+    //     _func = func;
+    //     id = ++EventHandler::counter;
+    // }
+}
+
+bool EventHandler::operator==(const EventHandler &del)
+{
+    return id == del.id;
+}
+
+bool EventHandler::operator!=(nullptr_t)
+{
+    return _func != nullptr;
+}
+
+void Event::AddHandler(const EventHandler &handler)
+{
+    _handlers.push_back(unique_ptr<EventHandler>(new EventHandler{handler}));
+}
+
+void Event::RemoveHandler(const EventHandler &handler)
+{
+    vector<unique_ptr<EventHandler>>::iterator it;
     for (it = _handlers.begin(); it != _handlers.end(); ++it)
     {
         if (*(*it) == handler)
@@ -23,13 +62,13 @@ void Event::operator()()
     NotifyHandlers();
 }
 
-Event &Event::operator+=(const EventType &handler)
+Event &Event::operator+=(const EventHandler &handler)
 {
     AddHandler(handler);
     return *this;
 }
 
-Event &Event::operator-=(const EventType &handler)
+Event &Event::operator-=(const EventHandler &handler)
 {
     RemoveHandler(handler);
     return *this;
@@ -37,28 +76,13 @@ Event &Event::operator-=(const EventType &handler)
 
 void Event::NotifyHandlers()
 {
-    vector<unique_ptr<EventType>>::iterator it;
+    vector<unique_ptr<EventHandler>>::iterator it;
     for (it = _handlers.begin(); it != _handlers.end(); ++it)
     {
-        // if (*it)
-        //     (*(*it))();
-    }
-}
-
-void Event::NotifyHandlers()
-{
-    vector<unique_ptr<EventType>>::iterator it;
-    for (it = _handlers.begin(); it != _handlers.end(); ++it)
-    {
-        EventType = it;
         if (*it != nullptr)
             (*(*it))();
     }
 }
-
-
-출처: https://vallista.tistory.com/entry/C-c에-있는-eventdelegate-system-구현 [VallistA]
-출처: https://vallista.tistory.com/entry/C-c에-있는-eventdelegate-system-구현 [VallistA]
 
 void EventDispatcher::AddListener(Listener *pObs)
 {

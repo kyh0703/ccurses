@@ -3,6 +3,7 @@
 #include <list>
 #include <string>
 #include <memory>
+#include <functional>
 using namespace std;
 
 enum EventType
@@ -31,18 +32,38 @@ public:
     virtual void OnNotify() = 0;
 };
 
+class EventHandler
+{
+public:
+    using Func = function<void()>;
+
+private:
+    Func _func;
+
+public:
+    int id;
+    static int counter;
+
+    EventHandler();
+    EventHandler(const Func &func);
+    void operator()();
+    void operator=(const Func &func);
+    bool operator==(const EventHandler &del);
+    bool operator!=(nullptr_t);
+};
+
 class Event
 {
 public:
-    void AddHandler(const EventType &handler);
-    void RemoveHandler(const EventType &handler);
-    void operator()(void);
-    Event &operator+=(const EventType &handler);
-    Event &operator-= (const EventType &handler);
+    void AddHandler(const EventHandler &handler);
+    void RemoveHandler(const EventHandler &handler);
+    void operator()();
+    Event &operator+=(const EventHandler &handler);
+    Event &operator-=(const EventHandler &handler);
 
 private:
     void NotifyHandlers();
-    vector<unique_ptr<EventType>> _handlers;
+    vector<unique_ptr<EventHandler>> _handlers;
 };
 
 class EventDispatcher
