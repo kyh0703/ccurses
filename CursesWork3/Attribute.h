@@ -1,13 +1,6 @@
 #pragma once
 #include "ncurses.h"
 
-struct Border
-{
-    Border();
-    chtype ls, rs, ts, bs;
-    chtype tl, tr, bl, br;
-};
-
 struct Color
 {
     Color();

@@ -1,17 +1,5 @@
 #include "Attribute.h"
 
-Border::Border()
-{
-    this->ls = ACS_VLINE;
-    this->rs = ACS_VLINE;
-    this->ts = ACS_HLINE;
-    this->bs = ACS_HLINE;
-    this->tl = ACS_ULCORNER;
-    this->tr = ACS_URCORNER;
-    this->bl = ACS_LLCORNER;
-    this->br = ACS_LRCORNER;
-}
-
 Color::Color()
 {
     this->bg = COLOR_BLACK;

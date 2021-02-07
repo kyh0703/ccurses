@@ -49,7 +49,6 @@ protected:
     bool _isBox;
     unsigned _type;
     Rect _rect, _wrect, _winner;
-    Border _border;
     Color _color;
     int _titleColor;
     string _title;
