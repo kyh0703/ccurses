@@ -1,24 +1,15 @@
 #include "MyForm.h"
-#include "EventHandler.h"
 
 MyForm::MyForm()
 {
     pBtn = new Button;
-    pBtn->SetRect(3, 3, 0, 0);
-    auto a = bind(&MyForm::btn1_clicked, this);
-    pBtn->_clicked += *(new EventHandler(a));
-    auto b = bind(&MyForm::btn2_clicked, this);
-    EventHandler c(b);
-    pBtn->_clicked += c;
+    pBtn->SetRect(30, 30, 0, 0);
+    pBtn->_clicked = bind(&MyForm::btn1_clicked, this);
     Add(pBtn);
 }
 
 MyForm::~MyForm()
 {
-}
-void MyForm::btn2_clicked()
-{
-    printw("22222\n");
 }
 
 void MyForm::btn1_clicked()
@@ -31,10 +22,16 @@ void MyForm::OnMouseLCliecked(int y, int x)
     list<Widget *>::iterator it;
     for (it = _pWidgetes.begin(); it != _pWidgetes.end(); ++it)
     {
-        Rect rect = (*it)->GetRect();
+        Widget *pWidget = (*it);
+        Rect rect = pWidget->GetRect();
         if ((rect.min.y <= y && y <= rect.max.y) &&
            (rect.min.x <= x && x <= rect.max.x))
-            (*it)->_clicked();
+        {
+            if (pWidget->_clicked)
+                pWidget->_clicked();
+            if (pWidget->_mouseClick)
+                pWidget->_mouseClick();
+        }
     }
 }
 
@@ -52,7 +49,6 @@ void MyForm::OnMouseRCliecked(int y, int x)
 
 void MyForm::OnKeyEvent(int ch)
 {
-    MEVENT event;
     while (int ch = getch())
     {
         switch (ch)
@@ -60,10 +56,15 @@ void MyForm::OnKeyEvent(int ch)
         case 'q':
             return;
         case KEY_MOUSE:
+            MEVENT event;
             if (getmouse(&event) == OK)
             {
                 if (event.bstate == BUTTON1_CLICKED)
                     OnMouseLCliecked(event.y, event.x);
+                else if (event.bstate == BUTTON1_DOUBLE_CLICKED)
+                    printf("1\n");
+                else if (event.bstate == BUTTON1_PRESSED)
+                    printf("2\n");
             }
             break;
         }

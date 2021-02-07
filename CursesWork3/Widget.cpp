@@ -5,6 +5,7 @@
 TextBox::TextBox()
 {
     _style = th::Get()._textbox.style;
+    _isBox = false;
 }
 
 TextBox::~TextBox()

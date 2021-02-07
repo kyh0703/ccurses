@@ -1,6 +1,5 @@
 #pragma once
 #include "Attribute.h"
-#include "EventHandler.h"
 #include <functional>
 #include <iostream>
 #include <map>
@@ -9,6 +8,9 @@
 #include <string>
 #include <vector>
 using namespace std;
+
+using Event = function<void()>;
+using MouseEvent = function<void()>;
 
 class Window
 {
@@ -25,19 +27,17 @@ public:
     void SetColor(int bg, int fg);
     void SetTitle(string title);
 
-    const map<Pos, Rune> &GetCells(void);
-    void AttachCells(map<Pos, Rune> cells);
     void Erase();
-    void BindKeyEvent(function<void(int)> keyEvent);
-    bool HasKeyEvent(void);
-    void KeyEvent(int ch);
     virtual void Draw() = 0;
     void Render();
 
     Event _clicked;
+    MouseEvent _mouseClick;
+    MouseEvent _mouseUp;
+    MouseEvent _mouseDown;
+    MouseEvent _mouseLeave;
 
 protected:
-    void VLine(int y, int x, int n, Rune c);
     void AddCh(int y, int x, Rune r);
     void AddCh(int y, int x, Style s, chtype c);
     void AddStr(int y, int x, string s);
@@ -46,14 +46,12 @@ protected:
     void DrawBase();
     void DrawBase(WINDOW *pParent);
 
-protected:
     bool _isBox;
+    unsigned _type;
     Rect _rect, _wrect, _winner;
     Border _border;
     Color _color;
     int _titleColor;
     string _title;
-    function<void(int)> _keyEvent;
-    map<Pos, Rune> _cells;
     WINDOW *_pWin;
 };

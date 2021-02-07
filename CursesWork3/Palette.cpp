@@ -125,22 +125,19 @@ void Palette::PollEvent(bool hasTab, int millisecond)
     // tab._tabs = {"i", "love", "you"};
     // Render({&tab});
 
-    DrawForm();
-    do
+    while (true)
     {
-        // clear();
-        // tab._activeIdx = _activeForm;
-        // Render({&tab});
-        // DrawForm();
-
         if (KbHit())
         {
             int ch = getch();
+            if (ch == KEY_RESIZE)
+                DrawForm();
             if (_onKeyEvent)
                 _onKeyEvent(ch);
             continue;
         }
-        refresh();
+
+        DrawForm();
         this_thread::sleep_for(chrono::milliseconds(millisecond));
     }
     while(true);

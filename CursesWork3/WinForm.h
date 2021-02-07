@@ -4,7 +4,6 @@
 #include <queue>
 #include <list>
 #include "Widget.h"
-#include "EventHandler.h"
 
 class WinForm
 {

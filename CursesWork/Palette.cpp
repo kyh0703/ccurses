@@ -131,7 +131,7 @@ void Palette::PollEvent(bool hasTab, int millisecond)
         // clear();
         // tab._activeIdx = _activeForm;
         // Render({&tab});
-        // DrawForm();
+        DrawForm();
         refresh();
 
         if (KbHit())

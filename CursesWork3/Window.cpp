@@ -70,51 +70,12 @@ void Window::SetTitle(string title)
     _title = title;
 }
 
-const map<Pos, Rune> &Window::GetCells(void)
-{
-    return _cells;
-}
-
-void Window::AttachCells(map<Pos, Rune> cells)
-{
-    map<Pos, Rune>::iterator it;
-    for (it = cells.begin(); it != cells.end(); ++it)
-    {
-        Pos pos((*it).first);
-        Rune r((*it).second);
-        if (_cells.find(pos) != _cells.end())
-            _cells[pos] = r;
-    }
-}
-
 void Window::Erase()
 {
     for (int y = _rect.min.y; y <= _rect.max.y; ++y)
         for (int x = _rect.min.x; x <= _rect.max.x; ++x)
             mvdelch(y, x);
     refresh();
-}
-
-void Window::BindKeyEvent(function<void(int)> keyEvent)
-{
-    _keyEvent = move(keyEvent);
-}
-
-bool Window::HasKeyEvent(void)
-{
-    return (_keyEvent ? true : false);
-}
-
-void Window::KeyEvent(int ch)
-{
-    if (_keyEvent)
-        _keyEvent(ch);
-}
-
-void Window::VLine(int y, int x, int n, Rune c)
-{
-    for (int line = y; line < n + y; ++line)
-        _cells[{line, x}] = c;
 }
 
 void Window::AddCh(int y, int x, Rune r)
@@ -131,17 +92,6 @@ void Window::AddCh(int y, int x, Style s, chtype c)
     wattron(_pWin, COLOR_PAIR(idx) | s.opt);
     mvwaddch(_pWin, y, x, c);
     wattroff(_pWin, COLOR_PAIR(idx) | s.opt);
-}
-
-void Window::AddStr(int y, int x, string s)
-{
-    for (size_t idx = 0; idx < s.size(); idx++)
-        _cells[{y, x++}] = {_color.bg, COLOR_WHITE, (chtype)s[idx]};
-}
-
-const Rune Window::GetCh(int y, int x)
-{
-    return _cells[{y, x}];
 }
 
 const string Window::GetStr(int y, int x, int n)

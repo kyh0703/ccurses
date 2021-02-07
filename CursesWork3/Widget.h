@@ -5,7 +5,6 @@
 #include <string>
 #include <map>
 #include "Window.h"
-#include "EventHandler.h"
 using namespace std;
 
 class Widget : public Window
@@ -191,4 +190,14 @@ public:
     vector<string> _query;
     vector<string> _default;
     // map<string, Input *> _items;
+};
+
+class RadioButton : public Widget
+{
+
+};
+
+class CheckBox : public Widget
+{
+
 };

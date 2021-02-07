@@ -57,15 +57,22 @@ private:
 
 void OnKeyEvent(int ch)
 {
-    switch (ch)
-    {
-    case 9: // TAB
-        ui.ForcusRight();
-        break;
-    case KEY_BTAB:
-        ui.ForcusLeft();
-        break;
-    }
+    // MEVENT event;
+    // switch (ch)
+    // {
+    // case 9: // TAB
+    //     ui.ForcusRight();
+    //     break;
+    // case KEY_BTAB:
+    //     ui.ForcusLeft();
+    //     break;
+    // case KEY_MOUSE:
+    //     if (getmouse(&event) == OK)
+    //     {
+    //         // printw("ID[%d] Y[%d] X[%d] Z[%d] bstate[%d]", event.id, event.y, event.x, event.z, event.bstate);
+    //     }
+    //     break;
+    // }
 }
 
 class buttonListner : public Listener
@@ -87,14 +94,7 @@ int main(void)
     }
 
 
-    MyForm *pForm1 = new MyForm;
-    ui.Regist(pForm1);
-
-    MyForm2 *pForm2 = new MyForm2;
-    ui.Regist(pForm2);
-
-    ui.SetKeyEvent(OnKeyEvent);
-    ui.PollEvent(100);
+    TestText();
     return 0;
 }
 

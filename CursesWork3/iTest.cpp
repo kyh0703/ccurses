@@ -45,6 +45,7 @@ int main(void)
         return 1;
     }
     MyForm form;
+    // ui.Regist(&form);
     form.Draw();
     form.OnKeyEvent(1);
     // ui.SetKeyEvent(bind(keykey));
