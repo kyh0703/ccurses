@@ -7,10 +7,8 @@
 #include <string>
 #include "WinForm.h"
 #include "Widget.h"
-
 using namespace std;
 
-typedef function<void(int)> MainEvt;
 class Palette
 {
 public:
@@ -19,7 +17,6 @@ public:
     ~Palette();
 
     bool Init();
-    void SetKeyEvent(MainEvt func);
 
     void ForcusLeft();
     void ForcusRight();
@@ -30,14 +27,12 @@ public:
     void Remove(WinForm *pForm);
 
     void DrawForm();
-    void PollEvent(bool hasTab, int milliseconds = 500);
-    void Render(vector<Widget *> pWidgets);
+    void PollEvent(int fps = 500);
 
 private:
     bool KbHit();
 
-    MainEvt _onKeyEvent;
-    int _activeForm;
-    WinForm *_pActvieForm;
+    int _activeform;
+    WinForm *_pAactvieForm;
     vector<WinForm *> _pForms;
 };

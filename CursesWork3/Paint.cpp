@@ -22,8 +22,8 @@ short Paint::GetIndex(short bg, short fg)
 
 Paint::Paint()
 {
-    _colorCnt = 0;
-    memset(_colorTable, 0x00, sizeof(_colorTable));
+    _color_count = 0;
+    memset(_color_table, 0x00, sizeof(_color_table));
 }
 
 bool Paint::IsColorSet(short color)
@@ -50,14 +50,14 @@ short Paint::AddColorSet(short bg, short fg)
     if (ret > 0)
         return ret;
 
-    if (_colorCnt >= 64)
+    if (_color_count >= 64)
         return -1;
 
-    _colorTable[_colorCnt].no = _colorCnt + 1;
-    _colorTable[_colorCnt].bg = bg;
-    _colorTable[_colorCnt].fg = fg;
+    _color_table[_color_count].no = _color_count + 1;
+    _color_table[_color_count].bg = bg;
+    _color_table[_color_count].fg = fg;
 
-    if (_colorCnt <= 0)
+    if (_color_count <= 0)
     {
         start_color();
         init_color(COLOR_RED, 500, 0, 0);
@@ -68,22 +68,22 @@ short Paint::AddColorSet(short bg, short fg)
         init_color(COLOR_CYAN, 500, 0, 0);
     }
 
-    init_pair(_colorTable[_colorCnt].no,
-              _colorTable[_colorCnt].fg,
-              _colorTable[_colorCnt].bg);
+    init_pair(_color_table[_color_count].no,
+              _color_table[_color_count].fg,
+              _color_table[_color_count].bg);
 
-    ret = _colorTable[_colorCnt].no;
-    _colorCnt++;
+    ret = _color_table[_color_count].no;
+    _color_count++;
     return ret;
 }
 
 short Paint::FindColorSet(short bg, short fg)
 {
-    for (int colorIdx = 0; colorIdx < _colorCnt; colorIdx++)
+    for (int idx = 0; idx < _color_count; idx++)
     {
-        if (_colorTable[colorIdx].bg == bg &&
-            _colorTable[colorIdx].fg == fg)
-            return _colorTable[colorIdx].no;
+        if (_color_table[idx].bg == bg &&
+            _color_table[idx].fg == fg)
+            return _color_table[idx].no;
     }
 
     return -1;

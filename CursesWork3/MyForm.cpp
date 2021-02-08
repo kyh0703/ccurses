@@ -2,71 +2,61 @@
 
 MyForm::MyForm()
 {
-    pBtn = new Button;
-    pBtn->SetRect(30, 30, 0, 0);
-    pBtn->_clicked = bind(&MyForm::btn1_clicked, this);
-    Add(pBtn);
+    // pBtn = new Button;
+    // pBtn->_rect = {3, 10, 0, 0};
+    // pBtn->_color = {COLOR_BLACK, COLOR_RED};
+    // pBtn->_title_color = COLOR_RED;
+    // pBtn->_title = "test";
+    // pBtn->_text = "btn1";
+    // pBtn->_click = bind(&MyForm::btn1_clicked, this);
+    // Add(pBtn);
+
+    // pBtn2 = new Button;
+    // pBtn2->_rect = {3, 11, 10, 10};
+    // pBtn2->_text = "btn2222222";
+    // pBtn2->_click = bind(&MyForm::btn2_clicked, this);
+    // Add(pBtn2);
+
+    // pList = new List;
+    // pBtn2->_rect = {5, 10, 15, 10};
+    // pList->_rows = {"test1", "test2", "test3", "test4", "test5", "test6"};
+    // pList->_mouse_wheel_up = bind(&MyForm::list_wheel_up, this, placeholders::_1);
+    // pList->_mouse_wheel_down = bind(&MyForm::list_wheel_down, this, placeholders::_1);
+    // Add(pList);
+
+    // CheckBox *check = new CheckBox;
+    // check->_rect = {5, 15, 20, 20};
+    // check->_text = "Checkbox";
+    // check->_is_check = true;
+    // Add(check);
+
+    Input *input = new Input;
+    input->_rect = {2, 15, 20, 20};
+    input->_is_active = true;
+    input->SetText("test");
+    Add(input);
 }
 
 MyForm::~MyForm()
 {
 }
 
+void MyForm::list_wheel_up(MouseArgs args)
+{
+    pList->ScrollUp();
+}
+
+void MyForm::list_wheel_down(MouseArgs args)
+{
+    pList->ScrollDown();
+}
+
 void MyForm::btn1_clicked()
 {
-    printw("1111\n");
+    pBtn->_text = "alter";
 }
 
-void MyForm::OnMouseLCliecked(int y, int x)
+void MyForm::btn2_clicked()
 {
-    list<Widget *>::iterator it;
-    for (it = _pWidgetes.begin(); it != _pWidgetes.end(); ++it)
-    {
-        Widget *pWidget = (*it);
-        Rect rect = pWidget->GetRect();
-        if ((rect.min.y <= y && y <= rect.max.y) &&
-           (rect.min.x <= x && x <= rect.max.x))
-        {
-            if (pWidget->_clicked)
-                pWidget->_clicked();
-            if (pWidget->_mouseClick)
-                pWidget->_mouseClick();
-        }
-    }
-}
-
-void MyForm::OnMouseRCliecked(int y, int x)
-{
-    list<Widget *>::iterator it;
-    for (it = _pWidgetes.begin(); it != _pWidgetes.end(); ++it)
-    {
-        Rect rect = (*it)->GetRect();
-        if ((rect.min.y <= y && y <= rect.max.y) &&
-            (rect.min.x <= x && x <= rect.max.x))
-            (*it)->_clicked();
-    }
-}
-
-void MyForm::OnKeyEvent(int ch)
-{
-    while (int ch = getch())
-    {
-        switch (ch)
-        {
-        case 'q':
-            return;
-        case KEY_MOUSE:
-            MEVENT event;
-            if (getmouse(&event) == OK)
-            {
-                if (event.bstate == BUTTON1_CLICKED)
-                    OnMouseLCliecked(event.y, event.x);
-                else if (event.bstate == BUTTON1_DOUBLE_CLICKED)
-                    printf("1\n");
-                else if (event.bstate == BUTTON1_PRESSED)
-                    printf("2\n");
-            }
-            break;
-        }
-    }
+    pBtn2->_text = "test232";
 }

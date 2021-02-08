@@ -16,15 +16,21 @@ public:
         Style style;
     };
 
+    struct Button
+    {
+        Style active;
+        Style inactive;
+    };
+
     struct Popup
     {
-        int textColor;
+        int text_color;
         Style button;
     };
 
     struct YesNo
     {
-        int textColor;
+        int text_color;
         Style active;
         Style inactive;
     };
@@ -60,6 +66,18 @@ public:
         Style label;
     };
 
+    struct CheckBox
+    {
+        Style active;
+        Style inactive;
+    };
+
+    struct Radio
+    {
+        Style active;
+        Style inactive;
+    };
+
 public:
     static Theme &Get();
 
@@ -73,6 +91,7 @@ protected:
 public:
     Base _base;
     TextBox _textbox;
+    Button _button;
     Popup _popup;
     YesNo _yesno;
     Input _input;
@@ -80,4 +99,6 @@ public:
     List _list;
     ProgressBar _progress;
     BarChart _bar;
+    CheckBox _checkbox;
+    Radio _radio;
 };

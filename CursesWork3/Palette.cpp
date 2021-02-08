@@ -5,7 +5,7 @@
 
 Palette::Palette()
 {
-    _activeForm = 0;
+    _activeform = 0;
 }
 
 Palette::~Palette()
@@ -31,8 +31,7 @@ bool Palette::Init()
     fflush(stdout);
 
     setlocale(LC_ALL, "ko_KR.utf8");
-    mousemask(ALL_MOUSE_EVENTS, NULL);
-    mousemask(BUTTON1_CLICKED | BUTTON3_CLICKED, NULL);
+    mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 
     int bg = th::Get()._base.color.bg;
     int fg = th::Get()._base.color.fg;
@@ -43,42 +42,37 @@ bool Palette::Init()
     return true;
 }
 
-void Palette::SetKeyEvent(MainEvt func)
-{
-    _onKeyEvent = func;
-}
-
 void Palette::ForcusLeft()
 {
     if (_pForms.size() == 0)
-        _activeForm = 0;
-    else if (_activeForm == 0)
-        _activeForm = _pForms.size() - 1;
+        _activeform = 0;
+    else if (_activeform == 0)
+        _activeform = _pForms.size() - 1;
     else
-        _activeForm--;
+        _activeform--;
 }
 
 void Palette::ForcusRight()
 {
     if (_pForms.size() == 0)
-        _activeForm = 0;
-    else if (_activeForm < (int)(_pForms.size() - 1))
-        _activeForm++;
+        _activeform = 0;
+    else if (_activeform < (int)(_pForms.size() - 1))
+        _activeform++;
     else
-        _activeForm = 0;
+        _activeform = 0;
 }
 
 void Palette::ForcurFirst()
 {
-    _activeForm = 0;
+    _activeform = 0;
 }
 
 void Palette::ForcurLast()
 {
     if (_pForms.size() == 0)
-        _activeForm = 0;
+        _activeform = 0;
     else
-        _activeForm = _pForms.size() - 1;
+        _activeform = _pForms.size() - 1;
 }
 
 bool Palette::Regist(WinForm *pForm)
@@ -109,7 +103,7 @@ void Palette::DrawForm()
 {
     for (size_t idx = 0; idx < _pForms.size(); ++idx)
     {
-        if ((int)idx == _activeForm)
+        if ((int)idx == _activeform)
         {
             _pForms[idx]->Draw();
             return;
@@ -117,14 +111,8 @@ void Palette::DrawForm()
     }
 }
 
-void Palette::PollEvent(bool hasTab, int millisecond)
+void Palette::PollEvent(int fps)
 {
-    // Tab tab;
-    // tab.SetRect(3, COLS, 0, 0);
-    // tab.SetBox(true);
-    // tab._tabs = {"i", "love", "you"};
-    // Render({&tab});
-
     while (true)
     {
         if (KbHit())
@@ -132,26 +120,12 @@ void Palette::PollEvent(bool hasTab, int millisecond)
             int ch = getch();
             if (ch == KEY_RESIZE)
                 DrawForm();
-            if (_onKeyEvent)
-                _onKeyEvent(ch);
             continue;
         }
 
         DrawForm();
-        this_thread::sleep_for(chrono::milliseconds(millisecond));
-    }
-    while(true);
-}
-
-void Palette::Render(vector<Widget *> widgets)
-{
-    vector<Widget *>::iterator it;
-    for (it = widgets.begin(); it != widgets.end(); ++it)
-    {
-        Widget *pWidget = *it;
-        pWidget->Draw();
-        // pWidget->Print();
-    }
+        this_thread::sleep_for(chrono::milliseconds(fps));
+    };
 }
 
 bool Palette::KbHit()

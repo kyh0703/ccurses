@@ -1,9 +1,10 @@
 #pragma once
-#include <mutex>
-#include <thread>
-#include <queue>
-#include <list>
+#include "Queue.h"
 #include "Widget.h"
+#include <vector>
+#include <mutex>
+#include <queue>
+#include <thread>
 
 class WinForm
 {
@@ -12,22 +13,17 @@ public:
     virtual ~WinForm();
 
     void Draw();
-
-    virtual void OnKeyEvent(int ch) = 0;
+    void Run();
 
 protected:
-    void Add(Widget *pWidget);
-    void Del(Widget *pWidget);
+    void Add(Widget *pwidget);
+    void Close(Widget *pwidget);
     void Clear();
 
-protected:
-    bool IsInner(int y, int x);
+    vector<Widget *> _pwidgetes;
+    Queue<int> _eventque;
 
-    bool _isActive;
-    list<Widget *> _pWidgetes;
-    Widget *_pCurrent;
-
-    bool _isRun;
-    queue<int> _keyEvent;
-    thread _worker;
+private:
+    void OnMouseEvent(MEVENT &e);
+    void OnKeyboardEvent(int ch);
 };

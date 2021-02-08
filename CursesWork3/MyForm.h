@@ -5,16 +5,14 @@ class MyForm : public WinForm
 {
 public:
     MyForm();
-    ~MyForm();
-    void btn2_clicked();
+    virtual ~MyForm();
+
+    void list_wheel_up(MouseArgs args);
+    void list_wheel_down(MouseArgs args);
     void btn1_clicked();
-    void OnMouseLCliecked(int y, int x);
-    void OnMouseRCliecked(int y, int x);
-    void OnMouseArrived(int y, int x);
-    void OnMouseLeave(int y, int x);
-    void IsInclude(int y, int x);
-    void OnKeyEvent(int ch);
+    void btn2_clicked();
 
 private:
-    Button *pBtn;
+    Button *pBtn, *pBtn2;
+    List *pList;
 };

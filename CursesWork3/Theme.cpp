@@ -16,11 +16,16 @@ Theme::Theme()
     _textbox.style.bg = COLOR_BLACK;
     _textbox.style.fg = COLOR_BLACK;
 
-    _popup.textColor = COLOR_WHITE;
+    _button.active.bg = COLOR_WHITE;
+    _button.active.fg = COLOR_BLACK;
+    _button.inactive.bg = COLOR_BLACK;
+    _button.inactive.fg = COLOR_WHITE;
+
+    _popup.text_color = COLOR_WHITE;
     _popup.button.bg = COLOR_WHITE;
     _popup.button.fg = COLOR_BLACK;
 
-    _yesno.textColor = COLOR_WHITE;
+    _yesno.text_color = COLOR_WHITE;
     _yesno.active.bg = COLOR_WHITE;
     _yesno.active.fg = COLOR_BLACK;
     _yesno.inactive.bg = COLOR_BLACK;
@@ -56,4 +61,16 @@ Theme::Theme()
     _bar.number = COLOR_BLACK;
     _bar.label.bg = COLOR_BLACK;
     _bar.label.bg = COLOR_WHITE;
+
+    _checkbox.active.bg = COLOR_WHITE;
+    _checkbox.active.fg = COLOR_BLUE;
+    _checkbox.active.opt = A_REVERSE;
+    _checkbox.inactive.bg = COLOR_WHITE;
+    _checkbox.inactive.bg = COLOR_WHITE;
+
+    _radio.active.bg = COLOR_WHITE;
+    _radio.active.fg = COLOR_BLUE;
+    _radio.active.opt = A_REVERSE;
+    _radio.inactive.bg = COLOR_WHITE;
+    _radio.inactive.bg = COLOR_WHITE;
 }

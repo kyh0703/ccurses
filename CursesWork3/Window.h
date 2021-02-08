@@ -1,5 +1,6 @@
 #pragma once
 #include "Attribute.h"
+#include "Event.h"
 #include <functional>
 #include <iostream>
 #include <map>
@@ -9,48 +10,44 @@
 #include <vector>
 using namespace std;
 
-using Event = function<void()>;
-using MouseEvent = function<void()>;
-
 class Window
 {
 public:
     Window();
     virtual ~Window();
 
-    static void Log(const char *format, ...);
-
-    void SetBox(bool isBox);
-    Rect GetWinRect(void);
-    Rect GetRect();
-    void SetRect(int h, int w, int y, int x);
-    void SetColor(int bg, int fg);
-    void SetTitle(string title);
-
-    void Erase();
     virtual void Draw() = 0;
-    void Render();
 
-    Event _clicked;
-    MouseEvent _mouseClick;
-    MouseEvent _mouseUp;
-    MouseEvent _mouseDown;
-    MouseEvent _mouseLeave;
+    Event _click;
+    MouseEvent _mouse_click;
+    MouseEvent _mouse_press;
+    MouseEvent _mouse_double_click;
+    MouseEvent _mouse_release;
+    MouseEvent _mouse_wheel_up;
+    MouseEvent _mouse_wheel_down;
+    KeyboardEvent _key_press;
+    KeyboardEvent _key_default;
+
+    bool _is_enable;
+    bool _is_visible;
+    bool _is_select;
+    bool _is_active;
+    bool _is_box;
+    unsigned _type;
+    Rect _rect;
+    Color _color;
+    int _title_color;
+    string _title;
 
 protected:
     void AddCh(int y, int x, Rune r);
     void AddCh(int y, int x, Style s, chtype c);
     void AddStr(int y, int x, string s);
-    const Rune GetCh(int y, int x);
     const string GetStr(int y, int x, int n);
     void DrawBase();
-    void DrawBase(WINDOW *pParent);
+    void DrawTitle();
+    Rect GetWinRect(void);
+    void Render();
 
-    bool _isBox;
-    unsigned _type;
-    Rect _rect, _wrect, _winner;
-    Color _color;
-    int _titleColor;
-    string _title;
-    WINDOW *_pWin;
+    WINDOW *_pwindow;
 };

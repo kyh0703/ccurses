@@ -14,29 +14,6 @@ void TestTable();
 void TestBarChart();
 void TestInput();
 
-void keykey()
-{
-    MEVENT event;
-    while (int ch = getch())
-    {
-        switch (ch)
-        {
-        case 'q':
-            return;
-        case KEY_MOUSE:
-            printw("I'm mouse [%d][%d]", event.y, event.x);
-            if (getmouse(&event) == OK)
-            {
-                printw("I'm mouse [%d][%d]", event.y, event.x);
-                if (event.bstate == BUTTON1_CLICKED)
-                {
-                }
-            }
-            break;
-        }
-    }
-}
-
 int main(void)
 {
     if (!ui.Init())
@@ -44,22 +21,22 @@ int main(void)
         cout << "ncurses init Fail" << endl;
         return 1;
     }
-    MyForm form;
-    // ui.Regist(&form);
-    form.Draw();
-    form.OnKeyEvent(1);
-    // ui.SetKeyEvent(bind(keykey));
-    // ui.PollEvent(false);
+
+    MyForm my_form;
+    my_form.Draw();
+    my_form.Run();
+    // ui.Regist(&my_form);
+    // ui.PollEvent();
 }
 
 void TestText()
 {
     TextBox text;
-    text.SetRect(5, 15, 10, 10);
-    text.SetTitle("hello");
+    text._rect = {5, 15, 10, 10};
+    text._title = "hello";
     text._text = "hihihi111111111111111111111111111111111111";
     text._style = {COLOR_BLACK, COLOR_RED};
-    ui.Render({&text});
+    // ui.Render({&text});
     while (int ch = getchar())
     {
         switch (ch)
@@ -73,11 +50,11 @@ void TestText()
 void TestPopup()
 {
     Popup pop;
-    pop.SetRect(10, 20, 10, 10);
-    pop.SetTitle("hello");
+    pop._rect = {10, 20, 10, 10};
+    pop._title = "hello";
     pop._text = "hihihiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa111111111";
-    pop._textColor = COLOR_RED;
-    ui.Render({&pop});
+    pop._text_color = COLOR_RED;
+    // ui.Render({&pop});
     while (int ch = getchar())
     {
         switch (ch)
@@ -91,11 +68,11 @@ void TestPopup()
 void TestYesNo()
 {
     YesNo yn;
-    yn.SetRect(10, 20, 10, 10);
-    yn.SetTitle("hello");
+    yn._rect = {10, 20, 10, 10};
+    yn._title = "hello";
     yn._text = "hihihiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa111111111";
-    yn._textColor = COLOR_RED;
-    ui.Render({&yn});
+    yn._text_color = COLOR_RED;
+    // ui.Render({&yn});
     while (int ch = getchar())
     {
         switch (ch)
@@ -118,24 +95,24 @@ void TestYesNo()
 void TestTap()
 {
     Tab tab;
-    tab.SetRect(3, 40, 5, 5);
+    tab._rect = {3, 40, 5, 5};
     tab._tabs = {"test1", "test2", "test3", "test4"};
 
     TextBox txt1;
-    txt1.SetRect(10, 10, 10, 10);
-    txt1.SetTitle("tab1111");
+    txt1._rect = {10, 10, 10, 10};
+    txt1._title = "tab1111";
 
     TextBox txt2;
-    txt2.SetRect(10, 10, 10, 10);
-    txt2.SetTitle("tab2222");
+    txt2._rect = {10, 10, 10, 10};
+    txt2._title = "tab2222";
 
-    switch (tab._activeIdx)
+    switch (tab._active_index)
     {
     case 0:
-        ui.Render({&tab, &txt1});
+        // ui.Render({&tab, &txt1});
         break;
     case 1:
-        ui.Render({&tab, &txt2});
+        // ui.Render({&tab, &txt2});
         break;
     default:
         break;
@@ -149,31 +126,31 @@ void TestTap()
             return;
         case 'h':
             tab.ForcusLeft();
-            switch (tab._activeIdx)
+            switch (tab._active_index)
             {
             case 0:
-                ui.Render({&tab, &txt1});
+                // ui.Render({&tab, &txt1});
                 break;
             case 1:
-                ui.Render({&tab, &txt2});
+                // ui.Render({&tab, &txt2});
                 break;
             default:
-                ui.Render({&tab});
+                // ui.Render({&tab});
                 break;
             }
             break;
         case 'k':
             tab.ForcusRight();
-            switch (tab._activeIdx)
+            switch (tab._active_index)
             {
             case 0:
-                ui.Render({&tab, &txt1});
+                // ui.Render({&tab, &txt1});
                 break;
             case 1:
-                ui.Render({&tab, &txt2});
+                // ui.Render({&tab, &txt2});
                 break;
             default:
-                ui.Render({&tab});
+                // ui.Render({&tab});
                 break;
             }
             break;
@@ -186,10 +163,10 @@ void TestTap()
 void TestList()
 {
     List list;
-    list.SetRect(5, 15, 10, 10);
+    list._rect = {5, 15, 10, 10};
     list._rows = {"test11111", "test2", "test3", "test4",
                   "test5", "test6", "test7"};
-    ui.Render({&list});
+    // ui.Render({&list});
 
     while (int ch = getchar())
     {
@@ -212,17 +189,17 @@ void TestList()
         default:
             break;
         }
-        ui.Render({&list});
+        // ui.Render({&list});
     }
 }
 
 void TestProgressBar()
 {
     ProgressBar pro;
-    pro.SetRect(3, 50, 0, 0);
+    pro._rect = {3, 50, 0, 0};
     pro._percent = 10;
     pro._label = "12341234";
-    ui.Render({&pro});
+    // ui.Render({&pro});
     while (int ch = getchar())
     {
         switch (ch)
@@ -240,14 +217,14 @@ void TestProgressBar()
         default:
             break;
         }
-        ui.Render({&pro});
+        // ui.Render({&pro});
     }
 }
 
 void TestTable()
 {
     Table table;
-    table.SetRect(9, 38, 5, 10);
+    table._rect = {9, 38, 5, 10};
     table._alignment = Table::LEFT;
     table._rows = {
         {"test", "test1", "test2"},
@@ -255,7 +232,7 @@ void TestTable()
         {"test3", "test4", "test7"},
         {"test3", "test4", "test7"},
     };
-    ui.Render({&table});
+    // ui.Render({&table});
     while (int ch = getchar())
     {
         switch (ch)
@@ -271,12 +248,12 @@ void TestTable()
 void TestBarChart()
 {
     BarChart bar;
-    bar.SetRect(20, 50, 0, 0);
+    bar._rect = {20, 50, 0, 0};
     bar._data = {7, 6, 5, 4, 3, 2};
-    bar._barColor = {COLOR_WHITE, COLOR_BLUE, COLOR_RED};
-    bar._labelStyle = {{COLOR_BLACK, COLOR_BLUE}, {COLOR_BLACK, COLOR_RED}};
+    bar._bar_color = {COLOR_WHITE, COLOR_BLUE, COLOR_RED};
+    bar._label_style = {{COLOR_BLACK, COLOR_BLUE}, {COLOR_BLACK, COLOR_RED}};
     bar._label = {"11", "22", "33", "44", "55", "66"};
-    ui.Render({&bar});
+    // ui.Render({&bar});
     while (int ch = getchar())
     {
         switch (ch)
@@ -286,7 +263,7 @@ void TestBarChart()
         default:
             break;
         }
-        ui.Render({&bar});
+        // ui.Render({&bar});
     }
 }
 

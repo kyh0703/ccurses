@@ -4,94 +4,45 @@
 
 Window::Window()
 {
-    _isBox = true;
+    _click = NULL;
+    _mouse_click = NULL;
+    _mouse_press = NULL;
+    _mouse_double_click = NULL;
+    _mouse_release = NULL;
+    _mouse_wheel_up = NULL;
+    _mouse_wheel_down = NULL;
+    _key_press = NULL;
+    _key_default = NULL;
+    _is_enable = true;
+    _is_visible = true;
+    _is_box = true;
+    _is_active = false;
+    _is_select = false;
     _color.bg = th::Get()._base.color.bg;
     _color.fg = th::Get()._base.color.fg;
-    _titleColor = th::Get()._base.tilte;
-    _pWin = NULL;
+    _title_color = th::Get()._base.tilte;
+    _pwindow = NULL;
 }
 
 Window::~Window()
 {
-    delwin(_pWin);
-}
-
-void Window::Log(const char *format, ...)
-{
-    char line[1024], *pPos;
-    memset(line, 0x00, sizeof(line));
-    pPos = line;
-    int size = sprintf(pPos, "DEBUG > ");
-
-    va_list Marker;
-    va_start(Marker, format);
-    vsnprintf(line, sizeof(line) - size, format, Marker);
-    va_end(Marker);
-    mvaddstr(LINES - 1, 0, line);
-}
-
-void Window::SetBox(bool isBox)
-{
-    _isBox = isBox;
-};
-
-Rect Window::GetWinRect()
-{
-    int minY = 0;
-    int minX = 0;
-
-    if (_isBox)
-    {
-        minY += 1;
-        minX += 1;
-    }
-
-    return {_rect.h - 2, _rect.w - 2, minY, minX};
-}
-
-Rect Window::GetRect()
-{
-    return _rect;
-}
-
-void Window::SetRect(int h, int w, int y, int x)
-{
-    _rect = {h, w, y, x};
-}
-
-void Window::SetColor(int bg, int fg)
-{
-    _color.bg = bg;
-    _color.fg = fg;
-}
-
-void Window::SetTitle(string title)
-{
-    _title = title;
-}
-
-void Window::Erase()
-{
-    for (int y = _rect.min.y; y <= _rect.max.y; ++y)
-        for (int x = _rect.min.x; x <= _rect.max.x; ++x)
-            mvdelch(y, x);
-    refresh();
+    delwin(_pwindow);
 }
 
 void Window::AddCh(int y, int x, Rune r)
 {
     int idx = Paint::Get().GetIndex(r.s.bg, r.s.fg);
-    wattron(_pWin, COLOR_PAIR(idx) | r.s.opt);
-    mvwaddch(_pWin, y, x, r.c);
-    wattroff(_pWin, COLOR_PAIR(idx) | r.s.opt);
+    wattron(_pwindow, COLOR_PAIR(idx) | r.s.opt);
+    mvwaddch(_pwindow, y, x, r.c);
+    wattroff(_pwindow, COLOR_PAIR(idx) | r.s.opt);
 }
 
 void Window::AddCh(int y, int x, Style s, chtype c)
 {
     int idx = Paint::Get().GetIndex(s.bg, s.fg);
-    wattron(_pWin, COLOR_PAIR(idx) | s.opt);
-    mvwaddch(_pWin, y, x, c);
-    wattroff(_pWin, COLOR_PAIR(idx) | s.opt);
+    wattron(_pwindow, COLOR_PAIR(idx) | s.opt);
+    mvwaddch(_pwindow, y, x, c);
+    wattroff(_pwindow, COLOR_PAIR(idx) | s.opt);
 }
 
 const string Window::GetStr(int y, int x, int n)
@@ -105,31 +56,57 @@ const string Window::GetStr(int y, int x, int n)
 
 void Window::DrawBase()
 {
-    if (!_pWin)
-        _pWin = newwin(_rect.h, _rect.w, _rect.min.y, _rect.min.x);
+    if (!_pwindow)
+        _pwindow = newwin(_rect.h, _rect.w, _rect.min.y, _rect.min.x);
 
-    werase(_pWin);
+    werase(_pwindow);
 
-    if (_isBox)
-        box(_pWin, 0, 0);
+    if (_is_box)
+        box(_pwindow, 0, 0);
 
-    mvwaddstr(_pWin, 0, 2, _title.c_str());
+    int idx = Paint::Get().GetIndex(_color.bg, _color.fg);
+    chtype ch = COLOR_PAIR(idx);
+    if (_is_select)
+        ch |= A_BOLD | A_BLINK;
+    wbkgd(_pwindow, ch);
+    DrawTitle();
 }
 
-void Window::DrawBase(WINDOW *pParent)
+void Window::DrawTitle()
 {
-    if (!_pWin)
-        _pWin = subwin(pParent, _rect.h, _rect.w, _rect.min.y, _rect.min.x);
+    int idx = Paint::Get().GetIndex(_color.bg, _title_color);
+    wattron(_pwindow, COLOR_PAIR(idx));
+    mvwaddstr(_pwindow, 0, 2, _title.c_str());
+    wattroff(_pwindow, COLOR_PAIR(idx));
+}
 
-    werase(_pWin);
+Rect Window::GetWinRect()
+{
+    int h = 0;
+    int w = 0;
+    int min_y = 0;
+    int min_x = 0;
 
-    if (_isBox)
-        box(_pWin, 0, 0);
+    if (_is_box)
+    {
+        min_y += 1;
+        min_x += 1;
+    }
 
-    mvwaddstr(_pWin, 0, 2, _title.c_str());
+    if (_rect.h <= 2)
+        h = _rect.h;
+    else
+        h = _rect.h - 2;
+
+    if (_rect.w <= 2)
+        w = _rect.w;
+    else
+        w = _rect.w - 2;
+
+    return {h, w, min_y, min_x};
 }
 
 void Window::Render()
 {
-    wrefresh(_pWin);
+    wrefresh(_pwindow);
 }

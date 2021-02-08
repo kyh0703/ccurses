@@ -29,6 +29,6 @@ private:
     short AddColorSet(short bg, short fg);
     short FindColorSet(short bg, short fg);
 
-    int _colorCnt;
-    COLOR_TABLE _colorTable[64];
+    int _color_count;
+    COLOR_TABLE _color_table[64];
 };

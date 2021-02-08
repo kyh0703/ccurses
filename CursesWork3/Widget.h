@@ -7,6 +7,22 @@
 #include "Window.h"
 using namespace std;
 
+enum
+{
+    TEXTBOX,
+    BUTTON,
+    POPUP,
+    YESNO,
+    INPUT,
+    TAB,
+    LIST,
+    PROGRESSBAR,
+    TABLE,
+    BARCHART,
+    RADIO,
+    CHECKBOX,
+};
+
 class Widget : public Window
 {
 public:
@@ -21,7 +37,6 @@ public:
 
     void Draw() override;
 
-public:
     Style _style;
     string _text;
 };
@@ -34,8 +49,6 @@ public:
 
     void Draw() override;
 
-public:
-    bool _isActive;
     string _text;
     Style _active;
     Style _inactive;
@@ -49,9 +62,8 @@ public:
 
     void Draw() override;
 
-public:
-    Style _btnStyle;
-    int _textColor;
+    Style _button_style;
+    int _text_color;
     string _text;
 };
 
@@ -65,12 +77,33 @@ public:
     void ForcusRight();
     void Draw() override;
 
-public:
     Style _active;
     Style _inactive;
-    int _textColor;
-    bool _isYes;
+    int _text_color;
+    bool _is_yes;
     string _text;
+};
+
+class Input : public Widget
+{
+public:
+    Input();
+    ~Input();
+
+    const string GetText();
+    void SetText(string s);
+
+    void Draw() override;
+
+    Style _active;
+    Style _inactive;
+    vector<chtype> _text;
+
+private:
+    void AddText(chtype c);
+    void DelText();
+    void ClearText();
+    void KeyDefault(KeyboardArgs args);
 };
 
 class Tab : public Widget
@@ -83,10 +116,9 @@ public:
     void ForcusRight();
     void Draw() override;
 
-public:
-    Style _activeStyle;
-    Style _inactiveStyle;
-    int _activeIdx;
+    Style _active;
+    Style _inactive;
+    int _active_index;
     vector<string> _tabs;
 };
 
@@ -107,11 +139,10 @@ public:
     void ScrollBottom();
     void Draw() override;
 
-public:
-    Style _activeStyle;
-    Style _inactiveStyle;
-    int _curRow;
-    int _topRow;
+    Style _active;
+    Style _inactive;
+    int _currow;
+    int _toprow;
     vector<string> _rows;
 };
 
@@ -123,9 +154,8 @@ public:
 
     void Draw() override;
 
-public:
-    Style _labelStyle;
-    int _barColor;
+    Style _label_style;
+    int _bar_color;
     int _percent;
     string _label;
 };
@@ -145,7 +175,6 @@ public:
 
     void Draw() override;
 
-public:
     int _alignment;
     vector<vector<string>> _rows;
 };
@@ -158,46 +187,45 @@ public:
 
     void Draw() override;
 
-private:
-    Rune GetBarColor(int idx);
-    Rune GetLabelStyle(int idx);
-    Rune GetNumberStyle(int idx);
-
-public:
-    int _barGap;
-    int _barWidth;
-    int _maxVal;
-    int _numColor;
-    vector<int> _barColor;
-    vector<Style> _labelStyle;
+    int _bar_gap;
+    int _bar_width;
+    int _max_val;
+    int _num_color;
+    vector<int> _bar_color;
+    vector<Style> _label_style;
     vector<string> _label;
     vector<float> _data;
+
+private:
+    Rune GetBarColor(int index);
+    Rune GetLabelStyle(int index);
+    Rune GetNumberStyle(int index);
 };
 
-class Input : public Widget
+class Radio : public Widget
 {
 public:
-    Input();
-    ~Input();
+    Radio();
+    ~Radio();
 
-    vector<string> GetItems();
     void Draw() override;
 
-public:
+    bool _is_check;
     Style _active;
     Style _inactive;
-    int _textGap;
-    vector<string> _query;
-    vector<string> _default;
-    // map<string, Input *> _items;
-};
-
-class RadioButton : public Widget
-{
-
+    string _text;
 };
 
 class CheckBox : public Widget
 {
+public:
+    CheckBox();
+    ~CheckBox();
 
+    void Draw() override;
+
+    bool _is_check;
+    Style _active;
+    Style _inactive;
+    string _text;
 };
