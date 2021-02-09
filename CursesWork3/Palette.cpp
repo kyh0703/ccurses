@@ -1,17 +1,54 @@
-#include "Paint.h"
-#include <unistd.h>
-#include "Theme.h"
 #include "Palette.h"
+#include "Paint.h"
+#include "Theme.h"
+#include <unistd.h>
 
 Palette::Palette()
 {
-    _activeform = 0;
+    setlocale(LC_ALL, "ko_KR.utf8");
+    _active_form = 0;
 }
 
 Palette::~Palette()
 {
     erase();
     endwin();
+    Clear();
+}
+
+bool Palette::operator+=(const WinForm *pform)
+{
+    vector<WinForm *>::iterator it;
+    it = find(_pforms.begin(), _pforms.end(), pform);
+    if (it != _pforms.end())
+        return false;
+    _pforms.push_back((WinForm *)pform);
+    return true;
+}
+
+void Palette::operator-=(const WinForm *pform)
+{
+    vector<WinForm *>::iterator it;
+    for (it = _pforms.begin(); it != _pforms.end(); ++it)
+    {
+        if (*it == pform)
+        {
+            WinForm *pTemp = *it;
+            delete pTemp;
+            _pforms.erase(it);
+        }
+    }
+}
+
+void Palette::Clear()
+{
+    vector<WinForm *>::iterator it;
+    for (it = _pforms.begin(); it != _pforms.end(); ++it)
+    {
+        WinForm *pTemp = *it;
+        delete pTemp;
+        _pforms.erase(it);
+    }
 }
 
 bool Palette::Init()
@@ -30,7 +67,6 @@ bool Palette::Init()
     printf("\033[?1000h");
     fflush(stdout);
 
-    setlocale(LC_ALL, "ko_KR.utf8");
     mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 
     int bg = th::Get()._base.color.bg;
@@ -44,71 +80,35 @@ bool Palette::Init()
 
 void Palette::ForcusLeft()
 {
-    if (_pForms.size() == 0)
-        _activeform = 0;
-    else if (_activeform == 0)
-        _activeform = _pForms.size() - 1;
+    if (_pforms.size() == 0)
+        _active_form = 0;
+    else if (_active_form == 0)
+        _active_form = _pforms.size() - 1;
     else
-        _activeform--;
+        _active_form--;
 }
 
 void Palette::ForcusRight()
 {
-    if (_pForms.size() == 0)
-        _activeform = 0;
-    else if (_activeform < (int)(_pForms.size() - 1))
-        _activeform++;
+    if (_pforms.size() == 0)
+        _active_form = 0;
+    else if (_active_form < (int)(_pforms.size() - 1))
+        _active_form++;
     else
-        _activeform = 0;
+        _active_form = 0;
 }
 
 void Palette::ForcurFirst()
 {
-    _activeform = 0;
+    _active_form = 0;
 }
 
 void Palette::ForcurLast()
 {
-    if (_pForms.size() == 0)
-        _activeform = 0;
+    if (_pforms.size() == 0)
+        _active_form = 0;
     else
-        _activeform = _pForms.size() - 1;
-}
-
-bool Palette::Regist(WinForm *pForm)
-{
-    vector<WinForm *>::iterator it;
-    it = find(_pForms.begin(), _pForms.end(), pForm);
-    if (it != _pForms.end())
-        return false;
-    _pForms.push_back(pForm);
-    return true;
-}
-
-void Palette::Remove(WinForm *pForm)
-{
-    vector<WinForm *>::iterator it;
-    for (it = _pForms.begin(); it != _pForms.end(); ++it)
-    {
-        if (*it == pForm)
-        {
-            WinForm *pTemp = *it;
-            delete pTemp;
-            _pForms.erase(it);
-        }
-    }
-}
-
-void Palette::DrawForm()
-{
-    for (size_t idx = 0; idx < _pForms.size(); ++idx)
-    {
-        if ((int)idx == _activeform)
-        {
-            _pForms[idx]->Draw();
-            return;
-        }
-    }
+        _active_form = _pforms.size() - 1;
 }
 
 void Palette::PollEvent(int fps)
@@ -119,13 +119,25 @@ void Palette::PollEvent(int fps)
         {
             int ch = getch();
             if (ch == KEY_RESIZE)
-                DrawForm();
+                Draw();
             continue;
         }
 
-        DrawForm();
+        Draw();
         this_thread::sleep_for(chrono::milliseconds(fps));
     };
+}
+
+void Palette::Draw()
+{
+    for (size_t index = 0; index < _pforms.size(); ++index)
+    {
+        if ((int)index == _active_form)
+        {
+            _pforms[index]->Draw();
+            return;
+        }
+    }
 }
 
 bool Palette::KbHit()

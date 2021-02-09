@@ -5,8 +5,7 @@
 TextBox::TextBox()
 {
     _style = th::Get()._textbox.style;
-    _is_box = false;
-    _type = TEXTBOX;
+    _box = false;
 }
 
 TextBox::~TextBox()
@@ -15,7 +14,7 @@ TextBox::~TextBox()
 
 void TextBox::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -33,13 +32,14 @@ void TextBox::Draw()
                 continue;
         }
 
+        Style style = _style;
         if (rect.max.y < pos.y)
             break;
 
-        Rune r(_style, _text[text_index]);
+        style.opt = (_enable ? A_BOLD : A_NORMAL);
+        Rune r(style, _text[text_index]);
         AddCh(pos.y, pos.x++, r);
     }
-
     Render();
 }
 
@@ -47,7 +47,7 @@ Button::Button()
 {
     _active = th::Get()._button.active;
     _inactive = th::Get()._button.inactive;
-    _type = BUTTON;
+    _key_default = bind(&Button::KeyDefault, this, placeholders::_1);
 }
 
 Button::~Button()
@@ -56,12 +56,17 @@ Button::~Button()
 
 void Button::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
     Rect rect = GetWinRect();
     Pos pos(rect.min.y, rect.min.x);
+
+    if (rect.w < (int)_text.size())
+        pos.x = rect.min.x;
+    else
+        pos.x = (rect.min.x + ((rect.w - _text.size()) / 2));
 
     for (size_t text_index = 0; text_index < _text.size(); ++text_index)
     {
@@ -74,17 +79,31 @@ void Button::Draw()
         else
             style = _inactive;
 
-        Rune r(_active, _text[text_index]);
+        style.opt = (_enable ? A_BOLD : A_NORMAL);
+        Rune r(style, _text[text_index]);
         AddCh(pos.y, pos.x++, r);
     }
     Render();
+}
+
+void Button::KeyDefault(KeyboardArgs args)
+{
+    switch (args.ch)
+    {
+    case ' ':
+    case 10:
+        if (_click)
+            _click(EventArgs());
+        break;
+    default:
+        break;
+    }
 }
 
 Popup::Popup()
 {
     _button_style = th::Get()._popup.button;
     _text_color = th::Get()._popup.text_color;
-    _type = POPUP;
 }
 
 Popup::~Popup()
@@ -93,7 +112,7 @@ Popup::~Popup()
 
 void Popup::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -135,7 +154,6 @@ YesNo::YesNo()
     _active = th::Get()._yesno.active;
     _inactive = th::Get()._yesno.inactive;
     _is_yes = true;
-    _type = YESNO;
 }
 
 YesNo::~YesNo()
@@ -156,7 +174,7 @@ void YesNo::ForcusRight()
 
 void YesNo::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -204,7 +222,7 @@ void YesNo::Draw()
 
 Input::Input()
 {
-    _is_box = false;
+    _box = false;
     _is_active = false;
     _active = th::Get()._input.active;
     _inactive = th::Get()._input.inactive;
@@ -232,7 +250,7 @@ void Input::SetText(string s)
 
 void Input::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -295,6 +313,10 @@ void Input::KeyDefault(KeyboardArgs args)
 {
     switch(args.ch)
     {
+    case KEY_ENTER:
+    case 10:
+        break;
+        break;
     case KEY_BACKSPACE:
         DelText();
         break;
@@ -309,11 +331,10 @@ void Input::KeyDefault(KeyboardArgs args)
 
 Tab::Tab()
 {
-    _is_box = false;
+    _box = false;
     _active = th::Get()._tab.active;
     _inactive = th::Get()._tab.inactive;
     _active_index = 0;
-    _type = TAB;
 }
 
 Tab::~Tab()
@@ -334,7 +355,7 @@ void Tab::ForcusRight()
 
 void Tab::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -371,6 +392,7 @@ List::List()
     _inactive = th::Get()._list.inactive;
     _currow = 0;
     _toprow = 0;
+    _key_default = bind(&List::KeyDefault, this, placeholders::_1);
 }
 
 List::~List()
@@ -424,7 +446,7 @@ void List::ScrollBottom()
 
 void List::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -474,6 +496,33 @@ void List::Draw()
     Render();
 }
 
+void List::KeyDefault(KeyboardArgs args)
+{
+    switch(args.ch)
+    {
+    case KEY_UP:
+        ScrollUp();
+        break;
+    case KEY_DOWN:
+        ScrollDown();
+        break;
+    case KEY_HOME:
+        ScrollTop();
+        break;
+    case KEY_END:
+        ScrollBottom();
+        break;
+    case KEY_PPAGE:
+        ScrollPageUp();
+        break;
+    case KEY_NPAGE:
+        ScrollPageDown();
+        break;
+    default:
+        break;
+    }
+}
+
 ProgressBar::ProgressBar()
 {
     _bar_color = th::Get()._progress.bar;
@@ -486,7 +535,7 @@ ProgressBar::~ProgressBar()
 
 void ProgressBar::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -541,7 +590,7 @@ Table::~Table()
 
 void Table::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -611,7 +660,7 @@ BarChart::~BarChart()
 
 void BarChart::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -697,7 +746,7 @@ Rune BarChart::GetNumberStyle(int index)
 
 Radio::Radio()
 {
-    _is_box = false;
+    _box = false;
     _active = th::Get()._checkbox.active;
     _inactive = th::Get()._checkbox.inactive;
 }
@@ -708,7 +757,7 @@ Radio::~Radio()
 
 void Radio::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -737,9 +786,10 @@ void Radio::Draw()
 
 CheckBox::CheckBox()
 {
-    _is_box = false;
+    _box = false;
     _active = th::Get()._checkbox.active;
     _inactive = th::Get()._checkbox.inactive;
+    _key_default = bind(&CheckBox::KeyDefault, this, placeholders::_1);
 }
 
 CheckBox::~CheckBox()
@@ -748,7 +798,7 @@ CheckBox::~CheckBox()
 
 void CheckBox::Draw()
 {
-    if (!_is_visible)
+    if (!_visible)
         return;
 
     DrawBase();
@@ -756,12 +806,12 @@ void CheckBox::Draw()
     Pos pos(rect.min.y, rect.min.x);
 
     Style style;
-    if (_is_check)
+    if (_checked)
         style = _active;
     else
         style = _inactive;
 
-    Rune r(style, _is_check ? 'v' : ' ');
+    Rune r(style, _checked ? 'v' : ' ');
     AddCh(pos.y, pos.x, r);
     pos.x += 2;
 
@@ -774,4 +824,18 @@ void CheckBox::Draw()
     }
 
     Render();
+}
+
+void CheckBox::KeyDefault(KeyboardArgs args)
+{
+    switch (args.ch)
+    {
+    case ' ':
+    case 10:
+        if (_click)
+            _click(EventArgs());
+        break;
+    default:
+        break;
+    }
 }

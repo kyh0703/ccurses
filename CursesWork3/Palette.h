@@ -12,27 +12,23 @@ using namespace std;
 class Palette
 {
 public:
-
     Palette();
     ~Palette();
 
+    bool operator+=(const WinForm *pform);
+    void operator-=(const WinForm *pform);
+    void Clear();
     bool Init();
-
     void ForcusLeft();
     void ForcusRight();
     void ForcurFirst();
     void ForcurLast();
-
-    bool Regist(WinForm *pForm);
-    void Remove(WinForm *pForm);
-
-    void DrawForm();
     void PollEvent(int fps = 500);
 
 private:
+    void Draw();
     bool KbHit();
 
-    int _activeform;
-    WinForm *_pAactvieForm;
-    vector<WinForm *> _pForms;
+    int _active_form;
+    vector<WinForm *> _pforms;
 };

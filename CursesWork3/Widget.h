@@ -7,22 +7,6 @@
 #include "Window.h"
 using namespace std;
 
-enum
-{
-    TEXTBOX,
-    BUTTON,
-    POPUP,
-    YESNO,
-    INPUT,
-    TAB,
-    LIST,
-    PROGRESSBAR,
-    TABLE,
-    BARCHART,
-    RADIO,
-    CHECKBOX,
-};
-
 class Widget : public Window
 {
 public:
@@ -52,6 +36,9 @@ public:
     string _text;
     Style _active;
     Style _inactive;
+
+private:
+    void KeyDefault(KeyboardArgs args);
 };
 
 class Popup : public Widget
@@ -122,6 +109,16 @@ public:
     vector<string> _tabs;
 };
 
+class Panel : public Widget
+{
+public:
+    Panel();
+    ~Panel();
+
+
+    void Draw();
+};
+
 class List : public Widget
 {
 public:
@@ -144,6 +141,9 @@ public:
     int _currow;
     int _toprow;
     vector<string> _rows;
+
+private:
+    void KeyDefault(KeyboardArgs args);
 };
 
 class ProgressBar : public Widget
@@ -224,8 +224,11 @@ public:
 
     void Draw() override;
 
-    bool _is_check;
+    bool _checked;
     Style _active;
     Style _inactive;
     string _text;
+
+private:
+    void KeyDefault(KeyboardArgs args);
 };

@@ -16,6 +16,7 @@ public:
     Window();
     virtual ~Window();
 
+    bool CanFocus();
     virtual void Draw() = 0;
 
     Event _click;
@@ -28,12 +29,11 @@ public:
     KeyboardEvent _key_press;
     KeyboardEvent _key_default;
 
-    bool _is_enable;
-    bool _is_visible;
-    bool _is_select;
+    bool _enable;
+    bool _visible;
+    bool _forcus;
     bool _is_active;
-    bool _is_box;
-    unsigned _type;
+    bool _box;
     Rect _rect;
     Color _color;
     int _title_color;

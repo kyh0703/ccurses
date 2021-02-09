@@ -2,27 +2,28 @@
 
 MyForm::MyForm()
 {
-    // pBtn = new Button;
-    // pBtn->_rect = {3, 10, 0, 0};
-    // pBtn->_color = {COLOR_BLACK, COLOR_RED};
-    // pBtn->_title_color = COLOR_RED;
-    // pBtn->_title = "test";
-    // pBtn->_text = "btn1";
-    // pBtn->_click = bind(&MyForm::btn1_clicked, this);
-    // Add(pBtn);
+    pBtn = new Button;
+    pBtn->_rect = {3, 10, 0, 0};
+    pBtn->_color = {COLOR_BLACK, COLOR_RED};
+    pBtn->_title_color = COLOR_RED;
+    pBtn->_title = "test";
+    pBtn->_text = "한글";
+    pBtn->_enable = false;
+    pBtn->_click = bind(&MyForm::btn1_clicked, this);
+    Add(pBtn);
 
-    // pBtn2 = new Button;
-    // pBtn2->_rect = {3, 11, 10, 10};
-    // pBtn2->_text = "btn2222222";
-    // pBtn2->_click = bind(&MyForm::btn2_clicked, this);
-    // Add(pBtn2);
+    pBtn2 = new Button;
+    pBtn2->_rect = {3, 11, 10, 10};
+    pBtn2->_text = "btn2222222";
+    pBtn2->_click = bind(&MyForm::btn2_clicked, this);
+    Add(pBtn2);
 
-    // pList = new List;
-    // pBtn2->_rect = {5, 10, 15, 10};
-    // pList->_rows = {"test1", "test2", "test3", "test4", "test5", "test6"};
-    // pList->_mouse_wheel_up = bind(&MyForm::list_wheel_up, this, placeholders::_1);
-    // pList->_mouse_wheel_down = bind(&MyForm::list_wheel_down, this, placeholders::_1);
-    // Add(pList);
+    pList = new List;
+    pList->_rect = {5, 10, 15, 10};
+    pList->_rows = {"test1", "test2", "test3", "test4", "test5", "test6"};
+    pList->_mouse_wheel_up = bind(&MyForm::list_wheel_up, this, placeholders::_1);
+    pList->_mouse_wheel_down = bind(&MyForm::list_wheel_down, this, placeholders::_1);
+    Add(pList);
 
     // CheckBox *check = new CheckBox;
     // check->_rect = {5, 15, 20, 20};
@@ -30,11 +31,11 @@ MyForm::MyForm()
     // check->_is_check = true;
     // Add(check);
 
-    Input *input = new Input;
-    input->_rect = {2, 15, 20, 20};
-    input->_is_active = true;
-    input->SetText("test");
-    Add(input);
+    // Input *input = new Input;
+    // input->_rect = {2, 15, 20, 20};
+    // input->_is_active = true;
+    // input->SetText("test");
+    // Add(input);
 }
 
 MyForm::~MyForm()
@@ -58,5 +59,5 @@ void MyForm::btn1_clicked()
 
 void MyForm::btn2_clicked()
 {
-    pBtn2->_text = "test232";
+    pBtn2->_text = "alter";
 }

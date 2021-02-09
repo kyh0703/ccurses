@@ -16,14 +16,14 @@ Style::Style()
 {
     this->bg = COLOR_BLACK;
     this->fg = COLOR_WHITE;
-    this->opt = A_NORMAL;
+    this->opt = A_BOLD;
 }
 
 Style::Style(int bg, int fg)
 {
     this->bg = bg;
     this->fg = fg;
-    this->opt = A_NORMAL;
+    this->opt = A_BOLD;
 }
 
 Style::Style(int bg, int fg, int opt)
@@ -68,6 +68,12 @@ Rect::Rect(int h, int w, int y, int x)
     max.x = x + w - 1;
     this->h = h;
     this->w = w;
+}
+
+bool Rect::IsInclude(int y, int x)
+{
+    return (this->min.y <= y && y <= this->max.y &&
+            this->min.x <= x && x <= this->max.x);
 }
 
 Rune::Rune()

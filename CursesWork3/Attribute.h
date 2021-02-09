@@ -28,6 +28,7 @@ struct Rect
 {
     Rect();
     Rect(int h, int w, int y, int x);
+    bool IsInclude(int y, int x);
     Pos min;
     Pos max;
     int h, w;

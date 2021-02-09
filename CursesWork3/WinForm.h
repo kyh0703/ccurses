@@ -1,10 +1,10 @@
 #pragma once
 #include "Queue.h"
 #include "Widget.h"
-#include <vector>
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <vector>
 
 class WinForm
 {
@@ -24,6 +24,11 @@ protected:
     Queue<int> _eventque;
 
 private:
+    void PrevForcus();
+    void NextForcus();
+    void SetForcus();
     void OnMouseEvent(MEVENT &e);
     void OnKeyboardEvent(int ch);
+
+    Widget *_pcurrent;
 };

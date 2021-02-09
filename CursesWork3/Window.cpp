@@ -13,11 +13,11 @@ Window::Window()
     _mouse_wheel_down = NULL;
     _key_press = NULL;
     _key_default = NULL;
-    _is_enable = true;
-    _is_visible = true;
-    _is_box = true;
+    _enable = true;
+    _visible = true;
+    _box = true;
     _is_active = false;
-    _is_select = false;
+    _forcus = false;
     _color.bg = th::Get()._base.color.bg;
     _color.fg = th::Get()._base.color.fg;
     _title_color = th::Get()._base.tilte;
@@ -27,6 +27,11 @@ Window::Window()
 Window::~Window()
 {
     delwin(_pwindow);
+}
+
+bool Window::CanFocus()
+{
+    return (_enable && _visible && _key_default);
 }
 
 void Window::AddCh(int y, int x, Rune r)
@@ -61,13 +66,14 @@ void Window::DrawBase()
 
     werase(_pwindow);
 
-    if (_is_box)
+    if (_box)
         box(_pwindow, 0, 0);
 
     int idx = Paint::Get().GetIndex(_color.bg, _color.fg);
     chtype ch = COLOR_PAIR(idx);
-    if (_is_select)
+    if (_forcus)
         ch |= A_BOLD | A_BLINK;
+
     wbkgd(_pwindow, ch);
     DrawTitle();
 }
@@ -87,7 +93,7 @@ Rect Window::GetWinRect()
     int min_y = 0;
     int min_x = 0;
 
-    if (_is_box)
+    if (_box)
     {
         min_y += 1;
         min_x += 1;
