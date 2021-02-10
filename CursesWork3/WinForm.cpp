@@ -62,6 +62,7 @@ void WinForm::PrevForcus()
     {
         if (*it == _pcurrent)
             continue;
+
         if ((*it)->CanFocus())
         {
             _pcurrent = (*it);
@@ -92,6 +93,7 @@ void WinForm::NextForcus()
     {
         if (*it == _pcurrent)
             continue;
+
         if ((*it)->CanFocus())
         {
             _pcurrent = (*it);
@@ -133,7 +135,10 @@ void WinForm::OnMouseEvent(MEVENT &e)
         if (!rect.IsInclude(e.y, e.x))
             continue;
 
-        if ((*it)->CanFocus())
+        if (!(*it)->_visible && !(*it)->_enable)
+            continue;
+
+        if ((*it)->_key_default)
         {
             _pcurrent = *it;
             SetForcus();
@@ -196,7 +201,8 @@ void WinForm::OnKeyboardEvent(int ch)
         PrevForcus();
         break;
     default:
-        _pcurrent->_key_default(args);
+        if (_pcurrent && _pcurrent->CanFocus())
+            _pcurrent->_key_default(args);
         break;
     }
 }

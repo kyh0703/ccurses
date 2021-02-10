@@ -78,6 +78,12 @@ public:
         Style inactive;
     };
 
+    struct MessageBox
+    {
+        Style active;
+        Style inactive;
+    };
+
 public:
     static Theme &Get();
 

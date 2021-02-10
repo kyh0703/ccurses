@@ -46,7 +46,7 @@ LIB_PATHS       = -L$(CO_LIB) -L$(IL_LIB)
 # Define / Compile flags / Linking flags #
 #----------------------------------------#
 DEFINE					=
-CFLAGS					= -g -O0 -fPIC -Wall -std=c++11
+CFLAGS					= -g -O0 -fPIC -Wall -std=c++11 -fshort-wchar
 LFLAGS					= -lstdc++ -lpthread -lncursesw
 
 ############################
