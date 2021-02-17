@@ -13,9 +13,9 @@ MyForm::MyForm()
     pBtn->_rect = {3, 10, LINES/2, COLS/2};
     pBtn->_color = {COLOR_BLACK, COLOR_RED};
     pBtn->_title_color = COLOR_RED;
-    pBtn->_title = "test";
+    pBtn->_title = L"버튼";
     pBtn->_text = L"등록";
-    pBtn->_enable = false;
+    pBtn->_enable = true;
     pBtn->_click = bind(&MyForm::btn1_clicked, this);
     Add(pBtn);
 
@@ -26,17 +26,17 @@ MyForm::MyForm()
     // Add(pBtn2);
 
     // pList = new List;
-    // pList->_rect = {5, 10, 15, 10};
-    // pList->_rows = {"test1", "test2", "test3", "test4", "test5", "test6"};
+    // pList->_rect = {5, 15, 15, 10};
+    // pList->_rows = {L"안녕", L"안녕1", L"안녕2", L"안녕3", L"test5", L"test6"};
     // pList->_mouse_wheel_up = bind(&MyForm::list_wheel_up, this, placeholders::_1);
     // pList->_mouse_wheel_down = bind(&MyForm::list_wheel_down, this, placeholders::_1);
     // Add(pList);
 
-    // CheckBox *check = new CheckBox;
-    // check->_rect = {5, 15, 20, 20};
-    // check->_text = "Checkbox";
-    // check->_is_check = true;
-    // Add(check);
+    CheckBox *check = new CheckBox;
+    check->_rect = {1, 15, 20, 20};
+    check->_text = L"TLS사용여부";
+    check->_checked = true;
+    Add(check);
 
     // Input *input = new Input;
     // input->_rect = {2, 15, 20, 20};
@@ -61,7 +61,7 @@ void MyForm::list_wheel_down(MouseArgs args)
 
 void MyForm::btn1_clicked()
 {
-    int ret = MessageBox("test", "Do you kow bts?", MB_TYPE_YESNO);
+    int ret = MessageBox(L"안녕", L"BTS를 아시나요?", MB_TYPE_YESNO);
 }
 
 void MyForm::btn2_clicked()

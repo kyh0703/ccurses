@@ -41,33 +41,25 @@ bool Window::IsHangle(const wchar_t wch)
     return (start_ch <= wch && wch <= end_ch);
 }
 
+void Window::AddCh(int y, int x, cchar_t *cch)
+{
+    mvwadd_wch(_window, y, x, cch);
+}
+
 void Window::AddCh(int y, int x, Rune r)
 {
     int idx = Paint::Get().GetIndex(r.s.bg, r.s.fg);
     cchar_t cch;
-    setcchar(&cch, &r.wc, r.s.opt, COLOR_PAIR(idx), NULL);
+    setcchar(&cch, &r.wch, r.s.opt, COLOR_PAIR(idx), NULL);
     mvwadd_wch(_window, y, x, &cch);
-    // mvwaddwstr(_window, y, x, &r.wc);
-    // wattron(_window, COLOR_PAIR(idx) | r.s.opt);
-    // mvwaddch(_window, y, x, r.c);
-    // wattroff(_window, COLOR_PAIR(idx) | r.s.opt);
 }
 
-void Window::AddCh(int y, int x, Style s, chtype c)
+void Window::AddCh(int y, int x, Style s, wchar_t wch)
 {
-    // int idx = Paint::Get().GetIndex(s.bg, s.fg);
-    // wattron(_window, COLOR_PAIR(idx) | s.opt);
-    // mvwaddch(_window, y, x, c);
-    // wattroff(_window, COLOR_PAIR(idx) | s.opt);
-}
-
-const string Window::GetStr(int y, int x, int n)
-{
-    vector<chtype> runes;
-    for (int col = x; col < x + n; ++col)
-        runes.push_back(mvgetch(y, col));
-    string str(runes.begin(), runes.end());
-    return str;
+    int idx = Paint::Get().GetIndex(s.bg, s.fg);
+    cchar_t cch;
+    setcchar(&cch, &wch, WA_NORMAL, COLOR_PAIR(idx), NULL);
+    mvwadd_wch(_window, y, x, &cch);
 }
 
 void Window::DrawBase()
@@ -82,19 +74,30 @@ void Window::DrawBase()
 
     int idx = Paint::Get().GetIndex(_color.bg, _color.fg);
     chtype ch = COLOR_PAIR(idx);
-    if (_focus)
-        ch |= A_BOLD | A_BLINK;
+    if (_enable)
+        ch |= WA_BOLD;
+    else
+        ch |= WA_NORMAL;
 
+    if (_focus)
+        ch |= WA_BLINK;
     wbkgd(_window, ch);
+
     DrawTitle();
 }
 
 void Window::DrawTitle()
 {
-    int idx = Paint::Get().GetIndex(_color.bg, _title_color);
-    wattron(_window, COLOR_PAIR(idx));
-    mvwaddstr(_window, 0, 2, _title.c_str());
-    wattroff(_window, COLOR_PAIR(idx));
+    Pos pos(0, 2);
+    for (size_t title_index = 0; title_index < _title.size(); ++title_index)
+    {
+        Rune r(_color.bg, _color.fg, _title[title_index]);
+        AddCh(pos.y, pos.x, r.wch);
+        if (IsHangle(r.wch))
+            pos.x += 2;
+        else
+            pos.x += 1;
+    }
 }
 
 Rect Window::GetWinRect()

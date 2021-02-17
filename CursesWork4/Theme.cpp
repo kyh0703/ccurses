@@ -23,44 +23,42 @@ Theme::Theme()
 
     _input.active.bg = COLOR_BLACK;
     _input.active.fg = COLOR_WHITE;
-    _input.active.opt = A_UNDERLINE | A_BLINK;
+    _input.active.opt = WA_UNDERLINE | WA_BLINK;
     _input.inactive.bg = COLOR_BLACK;
     _input.inactive.fg = COLOR_WHITE;
-    _input.inactive.opt = A_UNDERLINE;
+    _input.inactive.opt = WA_UNDERLINE;
 
     _tab.active.bg = COLOR_WHITE;
     _tab.active.fg = COLOR_BLACK;
-    _tab.active.opt = A_BLINK;
+    _tab.active.opt = WA_BLINK;
     _tab.inactive.bg = COLOR_BLACK;
     _tab.inactive.fg = COLOR_WHITE;
-    _tab.inactive.opt = A_NORMAL;
+    _tab.inactive.opt = WA_NORMAL;
 
     _list.active.bg = COLOR_WHITE;
     _list.active.fg = COLOR_BLACK;
-    _list.active.opt = A_BLINK;
+    _list.active.opt = WA_REVERSE;
     _list.inactive.bg = COLOR_BLACK;
     _list.inactive.fg = COLOR_WHITE;
-    _list.inactive.opt = A_NORMAL;
+    _list.inactive.opt = WA_NORMAL;
 
     _progress.bar = COLOR_WHITE;
     _progress.label.bg = COLOR_BLACK;
     _progress.label.fg = COLOR_WHITE;
-    _progress.label.opt = A_NORMAL;
+    _progress.label.opt = WA_NORMAL;
 
     _bar.bar = COLOR_WHITE;
     _bar.number = COLOR_BLACK;
     _bar.label.bg = COLOR_BLACK;
     _bar.label.bg = COLOR_WHITE;
 
-    _checkbox.active.bg = COLOR_WHITE;
-    _checkbox.active.fg = COLOR_BLUE;
-    _checkbox.active.opt = A_REVERSE;
-    _checkbox.inactive.bg = COLOR_WHITE;
-    _checkbox.inactive.bg = COLOR_WHITE;
+    _checkbox.style.bg = COLOR_WHITE;
+    _checkbox.style.fg = COLOR_BLACK;
+    _checkbox.style.opt = WA_REVERSE;
 
     _radio.active.bg = COLOR_WHITE;
     _radio.active.fg = COLOR_BLUE;
-    _radio.active.opt = A_REVERSE;
+    _radio.active.opt = WA_REVERSE;
     _radio.inactive.bg = COLOR_WHITE;
     _radio.inactive.bg = COLOR_WHITE;
 }

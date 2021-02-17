@@ -4,7 +4,7 @@
 #include <functional>
 #include <iostream>
 #include <map>
-#include <ncurses.h>
+#include <ncursesw/curses.h>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -31,7 +31,7 @@ public:
 
     bool _enable;
     bool _visible;
-    bool _forcus;
+    bool _focus;
     bool _is_active;
     bool _box;
     Rect _rect;
@@ -40,6 +40,7 @@ public:
     string _title;
 
 protected:
+    bool IsHangle(const wchar_t wch);
     void AddCh(int y, int x, Rune r);
     void AddCh(int y, int x, Style s, chtype c);
     void AddStr(int y, int x, string s);
@@ -49,5 +50,5 @@ protected:
     Rect GetWinRect(void);
     void Render();
 
-    WINDOW *_pwindow;
+    WINDOW *_window;
 };

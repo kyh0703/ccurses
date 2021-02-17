@@ -1,12 +1,12 @@
 #pragma once
-#include <locale.h>
-#include <ncurses.h>
-#include <thread>
-#include <chrono>
-#include <vector>
-#include <string>
-#include "WinForm.h"
+#include "Form.h"
 #include "Widget.h"
+#include <chrono>
+#include <locale.h>
+#include <ncursesw/curses.h>
+#include <string>
+#include <thread>
+#include <vector>
 using namespace std;
 
 class Palette
@@ -15,8 +15,8 @@ public:
     Palette();
     ~Palette();
 
-    bool operator+=(const WinForm *pform);
-    void operator-=(const WinForm *pform);
+    bool operator+=(const Form *form);
+    void operator-=(const Form *form);
     void Clear();
     bool Init();
     void ForcusLeft();
@@ -30,5 +30,5 @@ private:
     bool KbHit();
 
     int _active_form;
-    vector<WinForm *> _pforms;
+    vector<Form *> _forms;
 };

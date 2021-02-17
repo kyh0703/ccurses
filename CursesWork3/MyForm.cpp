@@ -1,22 +1,23 @@
+#include "MessageBox.h"
 #include "MyForm.h"
 
 MyForm::MyForm()
 {
-    TextBox *text = new TextBox;
-    text->_rect = {5, 10, 10, 10};
-    text->_box = true;
-    text->_text = "asdfffffffffffffffffffffffffffffff";
-    Add(text);
+    // TextBox *text = new TextBox;
+    // text->_rect = {5, 10, 10, 10};
+    // text->_box = true;
+    // text->_text = L"한글입니다아아aaa";
+    // Add(text);
 
-    // pBtn = new Button;
-    // pBtn->_rect = {3, 10, 0, 0};
-    // pBtn->_color = {COLOR_BLACK, COLOR_RED};
-    // pBtn->_title_color = COLOR_RED;
-    // pBtn->_title = "test";
-    // pBtn->_text = "한글";
-    // pBtn->_enable = false;
-    // pBtn->_click = bind(&MyForm::btn1_clicked, this);
-    // Add(pBtn);
+    pBtn = new Button;
+    pBtn->_rect = {3, 10, LINES/2, COLS/2};
+    pBtn->_color = {COLOR_BLACK, COLOR_RED};
+    pBtn->_title_color = COLOR_RED;
+    pBtn->_title = "test";
+    pBtn->_text = L"등록";
+    pBtn->_enable = false;
+    pBtn->_click = bind(&MyForm::btn1_clicked, this);
+    Add(pBtn);
 
     // pBtn2 = new Button;
     // pBtn2->_rect = {3, 11, 10, 10};
@@ -60,10 +61,10 @@ void MyForm::list_wheel_down(MouseArgs args)
 
 void MyForm::btn1_clicked()
 {
-    pBtn->_text = "alter";
+    int ret = MessageBox("test", "Do you kow bts?", MB_TYPE_YESNO);
 }
 
 void MyForm::btn2_clicked()
 {
-    pBtn2->_text = "alter";
+    pBtn2->_text = L"alter";
 }

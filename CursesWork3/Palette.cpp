@@ -16,38 +16,38 @@ Palette::~Palette()
     Clear();
 }
 
-bool Palette::operator+=(const WinForm *pform)
+bool Palette::operator+=(const Form *form)
 {
-    vector<WinForm *>::iterator it;
-    it = find(_pforms.begin(), _pforms.end(), pform);
-    if (it != _pforms.end())
+    vector<Form *>::iterator it;
+    it = find(_forms.begin(), _forms.end(), form);
+    if (it != _forms.end())
         return false;
-    _pforms.push_back((WinForm *)pform);
+    _forms.push_back((Form *)form);
     return true;
 }
 
-void Palette::operator-=(const WinForm *pform)
+void Palette::operator-=(const Form *form)
 {
-    vector<WinForm *>::iterator it;
-    for (it = _pforms.begin(); it != _pforms.end(); ++it)
+    vector<Form *>::iterator it;
+    for (it = _forms.begin(); it != _forms.end(); ++it)
     {
-        if (*it == pform)
+        if (*it == form)
         {
-            WinForm *pTemp = *it;
+            Form *pTemp = *it;
             delete pTemp;
-            _pforms.erase(it);
+            _forms.erase(it);
         }
     }
 }
 
 void Palette::Clear()
 {
-    vector<WinForm *>::iterator it;
-    for (it = _pforms.begin(); it != _pforms.end(); ++it)
+    vector<Form *>::iterator it;
+    for (it = _forms.begin(); it != _forms.end(); ++it)
     {
-        WinForm *pTemp = *it;
+        Form *pTemp = *it;
         delete pTemp;
-        _pforms.erase(it);
+        _forms.erase(it);
     }
 }
 
@@ -80,19 +80,19 @@ bool Palette::Init()
 
 void Palette::ForcusLeft()
 {
-    if (_pforms.size() == 0)
+    if (_forms.size() == 0)
         _active_form = 0;
     else if (_active_form == 0)
-        _active_form = _pforms.size() - 1;
+        _active_form = _forms.size() - 1;
     else
         _active_form--;
 }
 
 void Palette::ForcusRight()
 {
-    if (_pforms.size() == 0)
+    if (_forms.size() == 0)
         _active_form = 0;
-    else if (_active_form < (int)(_pforms.size() - 1))
+    else if (_active_form < (int)(_forms.size() - 1))
         _active_form++;
     else
         _active_form = 0;
@@ -105,10 +105,10 @@ void Palette::ForcurFirst()
 
 void Palette::ForcurLast()
 {
-    if (_pforms.size() == 0)
+    if (_forms.size() == 0)
         _active_form = 0;
     else
-        _active_form = _pforms.size() - 1;
+        _active_form = _forms.size() - 1;
 }
 
 void Palette::PollEvent(int fps)
@@ -117,7 +117,8 @@ void Palette::PollEvent(int fps)
     {
         if (KbHit())
         {
-            int ch = getch();
+            wint_t ch;
+            get_wch(&ch);
             if (ch == KEY_RESIZE)
                 Draw();
             continue;
@@ -130,11 +131,11 @@ void Palette::PollEvent(int fps)
 
 void Palette::Draw()
 {
-    for (size_t index = 0; index < _pforms.size(); ++index)
+    for (size_t index = 0; index < _forms.size(); ++index)
     {
         if ((int)index == _active_form)
         {
-            _pforms[index]->Draw();
+            _forms[index]->Draw();
             return;
         }
     }

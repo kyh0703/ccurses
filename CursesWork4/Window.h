@@ -37,14 +37,13 @@ public:
     Rect _rect;
     Color _color;
     int _title_color;
-    string _title;
+    wstring _title;
 
 protected:
-    bool IsHangle(const wchar_t wch);
+    bool IsHangle(const wchar_t wc);
+    void AddCh(int y, int x, cchar_t *cch);
     void AddCh(int y, int x, Rune r);
-    void AddCh(int y, int x, Style s, chtype c);
-    void AddStr(int y, int x, string s);
-    const string GetStr(int y, int x, int n);
+    void AddCh(int y, int x, Style s, wchar_t wc);
     void DrawBase();
     void DrawTitle();
     Rect GetWinRect(void);

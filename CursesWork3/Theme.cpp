@@ -21,16 +21,6 @@ Theme::Theme()
     _button.inactive.bg = COLOR_BLACK;
     _button.inactive.fg = COLOR_WHITE;
 
-    _popup.text_color = COLOR_WHITE;
-    _popup.button.bg = COLOR_WHITE;
-    _popup.button.fg = COLOR_BLACK;
-
-    _yesno.text_color = COLOR_WHITE;
-    _yesno.active.bg = COLOR_WHITE;
-    _yesno.active.fg = COLOR_BLACK;
-    _yesno.inactive.bg = COLOR_BLACK;
-    _yesno.inactive.fg = COLOR_WHITE;
-
     _input.active.bg = COLOR_BLACK;
     _input.active.fg = COLOR_WHITE;
     _input.active.opt = A_UNDERLINE | A_BLINK;

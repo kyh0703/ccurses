@@ -19,4 +19,4 @@ enum MB_TYPE
     MB_TYPE_YESNO,
 };
 
-const int MessageBox(string title, string text, int type);
+const int MessageBox(wstring title, wstring text, int type);

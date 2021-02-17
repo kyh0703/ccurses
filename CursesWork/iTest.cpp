@@ -1,359 +1,164 @@
-#include <iostream>
-#include <unistd.h>
-#include "Palette.h"
+#define _XOPEN_SOURCE_EXTENDED
 
-Palette ui;
-void TestText();
-void TestPopup();
-void TestYesNo();
-void TestTap();
-void TestList();
-void TestProgressBar();
-void TestTable();
-void TestBarChart();
-void TestInput();
+#include <math.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
-class MyForm : public WinForm
+#ifdef __APPLE__
+#include <ncurses.h>
+#else
+#include <ncursesw/curses.h>
+#endif
+
+#include "game.h"
+#include "render.h"
+
+#define EMPTY_BLOCK L" "
+#define LIGHT_SHADE L"░"
+#define MEDIUM_SHADE L"▒"
+#define DARK_SHADE L"▓"
+#define FULL_BLOCK L"█"
+
+void render_init(void)
 {
-public:
-    MyForm()
-    {
-        List *pList = new List;
-        pList->SetRect(10, 10, 10, 10);
-        pList->SetBox(true);
-        Add(pList);
-        _pCurrent = pList;
-    }
-    ~MyForm() {}
+        initscr();
 
-    void OnKeyEvent(int ch) override
-    {
-    }
+        cbreak();
+        noecho();
+        curs_set(FALSE);
 
-private:
-    Widget *_pCurrent;
-};
+        start_color();
+        init_pair(1, COLOR_WHITE, COLOR_BLACK);
 
-class MyForm2 : public WinForm
-{
-public:
-    MyForm2()
-    {
-        List *pList = new List;
-        pList->SetRect(30, 30, 10, 10);
-        pList->SetBox(true);
-        Add(pList);
-        _pCurrent = pList;
-    }
-    ~MyForm2() {}
-
-    void OnKeyEvent(int ch) override
-    {
-    }
-
-private:
-    Widget *_pCurrent;
-};
-
-void OnKeyEvent(int ch)
-{
-    // MEVENT event;
-    // switch (ch)
-    // {
-    // case 9: // TAB
-    //     ui.ForcusRight();
-    //     break;
-    // case KEY_BTAB:
-    //     ui.ForcusLeft();
-    //     break;
-    // case KEY_MOUSE:
-    //     if (getmouse(&event) == OK)
-    //     {
-    //         // printw("ID[%d] Y[%d] X[%d] Z[%d] bstate[%d]", event.id, event.y, event.x, event.z, event.bstate);
-    //     }
-    //     break;
-    // }
+        bkgd(COLOR_PAIR(1));
 }
 
-class buttonListner : public Listener
+void render_teardown(void)
 {
-public:
-    buttonListner();
-    void HandleEvent()
-    {
-        cout << "button pressed" << endl;
-    }
-};
-
-int main(void)
-{
-    if (!ui.Init())
-    {
-        cout << "ncurses init Fail" << endl;
-        return 1;
-    }
-
-
-    TestText();
-    return 0;
+        endwin();
 }
 
-void TestText()
+static void char_for_tile(Tile tile, cchar_t *pic)
 {
-    TextBox text;
-    text.SetRect(5, 15, 10, 10);
-    text.SetTitle("hello");
-    text._text = "hihihi111111111111111111111111111111111111";
-    text._style = {COLOR_BLACK, COLOR_RED};
-    ui.Render({&text});
-    while (int ch = getchar())
-    {
-        switch (ch)
+        switch (tile)
         {
-        case 'q':
-            return;
-        }
-    }
-}
-
-void TestPopup()
-{
-    Popup pop;
-    pop.SetRect(10, 20, 10, 10);
-    pop.SetTitle("hello");
-    pop._text = "hihihiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa111111111";
-    pop._textColor = COLOR_RED;
-    ui.Render({&pop});
-    while (int ch = getchar())
-    {
-        switch (ch)
-        {
-        case 'q':
-            return;
-        }
-    }
-}
-
-void TestYesNo()
-{
-    YesNo yn;
-    yn.SetRect(10, 20, 10, 10);
-    yn.SetTitle("hello");
-    yn._text = "hihihiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa111111111";
-    yn._textColor = COLOR_RED;
-    ui.Render({&yn});
-    while (int ch = getchar())
-    {
-        switch (ch)
-        {
-        case 'q':
-            return;
-        case 'k':
-            yn.ForcusLeft();
-            break;
-        case 'l':
-            yn.ForcusRight();
-            break;
-        default:
-            break;
-        }
-        ui.Render({&yn});
-    }
-}
-
-void TestTap()
-{
-    Tab tab;
-    tab.SetRect(3, 40, 5, 5);
-    tab._tabs = {"test1", "test2", "test3", "test4"};
-
-    TextBox txt1;
-    txt1.SetRect(10, 10, 10, 10);
-    txt1.SetTitle("tab1111");
-
-    TextBox txt2;
-    txt2.SetRect(10, 10, 10, 10);
-    txt2.SetTitle("tab2222");
-
-    switch (tab._activeIdx)
-    {
-    case 0:
-        ui.Render({&tab, &txt1});
-        break;
-    case 1:
-        ui.Render({&tab, &txt2});
-        break;
-    default:
-        break;
-    }
-
-    while (int ch = getchar())
-    {
-        switch (ch)
-        {
-        case 'q':
-            return;
-        case 'h':
-            tab.ForcusLeft();
-            switch (tab._activeIdx)
-            {
-            case 0:
-                ui.Render({&tab, &txt1});
+        case TILE_WALL:
+                setcchar(pic, FULL_BLOCK, WA_NORMAL, COLOR_PAIR(1), NULL);
                 break;
-            case 1:
-                ui.Render({&tab, &txt2});
+        case TILE_WALL_DARK:
+                setcchar(pic, DARK_SHADE, WA_NORMAL, COLOR_PAIR(1), NULL);
                 break;
-            default:
-                ui.Render({&tab});
+        case TILE_EMPTY:
+                setcchar(pic, MEDIUM_SHADE, WA_NORMAL, COLOR_PAIR(1), NULL);
                 break;
-            }
-            break;
-        case 'k':
-            tab.ForcusRight();
-            switch (tab._activeIdx)
-            {
-            case 0:
-                ui.Render({&tab, &txt1});
+        case TILE_EMPTY_DARK:
+                setcchar(pic, LIGHT_SHADE, WA_NORMAL, COLOR_PAIR(1), NULL);
                 break;
-            case 1:
-                ui.Render({&tab, &txt2});
-                break;
-            default:
-                ui.Render({&tab});
-                break;
-            }
-            break;
+        case TILE_UNKNOWN:
         default:
-            break;
+                setcchar(pic, EMPTY_BLOCK, WA_NORMAL, COLOR_PAIR(1), NULL);
         }
-    }
 }
 
-void TestList()
+/* See http://www.redblobgames.com/grids/line-drawing.html */
+static bool is_visible(GameState *game, int x, int y)
 {
-    List list;
-    list.SetRect(5, 15, 10, 10);
-    list._rows = {"test11111", "test2", "test3", "test4",
-                  "test5", "test6", "test7"};
-    ui.Render({&list});
+        int dx = abs(game->player.pos.x - x);
+        int dy = abs(game->player.pos.y - y);
+        int steps = max(dx, dy);
+        int step = 0;
 
-    while (int ch = getchar())
-    {
-        switch (ch)
+        while (++step <= steps - 1)
         {
-        case 'q':
-            return;
-        case 'j':
-            list.ScrollDown();
-            break;
-        case 'k':
-            list.ScrollUp();
-            break;
-        case 't':
-            list.ScrollPageUp();
-            break;
-        case 'd':
-            list.ScrollPageDown();
-            break;
-        default:
-            break;
+                double t = (double)step / (double)steps;
+                int u = game->player.pos.x + t * (x - game->player.pos.x);
+                int v = game->player.pos.y + t * (y - game->player.pos.y);
+
+                game->seen[v][u] = true;
+
+                if (game->map[v][u] == TILE_WALL)
+                        return false;
         }
-        ui.Render({&list});
-    }
+
+        game->seen[y][x] = true;
+        return true;
 }
 
-void TestProgressBar()
+static bool is_near(Position pos, int x, int y)
 {
-    ProgressBar pro;
-    pro.SetRect(3, 50, 0, 0);
-    pro._percent = 10;
-    pro._label = "12341234";
-    ui.Render({&pro});
-    while (int ch = getchar())
-    {
-        switch (ch)
+        int r = 5;
+        int dx = abs(pos.x - x);
+        int dy = abs(pos.y - y);
+        return dx * dx + dy * dy < r * r;
+}
+
+static bool in_bounds(int x, int y)
+{
+        return x >= 0 && x < SIZEX && y >= 0 && y < SIZEY;
+}
+
+static Tile get_tile_dark(Tile tile)
+{
+        switch (tile)
         {
-        case 'q':
-            return;
-        case 'j':
-            if (0 < pro._percent)
-                pro._percent--;
-            break;
-        case 'k':
-            if (pro._percent < 100)
-                pro._percent++;
-            break;
+        case TILE_WALL:
+                return TILE_WALL_DARK;
+        case TILE_EMPTY:
+                return TILE_EMPTY_DARK;
         default:
-            break;
+                return tile;
         }
-        ui.Render({&pro});
-    }
 }
 
-void TestTable()
+static Tile get_tile(GameState *game, int x, int y)
 {
-    Table table;
-    table.SetRect(9, 38, 5, 10);
-    table._alignment = Table::LEFT;
-    table._rows = {
-        {"test", "test1", "test2"},
-        {"test3", "test4", "test6"},
-        {"test3", "test4", "test7"},
-        {"test3", "test4", "test7"},
-    };
-    ui.Render({&table});
-    while (int ch = getchar())
-    {
-        switch (ch)
+        if (!in_bounds(x, y))
+                return TILE_UNKNOWN;
+
+        if (is_visible(game, x, y))
         {
-        case 'q':
-            return;
-        default:
-            break;
+                if (is_near(game->player.pos, x, y))
+                {
+                        return game->map[y][x];
+                }
+                else
+                {
+                        return get_tile_dark(game->map[y][x]);
+                }
         }
-    }
+
+        if (game->seen[y][x])
+                return get_tile_dark(game->map[y][x]);
+
+        return TILE_UNKNOWN;
 }
 
-void TestBarChart()
+void render(GameState *game)
 {
-    BarChart bar;
-    bar.SetRect(20, 50, 0, 0);
-    bar._data = {7, 6, 5, 4, 3, 2};
-    bar._barColor = {COLOR_WHITE, COLOR_BLUE, COLOR_RED};
-    bar._labelStyle = {{COLOR_BLACK, COLOR_BLUE}, {COLOR_BLACK, COLOR_RED}};
-    bar._label = {"11", "22", "33", "44", "55", "66"};
-    ui.Render({&bar});
-    while (int ch = getchar())
-    {
-        switch (ch)
-        {
-        case 'q':
-            return;
-        default:
-            break;
-        }
-        ui.Render({&bar});
-    }
-}
+        int h, w;
+        int num_captured = 0;
 
-void TestInput()
-{
-    // Form form;
-    // form.SetRect(10, 30, 0, 0);
-    // form._query = {"test1", "test2", "test3", "test4", "test5"};
-    // form._default = {"             ", "test2"};
-    // ui.Render({&form});
-    // while (int ch = getchar())
-    // {
-    //     switch (ch)
-    //     {
-    //     case 'q':
-    //         return 1;
-    //     case 'j':
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    //     ui.Render({&form});
-    // }
+        clear();
+        getmaxyx(stdscr, h, w);
+
+        for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                        cchar_t pic;
+                        char_for_tile(get_tile(game, x, y), &pic);
+                        mvadd_wch(y, x, &pic);
+                }
+
+        for (size_t i = 0; i < game->num_letters; i++)
+                if (game->letters[i].captured)
+                        mvaddch(SIZEY + 1, num_captured++, game->letters[i].val);
+                else
+                        mvaddch(
+                            game->letters[i].pos.y,
+                            game->letters[i].pos.x,
+                            game->letters[i].val);
+
+        mvaddch(game->player.pos.y, game->player.pos.x, '@');
+
+        refresh();
 }

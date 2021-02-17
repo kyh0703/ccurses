@@ -1,7 +1,7 @@
 #pragma once
-#include "WinForm.h"
+#include "Form.h"
 
-class MyForm : public WinForm
+class MyForm : public Form
 {
 public:
     MyForm();

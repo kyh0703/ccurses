@@ -68,8 +68,7 @@ public:
 
     struct CheckBox
     {
-        Style active;
-        Style inactive;
+        Style style;
     };
 
     struct Radio
@@ -103,6 +102,6 @@ public:
     List _list;
     ProgressBar _progress;
     BarChart _bar;
-    CheckBox _checkbox;
     Radio _radio;
+    CheckBox _checkbox;
 };

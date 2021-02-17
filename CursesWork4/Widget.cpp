@@ -31,11 +31,11 @@ void TextBox::Draw()
                 continue;
         }
 
-        Style style = _style;
         if (rect.max.y < pos.y)
             break;
 
-        style.opt = (_enable ? A_BOLD : A_NORMAL);
+        Style style = _style;
+        style.opt = (_enable ? WA_BOLD : WA_NORMAL);
         Rune r(style, _text[text_index]);
         AddCh(pos.y, pos.x, r);
 
@@ -49,8 +49,8 @@ void TextBox::Draw()
 
 Button::Button()
 {
-    _active = th::Get()._button.active;
-    _inactive = th::Get()._button.inactive;
+    _active_style = th::Get()._button.active;
+    _inactive_style = th::Get()._button.inactive;
     _key_default = bind(&Button::KeyDefault, this, placeholders::_1);
 }
 
@@ -79,11 +79,11 @@ void Button::Draw()
 
         Style style;
         if (_is_active)
-            style = _active;
+            style = _active_style;
         else
-            style = _inactive;
+            style = _inactive_style;
 
-        style.opt = (_enable ? A_BOLD : A_NORMAL);
+        style.opt = (_enable ? WA_BOLD : WA_NORMAL);
         Rune r(style, _text[text_index]);
         AddCh(pos.y, pos.x, r);
 
@@ -113,8 +113,8 @@ Input::Input()
 {
     _box = false;
     _is_active = false;
-    _active = th::Get()._input.active;
-    _inactive = th::Get()._input.inactive;
+    _active_style = th::Get()._input.active;
+    _inactive_style = th::Get()._input.inactive;
     _key_default = bind(&Input::KeyDefault, this, placeholders::_1);
 }
 
@@ -147,8 +147,13 @@ void Input::Draw()
     Pos pos(rect.min.y, rect.min.x);
 
     for (int y = rect.min.y; y <= rect.max.y; ++y)
+    {
         for (int x = rect.min.x; x <= rect.max.x; ++x)
-            AddCh(y, x, {COLOR_BLACK, COLOR_WHITE, A_UNDERLINE, ' '});
+        {
+            Rune r({COLOR_BLACK, COLOR_WHITE, WA_UNDERLINE}, ' ');
+            AddCh(y, x, r);
+        }
+    }
 
     for (size_t text_index = 0; text_index < _text.size(); ++text_index)
     {
@@ -163,9 +168,9 @@ void Input::Draw()
 
         Style style;
         if (_is_active)
-            style = _active;
+            style = _active_style;
         else
-            style = _inactive;
+            style = _inactive_style;
 
         Rune r(style, _text[text_index]);
         AddCh(pos.y, pos.x, r);
@@ -178,7 +183,7 @@ void Input::Draw()
 
     if (pos.x < rect.max.x && _is_active)
     {
-        Style style(COLOR_BLACK, COLOR_WHITE, A_UNDERLINE | A_STANDOUT);
+        Style style(COLOR_BLACK, COLOR_WHITE, WA_UNDERLINE | WA_STANDOUT);
         Rune r(style, ' ');
         AddCh(pos.y, pos.x++, r);
     }
@@ -226,8 +231,8 @@ void Input::KeyDefault(KeyboardArgs args)
 Tab::Tab()
 {
     _box = false;
-    _active = th::Get()._tab.active;
-    _inactive = th::Get()._tab.inactive;
+    _active_style = th::Get()._tab.active;
+    _inactive_style = th::Get()._tab.inactive;
     _active_index = 0;
 }
 
@@ -266,24 +271,28 @@ void Tab::Draw()
 
             Style style;
             if (_active_index == (int)tab_index)
-                style = _active;
+                style = _active_style;
             else
-                style = _inactive;
+                style = _inactive_style;
 
             Rune r(style, text[text_index]);
-            AddCh(pos.y, pos.x++, r);
+            AddCh(pos.y, pos.x, r);
+            if (IsHangle(r.wch))
+                pos.x += 2;
+            else
+                pos.x += 1;
         }
 
         if (tab_index != _tabs.size() - 1)
-            AddCh(pos.y, pos.x++, ACS_VLINE);
+            AddCh(pos.y, pos.x++, WACS_VLINE);
     }
     Render();
 }
 
 List::List()
 {
-    _active = th::Get()._list.active;
-    _inactive = th::Get()._list.inactive;
+    _active_style = th::Get()._list.active;
+    _inactive_style = th::Get()._list.inactive;
     _currow = 0;
     _toprow = 0;
     _key_default = bind(&List::KeyDefault, this, placeholders::_1);
@@ -354,7 +363,7 @@ void List::Draw()
 
     for (size_t row_index = _toprow; row_index < _rows.size(); ++row_index)
     {
-        string text(_rows[row_index]);
+        wstring text(_rows[row_index]);
         for (size_t text_index = 0; text_index < text.size(); ++text_index)
         {
             if (rect.max.x < pos.x)
@@ -362,12 +371,16 @@ void List::Draw()
 
             Style style;
             if ((int)row_index == _currow)
-                style = _active;
+                style = _active_style;
             else
-                style = _inactive;
+                style = _inactive_style;
 
             Rune r(style, text[text_index]);
-            AddCh(pos.y, pos.x++, r);
+            AddCh(pos.y, pos.x, r);
+            if (IsHangle(r.wch))
+                pos.x += 2;
+            else
+                pos.x += 1;
         }
 
         pos.x = rect.min.x;
@@ -377,16 +390,11 @@ void List::Draw()
     }
 
     if (0 < _toprow)
-    {
-        Rune r(ACS_DIAMOND);
-        AddCh(rect.min.y, rect.max.x, r);
-    }
+        AddCh(rect.min.y, rect.max.x, WACS_UARROW);
 
     if (_toprow + rect.h < (int)_rows.size())
-    {
-        Rune r(ACS_DIAMOND);
-        AddCh(rect.max.y, rect.max.x, r);
-    }
+        AddCh(rect.max.y, rect.max.x, WACS_DARROW);
+
     Render();
 }
 
@@ -450,6 +458,7 @@ void ProgressBar::Draw()
         {
             if (rect.max.x < pos.x)
                 break;
+
             AddCh(pos.y, pos.x, r);
             pos.x++;
         }
@@ -466,7 +475,7 @@ void ProgressBar::Draw()
     {
         Style style(_label_style);
         if (pos.x + (int)label_index <= rect.min.x + bar_width)
-            style = {COLOR_BLACK, _bar_color, A_REVERSE};
+            style = {COLOR_BLACK, _bar_color, WA_REVERSE};
         Rune r(style, label[label_index]);
         AddCh(pos.y, pos.x + label_index, r);
     }
@@ -496,10 +505,10 @@ void Table::Draw()
 
     for (size_t row = 0; row < _rows.size(); ++row)
     {
-        vector<string> cols(_rows[row]);
+        vector<wstring> cols(_rows[row]);
         for (size_t col = 0; col < cols.size(); ++col)
         {
-            string text(cols[col]);
+            wstring text(cols[col]);
             if (colWidth < (int)text.length() || _alignment == LEFT)
                 pos.x = rect.min.x + (col * colWidth);
             else if (_alignment == CENTER)
@@ -513,15 +522,20 @@ void Table::Draw()
             }
 
             int oneColMax = (rect.min.x + (colWidth * (col + 1)));
-            for (size_t strIdx = 0; pos.x < oneColMax; ++pos.x)
+            for (size_t strIdx = 0; pos.x < oneColMax;)
             {
                 if (text[strIdx] == 0x00)
                     continue;
-                AddCh(pos.y, pos.x, text[strIdx++]);
+                wchar_t wch = text[strIdx++];
+                AddCh(pos.y, pos.x, wch);
+                if (IsHangle(wch))
+                    pos.x += 2;
+                else
+                    pos.x += 1;
             }
 
             if (col != cols.size() - 1)
-                AddCh(pos.y, pos.x - 1, ACS_VLINE);
+                AddCh(pos.y, pos.x - 1, WACS_VLINE);
             else
                 pos.y++;
         }
@@ -530,7 +544,7 @@ void Table::Draw()
             break;
 
         for (int x = rect.min.x; x <= rect.max.x; ++x)
-            AddCh(pos.y, x, ACS_S3);
+            AddCh(pos.y, x, WACS_S3);
 
         pos.y++;
         pos.x = rect.min.x;
@@ -580,7 +594,7 @@ void BarChart::Draw()
             for (int x = bar_x; x < w; x++)
             {
                 Rune r(GetBarColor(col));
-                r.wc = ' ';
+                r.wch = ' ';
                 AddCh(y, x, r);
             }
         }
@@ -593,7 +607,7 @@ void BarChart::Draw()
             for (size_t i = 0; i < label.size(); ++i)
             {
                 Rune r(GetLabelStyle(col));
-                r.wc = label[i];
+                r.wch = label[i];
                 AddCh(rect.max.y - 1, labalX++, r);
             }
         }
@@ -605,7 +619,7 @@ void BarChart::Draw()
             for (size_t i = 0; i < num.size(); ++i)
             {
                 Rune r(GetNumberStyle(col));
-                r.wc = num[i];
+                r.wch = num[i];
                 AddCh(rect.max.y - 2, numX, r);
             }
         }
@@ -634,15 +648,15 @@ Rune BarChart::GetNumberStyle(int index)
 {
     Rune r(GetBarColor(index));
     r.s.bg = COLOR_BLACK;
-    r.s.opt = A_REVERSE;
+    r.s.opt = WA_REVERSE;
     return r;
 }
 
 Radio::Radio()
 {
     _box = false;
-    _active = th::Get()._checkbox.active;
-    _inactive = th::Get()._checkbox.inactive;
+    _active = th::Get()._radio.active;
+    _inactive = th::Get()._radio.inactive;
 }
 
 Radio::~Radio()
@@ -681,8 +695,7 @@ void Radio::Draw()
 CheckBox::CheckBox()
 {
     _box = false;
-    _active = th::Get()._checkbox.active;
-    _inactive = th::Get()._checkbox.inactive;
+    _style = th::Get()._checkbox.style;
     _key_default = bind(&CheckBox::KeyDefault, this, placeholders::_1);
 }
 
@@ -699,13 +712,7 @@ void CheckBox::Draw()
     Rect rect = GetWinRect();
     Pos pos(rect.min.y, rect.min.x);
 
-    Style style;
-    if (_checked)
-        style = _active;
-    else
-        style = _inactive;
-
-    Rune r(style, _checked ? 'v' : ' ');
+    Rune r(_style, _checked ? 'v' : ' ');
     AddCh(pos.y, pos.x, r);
     pos.x += 2;
 
@@ -714,7 +721,12 @@ void CheckBox::Draw()
         if (rect.max.x < pos.x)
             break;
 
-        AddCh(pos.y, pos.x++, _text[text_index]);
+        wchar_t wch = _text[text_index];
+        AddCh(pos.y, pos.x, wch);
+        if (IsHangle(wch))
+            pos.x += 2;
+        else
+            pos.x += 1;
     }
 
     Render();
@@ -728,6 +740,7 @@ void CheckBox::KeyDefault(KeyboardArgs args)
     case 10:
         if (_click)
             _click(EventArgs());
+        _checked = !_checked;
         break;
     default:
         break;

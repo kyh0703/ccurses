@@ -98,8 +98,6 @@ public:
     Base _base;
     TextBox _textbox;
     Button _button;
-    Popup _popup;
-    YesNo _yesno;
     Input _input;
     Tab _tab;
     List _list;

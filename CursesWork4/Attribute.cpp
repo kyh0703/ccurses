@@ -78,35 +78,35 @@ bool Rect::IsInclude(int y, int x)
 
 Rune::Rune()
 {
-    this->wc = ' ';
+    this->wch = ' ';
 }
 
-Rune::Rune(wchar_t wc)
+Rune::Rune(wchar_t wch)
 {
     this->s.bg = COLOR_BLACK;
     this->s.fg = COLOR_WHITE;
     this->s.opt = A_NORMAL;
-    this->wc = wc;
+    this->wch = wch;
 }
 
-Rune::Rune(int bg, int fg, wchar_t wc)
+Rune::Rune(int bg, int fg, wchar_t wch)
 {
     this->s.bg = bg;
     this->s.fg = fg;
     this->s.opt = A_NORMAL;
-    this->wc = wc;
+    this->wch = wch;
 }
 
-Rune::Rune(int bg, int fg, int opt, wchar_t wc)
+Rune::Rune(int bg, int fg, int opt, wchar_t wch)
 {
     this->s.bg = bg;
     this->s.fg = fg;
     this->s.opt = opt;
-    this->wc = wc;
+    this->wch = wch;
 }
 
-Rune::Rune(Style s, wchar_t wc)
+Rune::Rune(Style s, wchar_t wch)
 {
     this->s = s;
-    this->wc = wc;
+    this->wch = wch;
 }

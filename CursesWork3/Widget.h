@@ -1,5 +1,6 @@
 #pragma once
-#include <ncurses.h>
+#include <ncursesw/curses.h>
+#include <wctype.h>
 #include <algorithm>
 #include <vector>
 #include <string>
@@ -22,7 +23,7 @@ public:
     void Draw() override;
 
     Style _style;
-    string _text;
+    wstring _text;
 };
 
 class Button : public Widget
@@ -33,42 +34,12 @@ public:
 
     void Draw() override;
 
-    string _text;
+    wstring _text;
     Style _active;
     Style _inactive;
 
 private:
     void KeyDefault(KeyboardArgs args);
-};
-
-class Popup : public Widget
-{
-public:
-    Popup();
-    ~Popup();
-
-    void Draw() override;
-
-    Style _button_style;
-    int _text_color;
-    string _text;
-};
-
-class YesNo : public Widget
-{
-public:
-    YesNo();
-    ~YesNo();
-
-    void ForcusLeft();
-    void ForcusRight();
-    void Draw() override;
-
-    Style _active;
-    Style _inactive;
-    int _text_color;
-    bool _is_yes;
-    string _text;
 };
 
 class Input : public Widget
@@ -84,10 +55,10 @@ public:
 
     Style _active;
     Style _inactive;
-    vector<chtype> _text;
+    vector<wchar_t> _text;
 
 private:
-    void AddText(chtype c);
+    void AddText(int ch);
     void DelText();
     void ClearText();
     void KeyDefault(KeyboardArgs args);
@@ -99,14 +70,27 @@ public:
     Tab();
     ~Tab();
 
-    void ForcusLeft();
-    void ForcusRight();
+    void FocusLeft();
+    void FocusRight();
     void Draw() override;
 
     Style _active;
     Style _inactive;
     int _active_index;
     vector<string> _tabs;
+};
+
+class TabPage : public Widget
+{
+public:
+    TabPage();
+    ~TabPage();
+
+    void Add(Widget *widget);
+    void Del(Widget *widget);
+    void Draw() override;
+
+    vector<Widget *> _tab_items;
 };
 
 class Panel : public Widget

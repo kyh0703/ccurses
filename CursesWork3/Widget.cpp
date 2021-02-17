@@ -20,10 +20,9 @@ void TextBox::Draw()
     DrawBase();
     Rect rect = GetWinRect();
     Pos pos(rect.min.x, rect.min.x);
-
     for (size_t text_index = 0; text_index < _text.size(); ++text_index)
     {
-        bool is_EOL = (_text[text_index] == '\n');
+        bool is_EOL = (_text[text_index] == L'\n');
         if (is_EOL || rect.max.x < pos.x)
         {
             pos.y++;
@@ -38,7 +37,12 @@ void TextBox::Draw()
 
         style.opt = (_enable ? A_BOLD : A_NORMAL);
         Rune r(style, _text[text_index]);
-        AddCh(pos.y, pos.x++, r);
+        AddCh(pos.y, pos.x, r);
+
+        if (IsHangle(_text[text_index]))
+            pos.x += 2;
+        else
+            pos.x += 1;
     }
     Render();
 }
@@ -66,7 +70,7 @@ void Button::Draw()
     if (rect.w < (int)_text.size())
         pos.x = rect.min.x;
     else
-        pos.x = (rect.min.x + ((rect.w - _text.size()) / 2));
+        pos.x = (rect.min.x + ((rect.w - _text.size()) / 2)) - 1;
 
     for (size_t text_index = 0; text_index < _text.size(); ++text_index)
     {
@@ -81,7 +85,12 @@ void Button::Draw()
 
         style.opt = (_enable ? A_BOLD : A_NORMAL);
         Rune r(style, _text[text_index]);
-        AddCh(pos.y, pos.x++, r);
+        AddCh(pos.y, pos.x, r);
+
+        if (IsHangle(_text[text_index]))
+            pos.x += 2;
+        else
+            pos.x += 1;
     }
     Render();
 }
@@ -98,126 +107,6 @@ void Button::KeyDefault(KeyboardArgs args)
     default:
         break;
     }
-}
-
-Popup::Popup()
-{
-    _button_style = th::Get()._popup.button;
-    _text_color = th::Get()._popup.text_color;
-}
-
-Popup::~Popup()
-{
-}
-
-void Popup::Draw()
-{
-    if (!_visible)
-        return;
-
-    DrawBase();
-    Rect rect = GetWinRect();
-    Pos pos(rect.min.y, rect.min.x);
-
-    for (size_t text_index = 0; text_index < _text.size(); ++text_index)
-    {
-        bool is_EOL = (_text[text_index] == '\n');
-        if (is_EOL || rect.max.x < pos.x)
-        {
-            pos.y++;
-            pos.x = rect.min.x;
-            if (is_EOL)
-                continue;
-        }
-
-        if (rect.max.y - 2 < pos.y)
-            break;
-
-        Rune r(_color.bg, _text_color, _text[text_index]);
-        AddCh(pos.y, pos.x++, r);
-    }
-
-    string enter = "<ENTER >";
-    pos.x = rect.min.x + ((rect.w - enter.size()) / 2);
-    for (size_t i = 0; i < enter.size(); ++i)
-    {
-        Rune r(_button_style, enter[i]);
-        AddCh(rect.max.y - 1, pos.x++, r);
-    }
-
-    Render();
-}
-
-YesNo::YesNo()
-{
-    _text_color = th::Get()._yesno.text_color;
-    _active = th::Get()._yesno.active;
-    _inactive = th::Get()._yesno.inactive;
-    _is_yes = true;
-}
-
-YesNo::~YesNo()
-{
-}
-
-void YesNo::ForcusLeft()
-{
-    if (!_is_yes)
-        _is_yes = true;
-}
-
-void YesNo::ForcusRight()
-{
-    if (_is_yes)
-        _is_yes = false;
-}
-
-void YesNo::Draw()
-{
-    if (!_visible)
-        return;
-
-    DrawBase();
-    Rect rect = GetWinRect();
-    Pos pos(rect.min.y, rect.min.x);
-
-    for (size_t text_index = 0; text_index < _text.size(); ++text_index)
-    {
-        bool isEol = (_text[text_index] == '\n');
-        if (isEol || rect.max.x < pos.x)
-        {
-            pos.y++;
-            pos.x = rect.min.x;
-            if (isEol)
-                continue;
-        }
-
-        if (rect.max.y - 2 < pos.y)
-            break;
-
-        Rune r(_color.bg, _text_color, _text[text_index]);
-        AddCh(pos.y, pos.x++, r);
-    }
-
-    int w = (rect.w / 2);
-    string yes = "< YES >";
-    pos.x = rect.min.x + ((w - yes.size()) / 2);
-    for (size_t i = 0; i < yes.size(); ++i)
-    {
-        Style style = (_is_yes ? _active : _inactive);
-        Rune r(style, yes[i]);
-        AddCh(rect.max.y - 1, pos.x++, r);
-    }
-
-    string no = "< NO >";
-    pos.x = rect.max.x - ((w + no.size()) / 2);
-    for (size_t i = 0; i < no.size(); ++i)
-    {
-        Style style = (_is_yes ? _inactive : _active);
-        Rune r(style, no[i]);
-        AddCh(rect.max.y - 1, pos.x++, r);
-    }
-    Render();
 }
 
 Input::Input()
@@ -279,7 +168,12 @@ void Input::Draw()
             style = _inactive;
 
         Rune r(style, _text[text_index]);
-        AddCh(pos.y, pos.x++, r);
+        AddCh(pos.y, pos.x, r);
+
+        if (IsHangle(_text[text_index]))
+            pos.x += 2;
+        else
+            pos.x += 1;
     }
 
     if (pos.x < rect.max.x && _is_active)
@@ -291,11 +185,11 @@ void Input::Draw()
     Render();
 }
 
-void Input::AddText(chtype c)
+void Input::AddText(int ch)
 {
     Rect rect = GetWinRect();
     if ((int)_text.size() < ((rect.max.y + 1) * rect.w))
-        _text.push_back(c);
+        _text.push_back(ch);
 }
 
 void Input::DelText()
@@ -324,7 +218,7 @@ void Input::KeyDefault(KeyboardArgs args)
         ClearText();
         break;
     default:
-        AddText((chtype)args.ch);
+        AddText(args.ch);
         break;
     }
 }
@@ -341,13 +235,13 @@ Tab::~Tab()
 {
 }
 
-void Tab::ForcusLeft()
+void Tab::FocusLeft()
 {
     if (0 < _active_index)
         _active_index--;
 }
 
-void Tab::ForcusRight()
+void Tab::FocusRight()
 {
     if (_active_index < (int)(_tabs.size() - 1))
         _active_index++;
@@ -686,7 +580,7 @@ void BarChart::Draw()
             for (int x = bar_x; x < w; x++)
             {
                 Rune r(GetBarColor(col));
-                r.c = ' ';
+                r.wc = ' ';
                 AddCh(y, x, r);
             }
         }
@@ -699,7 +593,7 @@ void BarChart::Draw()
             for (size_t i = 0; i < label.size(); ++i)
             {
                 Rune r(GetLabelStyle(col));
-                r.c = label[i];
+                r.wc = label[i];
                 AddCh(rect.max.y - 1, labalX++, r);
             }
         }
@@ -711,7 +605,7 @@ void BarChart::Draw()
             for (size_t i = 0; i < num.size(); ++i)
             {
                 Rune r(GetNumberStyle(col));
-                r.c = num[i];
+                r.wc = num[i];
                 AddCh(rect.max.y - 2, numX, r);
             }
         }

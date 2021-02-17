@@ -1,5 +1,5 @@
 #pragma once
-#include "ncurses.h"
+#include <ncursesw/curses.h>
 
 struct Color
 {
@@ -37,10 +37,10 @@ struct Rect
 struct Rune
 {
     Rune();
-    Rune(chtype c);
-    Rune(int bg, int fg, chtype c);
-    Rune(int bg, int fg, int opt, chtype c);
-    Rune(Style s, chtype c);
+    Rune(wchar_t wc);
+    Rune(int bg, int fg, wchar_t wc);
+    Rune(int bg, int fg, int opt, wchar_t wc);
+    Rune(Style s, wchar_t wc);
     Style s;
-    chtype c;
+    wchar_t wc;
 };

@@ -195,10 +195,10 @@ void Form::OnKeyboardEvent(wint_t wch)
     args.ch = wch;
     switch (wch)
     {
-    case 9:
+    case KEY_SLEFT:
         NextForcus();
         break;
-    case KEY_BTAB:
+    case KEY_SRIGHT:
         PrevForcus();
         break;
     default:
@@ -221,6 +221,10 @@ void Form::Run()
         case KEY_MOUSE:
             if (getmouse(&e) == OK)
                 OnMouseEvent(e);
+            break;
+        case 9:
+            break;
+        case KEY_BTAB:
             break;
         default:
             OnKeyboardEvent(wch);

@@ -37,10 +37,10 @@ struct Rect
 struct Rune
 {
     Rune();
-    Rune(wchar_t wc);
-    Rune(int bg, int fg, wchar_t wc);
-    Rune(int bg, int fg, int opt, wchar_t wc);
-    Rune(Style s, wchar_t wc);
+    Rune(wchar_t wch);
+    Rune(int bg, int fg, wchar_t wch);
+    Rune(int bg, int fg, int opt, wchar_t wch);
+    Rune(Style s, wchar_t wch);
     Style s;
-    wchar_t wc;
+    wchar_t wch;
 };

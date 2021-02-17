@@ -1,7 +1,7 @@
 #pragma once
 #include <form.h>
 #include <menu.h>
-#include <ncurses.h>
+#include <ncursesw/curses.h>
 #include <string.h>
 
 typedef struct

@@ -1,11 +1,13 @@
 #pragma once
-#include <ncurses.h>
-#include <string>
 #include "Attribute.h"
+#include <ncursesw/curses.h>
+#include <string>
+#include <vector>
 using namespace std;
 
 enum MB_RESULT
 {
+    MB_RESULT_CANCLE,
     MB_RESULT_OK,
     MB_RESULT_YES,
     MB_RESULT_NO,
@@ -13,8 +15,8 @@ enum MB_RESULT
 
 enum MB_TYPE
 {
-    MB_OK,
-    MB_YESNO,
+    MB_TYPE_OK,
+    MB_TYPE_YESNO,
 };
 
-int MessageBox(string title, string text, int type);
+const int MessageBox(string title, string text, int type);

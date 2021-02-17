@@ -35,8 +35,8 @@ public:
     void Draw() override;
 
     wstring _text;
-    Style _active;
-    Style _inactive;
+    Style _active_style;
+    Style _inactive_style;
 
 private:
     void KeyDefault(KeyboardArgs args);
@@ -53,8 +53,8 @@ public:
 
     void Draw() override;
 
-    Style _active;
-    Style _inactive;
+    Style _active_style;
+    Style _inactive_style;
     vector<wchar_t> _text;
 
 private:
@@ -74,33 +74,10 @@ public:
     void FocusRight();
     void Draw() override;
 
-    Style _active;
-    Style _inactive;
+    Style _active_style;
+    Style _inactive_style;
     int _active_index;
     vector<string> _tabs;
-};
-
-class TabPage : public Widget
-{
-public:
-    TabPage();
-    ~TabPage();
-
-    void Add(Widget *widget);
-    void Del(Widget *widget);
-    void Draw() override;
-
-    vector<Widget *> _tab_items;
-};
-
-class Panel : public Widget
-{
-public:
-    Panel();
-    ~Panel();
-
-
-    void Draw();
 };
 
 class List : public Widget
@@ -120,11 +97,11 @@ public:
     void ScrollBottom();
     void Draw() override;
 
-    Style _active;
-    Style _inactive;
+    Style _active_style;
+    Style _inactive_style;
     int _currow;
     int _toprow;
-    vector<string> _rows;
+    vector<wstring> _rows;
 
 private:
     void KeyDefault(KeyboardArgs args);
@@ -160,7 +137,7 @@ public:
     void Draw() override;
 
     int _alignment;
-    vector<vector<string>> _rows;
+    vector<vector<wstring>> _rows;
 };
 
 class BarChart : public Widget
@@ -209,9 +186,8 @@ public:
     void Draw() override;
 
     bool _checked;
-    Style _active;
-    Style _inactive;
-    string _text;
+    Style _style;
+    wstring _text;
 
 private:
     void KeyDefault(KeyboardArgs args);
