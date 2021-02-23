@@ -44,8 +44,7 @@ void Palette::Delete(const Form *form_ptr)
 
 void Palette::Clear()
 {
-    for (auto it = _forms.begin(); it != _forms.end(); ++it)
-        _forms.erase(it);
+    _forms.clear();
 }
 
 bool Palette::Init()
@@ -56,6 +55,8 @@ bool Palette::Init()
         return false;
     if (noecho() == ERR)
         return false;
+
+    resize_term(60, 120);
 
     clear();
     keypad(stdscr, TRUE);
@@ -81,6 +82,7 @@ void Palette::PollEvent(int fps)
     {
         if (KbHit())
         {
+
             MEVENT e;
             wint_t wch;
             int clicked;
@@ -102,6 +104,7 @@ void Palette::PollEvent(int fps)
             case KEY_MOUSE:
                 if (getmouse(&e) != OK)
                     break;
+                mvprintw(LINES - 1, 0, "[%d][%d]mouse[%d][%d]", LINES, COLS, e.y, e.x);
                 clicked = ClickTab(e);
                 if (clicked == -1)
                 {

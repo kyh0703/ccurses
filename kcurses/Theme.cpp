@@ -23,7 +23,7 @@ Theme::Theme()
 
     _input.active.bg = COLOR_BLACK;
     _input.active.fg = COLOR_WHITE;
-    _input.active.opt = WA_UNDERLINE | WA_BLINK;
+    _input.active.opt = WA_UNDERLINE;
     _input.inactive.bg = COLOR_BLACK;
     _input.inactive.fg = COLOR_WHITE;
     _input.inactive.opt = WA_UNDERLINE;

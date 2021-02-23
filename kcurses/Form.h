@@ -19,17 +19,16 @@ public:
     wstring _text;
 
 protected:
-    void Add(Widget *widget);
-    void Delete(Widget *widget);
-    void Close(Widget *widget);
+    void Add(Widget *widget_ptr);
+    void Delete(Widget *widget_ptr);
     void Clear();
 
-    vector<Widget *> _widgets;
+    vector<unique_ptr<Widget>> _widgets;
 
 private:
-    void PrevForcus();
-    void NextForcus();
-    void SetForcus();
+    bool PrevFocus();
+    bool NextFocus();
+    void SetFocus();
     void OnMouseEvent(MEVENT &e);
     void OnKeyboardEvent(wint_t ch);
 

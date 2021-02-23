@@ -29,8 +29,8 @@ IL_LIB          = $(IL_SRC)/lib
 #####################################
 # Copy/Moving files when installing #
 #-----------------------------------#
-INC_FILES       = BasicWindow.h FormWindow.h MenuWindow.h Painter.h Screen.h WindowAttribute.h
-INC_CPATH       = $(IL_INC)/iCurses
+INC_FILES       = $(wildcard *.h)
+INC_CPATH       = $(IL_INC)/iForm
 LIB_FILES       = $(TARGET)
 LIB_CPATH       = $(IL_LIB)
 BIN_FILES       =
@@ -47,7 +47,7 @@ LIB_PATHS       = -L$(CO_LIB) -L$(IL_LIB)
 #----------------------------------------#
 DEFINE					=
 CFLAGS					= -g -O0 -fPIC -Wall -std=c++11
-LFLAGS					= -lstdc++ -lpthread -lncursesw
+LFLAGS					= -lstdc++ -lncursesw
 
 ############################
 # Unit Testing for library #
@@ -62,7 +62,7 @@ UTBIN           = iTest
 #--------------------------#
 SRCS            = $(subst $(UTSRC),,$(wildcard *.cpp))
 OBJS            = $(SRCS:.cpp=.o)
-TARGET          = libiWidget.a
+TARGET          = libiForm.a
 ifdef IRELEASE
 INSTALLS				= $(TARGET)
 else

@@ -42,7 +42,7 @@ void TextBox::Draw()
         else
             pos.x += 1;
     }
-    Render();
+    // Render();
 }
 
 Button::Button()
@@ -89,7 +89,7 @@ void Button::Draw()
         else
             pos.x += 1;
     }
-    Render();
+    // Render();
 }
 
 void Button::KeyDefault(KeyboardArgs args)
@@ -184,7 +184,7 @@ void Input::Draw()
         Rune r(style, ' ');
         AddCh(pos.y, pos.x++, r);
     }
-    Render();
+    // Render();
 }
 
 void Input::AddText(int ch)
@@ -288,7 +288,7 @@ void Tab::Draw()
     for (int i = 0; i < COLS; ++i)
         AddCh(pos.y, i, WACS_D_HLINE);
 
-    Render();
+    // Render();
 }
 
 List::List()
@@ -397,7 +397,7 @@ void List::Draw()
     if (_toprow + rect.h < (int)_rows.size())
         AddCh(rect.max.y, rect.max.x, WACS_DARROW);
 
-    Render();
+    // Render();
 }
 
 void List::KeyDefault(KeyboardArgs args)
@@ -481,7 +481,7 @@ void ProgressBar::Draw()
         Rune r(style, label[label_index]);
         AddCh(pos.y, pos.x + label_index, r);
     }
-    Render();
+    // Render();
 }
 
 Table::Table()
@@ -551,7 +551,7 @@ void Table::Draw()
         pos.y++;
         pos.x = rect.min.x;
     }
-    Render();
+    // Render();
 }
 
 BarChart::BarChart()
@@ -628,7 +628,7 @@ void BarChart::Draw()
 
         bar_x += _bar_width + _bar_gap;
     }
-    Render();
+    // Render();
 }
 
 Rune BarChart::GetBarColor(int index)
@@ -691,7 +691,7 @@ void Radio::Draw()
         AddCh(pos.y, pos.x++, _text[text_index]);
     }
 
-    Render();
+    // Render();
 }
 
 CheckBox::CheckBox()
@@ -731,7 +731,7 @@ void CheckBox::Draw()
             pos.x += 1;
     }
 
-    Render();
+    // Render();
 }
 
 void CheckBox::KeyDefault(KeyboardArgs args)

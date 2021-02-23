@@ -11,83 +11,76 @@ Form::Form()
 
 Form::~Form()
 {
+    Clear();
 }
 
 void Form::Draw()
 {
-    vector<Widget *>::iterator it;
-    for (it = _widgets.begin(); it != _widgets.end(); ++it)
+    for (auto it = _widgets.begin(); it != _widgets.end(); ++it)
         (*it)->Draw();
+    for (auto it = _widgets.begin(); it != _widgets.end(); ++it)
+        (*it)->Render();
 }
 
-void Form::Add(Widget *widget)
+void Form::Add(Widget *widget_ptr)
 {
-    _widgets.push_back(widget);
-    if (widget->CanFocus() && !_curfocus)
+    auto const &it = find_if(_widgets.begin(), _widgets.end(), [&](unique_ptr<Widget> &p) {
+        return p.get() == widget_ptr;
+    });
+
+    if (it != _widgets.end())
+        return;
+
+    unique_ptr<Widget> temp(widget_ptr);
+    _widgets.push_back(move(temp));
+    if (widget_ptr->CanFocus() && !_curfocus)
     {
-        mvprintw(LINES - 1, 0, "test[%s]", widget->_title.c_str());
-        _curfocus = widget;
-        SetForcus();
+        _curfocus = widget_ptr;
+        SetFocus();
     }
 }
 
-void Form::Delete(Widget *widget)
+void Form::Delete(Widget *widget_ptr)
 {
-    vector<Widget *>::iterator it;
-    for (it = _widgets.begin(); it != _widgets.end(); ++it)
+    if (widget_ptr == _curfocus)
     {
-        if (*it == widget)
-        {
-            Widget *pTemp = *it;
-            delete pTemp;
-            _widgets.erase(it);
-        }
+        if (!NextFocus())
+            _curfocus = NULL;
     }
-}
 
-void Form::Close(Widget *widget)
-{
-    vector<Widget *>::iterator it;
-    for (it = _widgets.begin(); it != _widgets.end(); ++it)
-    {
-        if (*it != widget)
-            continue;
-        Widget *temp = *it;
-        if (temp)
-            delete temp;
+    auto const &it = find_if(_widgets.begin(), _widgets.end(), [&](unique_ptr<Widget> &p) {
+        return p.get() == widget_ptr;
+    });
+
+    if (it != _widgets.end())
         _widgets.erase(it);
-    }
 }
 
 void Form::Clear()
 {
-    vector<Widget *>::iterator it;
-    for (it = _widgets.begin(); it != _widgets.end();)
-    {
-        Widget *temp = *it;
-        if (temp)
-            delete temp;
-        it = _widgets.erase(it);
-    }
+    _widgets.clear();
 }
 
-void Form::PrevForcus()
+bool Form::PrevFocus()
 {
-    vector<Widget *>::reverse_iterator it;
-    it = find(_widgets.rbegin(), _widgets.rend(), _curfocus);
+    std::vector<unique_ptr<Widget>>::reverse_iterator it;
+    it = find_if(_widgets.rbegin(), _widgets.rend(), [&](unique_ptr<Widget> &p) {
+        return p.get() == _curfocus;
+    });
+
     if (it == _widgets.rend())
-        return;
+        return false;
 
     for (; it != _widgets.rend(); ++it)
     {
-        if (*it == _curfocus)
+        if ((*it).get() == _curfocus)
             continue;
 
         if ((*it)->CanFocus())
         {
-            _curfocus = (*it);
-            SetForcus();
-            return;
+            _curfocus = (*it).get();
+            SetFocus();
+            return true;
         }
     }
 
@@ -95,30 +88,35 @@ void Form::PrevForcus()
     {
         if ((*it)->CanFocus())
         {
-            _curfocus = (*it);
-            SetForcus();
-            return;
+            _curfocus = (*it).get();
+            SetFocus();
+            return true;
         }
     }
+
+    return false;
 }
 
-void Form::NextForcus()
+bool Form::NextFocus()
 {
-    vector<Widget *>::iterator it;
-    it = find(_widgets.begin(), _widgets.end(), _curfocus);
+    std::vector<unique_ptr<Widget>>::iterator it;
+    it = find_if(_widgets.begin(), _widgets.end(), [&](unique_ptr<Widget> &p) {
+        return p.get() == _curfocus;
+    });
+
     if (it == _widgets.end())
-        return;
+        return false;
 
     for (; it != _widgets.end(); ++it)
     {
-        if (*it == _curfocus)
+        if ((*it).get() == _curfocus)
             continue;
 
         if ((*it)->CanFocus())
         {
-            _curfocus = (*it);
-            SetForcus();
-            return;
+            _curfocus = (*it).get();
+            SetFocus();
+            return true;
         }
     }
 
@@ -126,18 +124,19 @@ void Form::NextForcus()
     {
         if ((*it)->CanFocus())
         {
-            _curfocus = (*it);
-            SetForcus();
-            return;
+            _curfocus = (*it).get();
+            SetFocus();
+            return true;
         }
     }
+
+    return false;
 }
 
-void Form::SetForcus()
+void Form::SetFocus()
 {
-    vector<Widget *>::iterator it;
-    for (it = _widgets.begin(); it != _widgets.end(); ++it)
-        (*it)->_focus = ((*it) == _curfocus);
+    for (auto it = _widgets.begin(); it != _widgets.end(); ++it)
+        (*it)->_focus = ((*it).get() == _curfocus);
 }
 
 void Form::OnMouseEvent(MEVENT &e)
@@ -147,10 +146,9 @@ void Form::OnMouseEvent(MEVENT &e)
     args.x = e.x;
     args.button = MouseArgs::BitToMouseButton(e.bstate);
 
-    vector<Widget *>::iterator it;
-    for (it = _widgets.begin(); it != _widgets.end(); ++it)
+    for (auto it = _widgets.begin(); it != _widgets.end(); ++it)
     {
-        Widget *temp = (*it);
+        Widget *temp = (*it).get();
         Rect rect = temp->_rect;
         if (!rect.IsInclude(e.y, e.x))
             continue;
@@ -160,8 +158,8 @@ void Form::OnMouseEvent(MEVENT &e)
 
         if ((*it)->_key_default)
         {
-            _curfocus = *it;
-            SetForcus();
+            _curfocus = (*it).get();
+            SetFocus();
         }
 
         switch (e.bstate)
@@ -231,10 +229,10 @@ void Form::ProcEvent(wint_t &wch)
             OnMouseEvent(e);
         break;
     case 9:
-        NextForcus();
+        NextFocus();
         break;
     case KEY_BTAB:
-        PrevForcus();
+        PrevFocus();
         break;
     default:
         OnKeyboardEvent(wch);

@@ -26,6 +26,9 @@ Window::Window()
 
 Window::~Window()
 {
+    clear();
+    wclear(_window);
+    wrefresh(_window);
     delwin(_window);
 }
 
@@ -64,7 +67,7 @@ void Window::DrawBase()
 
     if (_box)
     {
-        if (_enable)
+        if (_enable && _key_default)
         {
             wborder_set(_window,
                         WACS_T_VLINE, WACS_T_VLINE,
