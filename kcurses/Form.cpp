@@ -18,8 +18,6 @@ void Form::Draw()
 {
     for (auto it = _widgets.begin(); it != _widgets.end(); ++it)
         (*it)->Draw();
-    for (auto it = _widgets.begin(); it != _widgets.end(); ++it)
-        (*it)->Render();
 }
 
 void Form::Add(Widget *widget_ptr)

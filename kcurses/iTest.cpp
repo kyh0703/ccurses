@@ -10,21 +10,27 @@ class MyForm : public Form
 public:
     MyForm()
     {
-        // TextBox *text = new TextBox;
-        // text->_rect = {5, 10, 10, 10};
-        // text->_box = true;
-        // text->_text = L"한글입니다아아aaa";
-        // Add(text);
+        TextBox *text = new TextBox;
+        text->_rect = {5, 10, 10, 10};
+        text->_box = true;
+        text->_text = L"한글입니다아아aaa";
+        Add(text);
 
-        pBtn = new Button;
-        pBtn->_rect = {3, 10, 5, 5};
-        pBtn->_color = {COLOR_BLACK, COLOR_RED};
-        pBtn->_title_color = COLOR_RED;
-        pBtn->_title = L"a";
-        pBtn->_text = L"등록";
-        pBtn->_enable = true;
-        pBtn->_click = bind(&MyForm::btn1_clicked, this);
-        Add(pBtn);
+        Input *input = new Input;
+        input->_rect = {2, 15, 20, 10};
+        input->_is_active = true;
+        input->SetText("test");
+        Add(input);
+
+        // pBtn = new Button;
+        // pBtn->_rect = {3, 10, 5, 5};
+        // pBtn->_color = {COLOR_BLACK, COLOR_RED};
+        // pBtn->_title_color = COLOR_RED;
+        // pBtn->_title = L"a";
+        // pBtn->_text = L"등록";
+        // pBtn->_enable = true;
+        // pBtn->_click = bind(&MyForm::btn1_clicked, this);
+        // Add(pBtn);
 
         // Button *pBtn3 = new Button;
         // pBtn3->_rect = {11, 10, 15, 15};
@@ -54,11 +60,7 @@ public:
         // check->_focus = false;
         // Add(check);
 
-        Input *input = new Input;
-        input->_rect = {2, 15, 20, 20};
-        input->_is_active = true;
-        input->SetText("test");
-        Add(input);
+
     }
 
     virtual ~MyForm() {}

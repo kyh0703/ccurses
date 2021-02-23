@@ -11,7 +11,8 @@ Palette::Palette()
 
 Palette::~Palette()
 {
-    erase();
+    clrtoeol();
+    refresh();
     endwin();
     Clear();
     printf("\e[?1000h");
@@ -67,9 +68,7 @@ bool Palette::Init()
 
     mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 
-    int bg = th::Get()._base.color.bg;
-    int fg = th::Get()._base.color.fg;
-    Color color(bg, fg);
+    Color color(th::Get()._base.color);
     short idx = Paint::Get().GetIndex(color.bg, color.fg);
     wbkgd(stdscr, COLOR_PAIR(idx));
     refresh();
@@ -82,7 +81,6 @@ void Palette::PollEvent(int fps)
     {
         if (KbHit())
         {
-
             MEVENT e;
             wint_t wch;
             int clicked;
@@ -91,7 +89,7 @@ void Palette::PollEvent(int fps)
             switch (wch)
             {
             case KEY_RESIZE:
-                Draw();
+                erase();
                 continue;
             case KEY_SLEFT:
                 erase();
@@ -104,7 +102,7 @@ void Palette::PollEvent(int fps)
             case KEY_MOUSE:
                 if (getmouse(&e) != OK)
                     break;
-                mvprintw(LINES - 1, 0, "[%d][%d]mouse[%d][%d]", LINES, COLS, e.y, e.x);
+
                 clicked = ClickTab(e);
                 if (clicked == -1)
                 {
@@ -112,12 +110,12 @@ void Palette::PollEvent(int fps)
                     break;
                 }
 
-                erase();
                 _active_form = clicked;
                 continue;
             }
             _forms[_active_form]->ProcEvent(wch);
         }
+
         Draw();
         this_thread::sleep_for(chrono::milliseconds(fps));
     };

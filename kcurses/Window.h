@@ -18,7 +18,6 @@ public:
     virtual ~Window();
 
     bool CanFocus();
-    void Render();
     virtual void Draw() = 0;
 
     Event _click;
@@ -48,7 +47,6 @@ protected:
     void DrawBase();
     void DrawTitle();
     Rect GetWinRect(void);
-
 
     WINDOW *_window;
 };

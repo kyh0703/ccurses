@@ -63,7 +63,7 @@ void Window::DrawBase()
     if (!_window)
         _window = newwin(_rect.h, _rect.w, _rect.min.y, _rect.min.x);
 
-    werase(_window);
+    // werase(_window);
 
     if (_box)
     {
@@ -91,10 +91,10 @@ void Window::DrawBase()
         ch |= WA_BOLD;
     else
         ch |= WA_NORMAL;
-
     if (_focus)
         ch |= WA_STANDOUT;
     wbkgd(_window, ch);
+
     DrawTitle();
 }
 
@@ -136,9 +136,4 @@ Rect Window::GetWinRect()
         w = _rect.w - 2;
 
     return {h, w, min_y, min_x};
-}
-
-void Window::Render()
-{
-    wrefresh(_window);
 }

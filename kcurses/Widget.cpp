@@ -42,7 +42,7 @@ void TextBox::Draw()
         else
             pos.x += 1;
     }
-    // Render();
+    wrefresh(_window);
 }
 
 Button::Button()
@@ -89,7 +89,7 @@ void Button::Draw()
         else
             pos.x += 1;
     }
-    // Render();
+    wrefresh(_window);
 }
 
 void Button::KeyDefault(KeyboardArgs args)
@@ -184,7 +184,7 @@ void Input::Draw()
         Rune r(style, ' ');
         AddCh(pos.y, pos.x++, r);
     }
-    // Render();
+    wrefresh(_window);
 }
 
 void Input::AddText(int ch)
@@ -288,7 +288,7 @@ void Tab::Draw()
     for (int i = 0; i < COLS; ++i)
         AddCh(pos.y, i, WACS_D_HLINE);
 
-    // Render();
+    wrefresh(_window);
 }
 
 List::List()
@@ -397,7 +397,7 @@ void List::Draw()
     if (_toprow + rect.h < (int)_rows.size())
         AddCh(rect.max.y, rect.max.x, WACS_DARROW);
 
-    // Render();
+    wrefresh(_window);
 }
 
 void List::KeyDefault(KeyboardArgs args)
