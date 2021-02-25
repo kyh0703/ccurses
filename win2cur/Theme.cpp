@@ -14,7 +14,7 @@ Theme::Theme()
     _base.tilte = COLOR_WHITE;
 
     _textbox.style.bg = COLOR_BLACK;
-    _textbox.style.fg = COLOR_BLACK;
+    _textbox.style.fg = COLOR_WHITE;
 
     _button.active.bg = COLOR_WHITE;
     _button.active.fg = COLOR_BLACK;
@@ -28,8 +28,8 @@ Theme::Theme()
     _input.inactive.fg = COLOR_WHITE;
     _input.inactive.opt = WA_UNDERLINE;
 
-    _tab.active.bg = COLOR_WHITE;
-    _tab.active.fg = COLOR_BLACK;
+    _tab.active.bg = COLOR_BLACK;
+    _tab.active.fg = COLOR_WHITE;
     _tab.active.opt = WA_STANDOUT;
     _tab.inactive.bg = COLOR_BLACK;
     _tab.inactive.fg = COLOR_WHITE;

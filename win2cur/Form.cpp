@@ -42,7 +42,7 @@ void Form::Delete(Widget *widget_ptr)
 {
     if (widget_ptr == _curfocus)
     {
-        if (!NextFocus())
+        if (!NextFocus(true))
             _curfocus = NULL;
     }
 
@@ -59,7 +59,7 @@ void Form::Clear()
     _widgets.clear();
 }
 
-bool Form::PrevFocus()
+bool Form::PrevFocus(bool is_del)
 {
     std::vector<unique_ptr<Widget>>::reverse_iterator it;
     it = find_if(_widgets.rbegin(), _widgets.rend(), [&](unique_ptr<Widget> &p) {
@@ -86,6 +86,9 @@ bool Form::PrevFocus()
     {
         if ((*it)->CanFocus())
         {
+            if (is_del && _curfocus == (*it).get())
+                continue;
+
             _curfocus = (*it).get();
             SetFocus();
             return true;
@@ -95,7 +98,7 @@ bool Form::PrevFocus()
     return false;
 }
 
-bool Form::NextFocus()
+bool Form::NextFocus(bool is_del)
 {
     std::vector<unique_ptr<Widget>>::iterator it;
     it = find_if(_widgets.begin(), _widgets.end(), [&](unique_ptr<Widget> &p) {
@@ -122,6 +125,9 @@ bool Form::NextFocus()
     {
         if ((*it)->CanFocus())
         {
+            if (is_del && _curfocus == (*it).get())
+                continue;
+
             _curfocus = (*it).get();
             SetFocus();
             return true;

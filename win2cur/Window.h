@@ -33,7 +33,6 @@ public:
     bool _enable;
     bool _visible;
     bool _focus;
-    bool _is_active;
     bool _box;
     Rect _rect;
     Color _color;
@@ -42,6 +41,7 @@ public:
 
 protected:
     void AddCh(int y, int x, cchar_t *cch);
+    void AddCh(int y, int x, Style s, cchar_t *cch);
     void AddCh(int y, int x, Rune r);
     void AddCh(int y, int x, Style s, wchar_t wc);
 

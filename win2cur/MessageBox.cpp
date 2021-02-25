@@ -1,22 +1,28 @@
 #include "MessageBox.h"
+#include "Theme.h"
 #include "Paint.h"
 
 #define WIDTH 40
 #define TEXT_HEIGHT 6
+
+cchar_t Convcch(int opt, wchar_t wch)
+{
+    cchar_t cch;
+    Color c = th::Get()._base.color;
+    int index = Paint::Get().GetIndex(c.bg, c.fg);
+    setcchar(&cch, &wch, opt, index, NULL);
+    return cch;
+}
 
 void DrawTitle(WINDOW *window, wstring title)
 {
     Pos pos(0, 2);
     for (size_t title_index = 0; title_index < title.size(); ++title_index)
     {
-        cchar_t cch;
         wchar_t wch = title[title_index];
-        setcchar(&cch, &wch, 0, 0, NULL);
+        cchar_t cch = Convcch(WA_NORMAL, wch);
         mvwadd_wch(window, pos.y, pos.x, &cch);
-        if (Util::IsHangle(wch))
-            pos.x += 2;
-        else
-            pos.x += 1;
+        pos.x += (Util::IsHangle(wch) ? 2 : 1);
     }
 }
 
@@ -37,14 +43,10 @@ void DrawText(WINDOW *window, Rect win_rect, wstring text)
         if (win_rect.max.y - 2 < pos.y)
             break;
 
-        cchar_t cch;
         wchar_t wch = text[text_index];
-        setcchar(&cch, &wch, 0, 0, NULL);
+        cchar_t cch = Convcch(WA_NORMAL, wch);
         mvwadd_wch(window, pos.y, pos.x, &cch);
-        if (Util::IsHangle(wch))
-            pos.x += 2;
-        else
-            pos.x += 1;
+        pos.x += (Util::IsHangle(wch) ? 2 : 1);
     }
 }
 
@@ -79,14 +81,10 @@ const int MessageBoxOk(wstring title, wstring text)
 
     for (size_t ok_index = 0; ok_index < ok.size(); ++ok_index)
     {
-        cchar_t cch;
         wchar_t wch = ok[ok_index];
-        setcchar(&cch, &wch, WA_REVERSE, 0, NULL);
+        cchar_t cch = Convcch(WA_REVERSE, wch);
         mvwadd_wch(window, pos.y, pos.x, &cch);
-        if (Util::IsHangle(wch))
-            pos.x += 2;
-        else
-            pos.x += 1;
+        pos.x += (Util::IsHangle(wch) ? 2 : 1);
     }
 
     MEVENT event;
@@ -144,14 +142,10 @@ draw_button:
     Rect yes_rect(1, yes.size(), rect.max.y - 2, pos.x + rect.min.x);
     for (size_t yes_index = 0; yes_index < yes.size(); ++yes_index)
     {
-        cchar_t cch;
         wchar_t wch = yes[yes_index];
-        setcchar(&cch, &wch, (is_yes ? WA_REVERSE : WA_NORMAL), 0, NULL);
+        cchar_t cch = Convcch((is_yes ? WA_REVERSE : WA_NORMAL), wch);
         mvwadd_wch(window, pos.y, pos.x, &cch);
-        if (Util::IsHangle(wch))
-            pos.x += 2;
-        else
-            pos.x += 1;
+        pos.x += (Util::IsHangle(wch) ? 2 : 1);
     }
 
     const wstring no = L"< 아니오 >";
@@ -159,14 +153,10 @@ draw_button:
     Rect no_rect(1, no.size(), rect.max.y - 2, pos.x + rect.min.x);
     for (size_t no_index = 0; no_index < no.size(); ++no_index)
     {
-        cchar_t cch;
         wchar_t wch = no[no_index];
-        setcchar(&cch, &wch, (!is_yes ? WA_REVERSE : WA_NORMAL), 0, NULL);
+        cchar_t cch = Convcch((!is_yes ? WA_REVERSE : WA_NORMAL), wch);
         mvwadd_wch(window, pos.y, pos.x, &cch);
-        if (Util::IsHangle(wch))
-            pos.x += 2;
-        else
-            pos.x += 1;
+        pos.x += (Util::IsHangle(wch) ? 2 : 1);
     }
 
     MEVENT event;

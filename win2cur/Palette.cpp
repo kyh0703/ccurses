@@ -110,6 +110,7 @@ void Palette::PollEvent(int fps)
                     break;
                 }
 
+                erase();
                 _active_form = clicked;
                 continue;
             }
@@ -123,34 +124,29 @@ void Palette::PollEvent(int fps)
 
 int Palette::ClickTab(MEVENT e)
 {
-    // if (e.bstate != BUTTON1_CLICKED)
-    //     return -1;
+    if (e.bstate != BUTTON1_CLICKED)
+        return -1;
 
-    // if (!_tab._rect.IsInclude(e.y, e.x))
-    //     return -1;
+    if (!_tab._rect.IsInclude(e.y, e.x))
+        return -1;
 
-    // Pos pos(0, 0);
-    // for (size_t tab_index = 0; tab_index < _tab._tabs.size(); ++tab_index)
-    // {
-    //     Pos str_pos(pos);
-    //     wstring item(_tab._tabs[tab_index]);
-    //     for (size_t item_index = 0; item_index < item.size(); ++item_index)
-    //     {
-    //         if (Util::IsHangle(item[item_index]))
-    //             str_pos.x += 2;
-    //         else
-    //             str_pos.x += 1;
-    //     }
+    Pos pos(0, 0);
+    for (size_t tab_index = 0; tab_index < _tab._tabs.size(); ++tab_index)
+    {
+        Pos str_pos(pos);
+        wstring item(_tab._tabs[tab_index]);
+        for (size_t item_index = 0; item_index < item.size(); ++item_index)
+            str_pos.x += (Util::IsHangle(item[item_index]) ? 2 : 1);
 
-    //     if (pos.y <= e.y && e.y <= str_pos.y &&
-    //         pos.x <= e.x && e.x <= str_pos.x)
-    //         return tab_index;
+        if (pos.y <= e.y && e.y <= str_pos.y &&
+            pos.x <= e.x && e.x <= str_pos.x)
+            return tab_index;
 
-    //     str_pos.x += 1;
-    //     pos = str_pos;
-    // }
+        str_pos.x += 1;
+        pos = str_pos;
+    }
 
-    // return -1;
+    return -1;
 }
 
 void Palette::FocusLeft()
@@ -188,17 +184,17 @@ void Palette::FocusLast()
 
 void Palette::DrawTab()
 {
-    // _tab._rect = { 2, COLS, 0, 0};
-    // _tab._active_index = _active_form;
-    // _tab._focus = false;
-    // vector<wstring> items;
-    // for (auto it = _forms.begin(); it != _forms.end(); ++it)
-    // {
-    //     wstring form_text = (*it)->_text;
-    //     items.push_back(form_text);
-    // }
-    // _tab._tabs = items;
-    // _tab.Draw();
+    _tab._rect = { 2, COLS, 0, 0};
+    _tab._active_index = _active_form;
+    _tab._focus = false;
+    vector<wstring> items;
+    for (auto it = _forms.begin(); it != _forms.end(); ++it)
+    {
+        wstring form_text = (*it)->_text;
+        items.push_back(form_text);
+    }
+    _tab._tabs = items;
+    _tab.Draw();
 }
 
 void Palette::Draw()

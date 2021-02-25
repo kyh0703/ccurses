@@ -20,7 +20,7 @@ public:
     void Delete(const Form *form_ptr);
     void Clear();
     bool Init();
-    void PollEvent(int fps = 100);
+    void PollEvent(int fps = 50);
 
 private:
     void FocusLeft();
@@ -35,5 +35,5 @@ private:
 
     int _active_form;
     vector<unique_ptr<Form>> _forms;
-    // Tab _tab;
+    Tab _tab;
 };

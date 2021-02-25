@@ -25,8 +25,8 @@ protected:
     vector<unique_ptr<Widget>> _widgets;
 
 private:
-    bool PrevFocus();
-    bool NextFocus();
+    bool PrevFocus(bool is_del = false);
+    bool NextFocus(bool is_del = false);
     void SetFocus();
     void OnMouseEvent(MEVENT &e);
     void OnKeyboardEvent(wint_t ch);

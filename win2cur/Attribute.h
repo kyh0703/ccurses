@@ -1,6 +1,13 @@
 #pragma once
 #include <ncursesw/curses.h>
 
+struct Border
+{
+    Border();
+    cchar_t *ls, *rs, *ts, *bs;
+    cchar_t *tl, *tr, *bl, *br;
+};
+
 struct Color
 {
     Color();

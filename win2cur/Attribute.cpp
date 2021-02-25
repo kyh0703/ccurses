@@ -1,6 +1,18 @@
 #include "Attribute.h"
 #include "Theme.h"
 
+Border::Border()
+{
+    this->ls = WACS_VLINE;
+    this->rs = WACS_VLINE;
+    this->ts = WACS_HLINE;
+    this->bs = WACS_HLINE;
+    this->tl = WACS_ULCORNER;
+    this->tr = WACS_URCORNER;
+    this->bl = WACS_LLCORNER;
+    this->br = WACS_LRCORNER;
+}
+
 Color::Color()
 {
     this->bg = COLOR_BLACK;
