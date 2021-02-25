@@ -3,6 +3,7 @@
 
 Border::Border()
 {
+    // NOTE WACS는 포인터임. attr 수정시 참조하는 Drawing 전체가 변경됨으로 주의
     this->ls = WACS_VLINE;
     this->rs = WACS_VLINE;
     this->ts = WACS_HLINE;
