@@ -51,6 +51,10 @@ public:
 
     const wstring GetText();
     void SetText(wstring s);
+    void AddStr(wstring wstr);
+    void AddText(wint_t wch);
+    void DelText();
+    void ClearText();
 
     void Draw() override;
 
@@ -59,9 +63,6 @@ public:
     vector<wchar_t> _text;
 
 private:
-    void AddText(int ch);
-    void DelText();
-    void ClearText();
     void KeyDefault(KeyboardArgs args);
 };
 

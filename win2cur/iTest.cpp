@@ -21,7 +21,7 @@ public:
         pBtn->_rect = {3, 10, 5, 5};
         // pBtn->_color = {COLOR_BLACK, COLOR_RED
         pBtn->_title = L"a";
-        pBtn->_text = L"등록";
+        pBtn->_text = L"1";
         pBtn->_enable = true;
         pBtn->_click = bind(&MyForm::btn1_clicked, this);
         Add(pBtn);

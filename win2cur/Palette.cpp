@@ -57,7 +57,7 @@ bool Palette::Init()
     if (noecho() == ERR)
         return false;
 
-    resize_term(60, 120);
+    resize_term(50, 120);
 
     clear();
     keypad(stdscr, TRUE);

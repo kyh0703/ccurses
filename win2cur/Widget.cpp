@@ -61,10 +61,11 @@ void Button::Draw()
     Rect rect = GetDrawRect();
     Pos pos(rect.min.y, rect.min.x);
 
+    int win_text_len = Util::GetTextSize(_text);
     if (rect.w < (int)_text.size())
         pos.x = rect.min.x;
     else
-        pos.x = (rect.min.x + ((rect.w - _text.size()) / 2)) - 1;
+        pos.x = (rect.min.x + ((rect.w - win_text_len) / 2));
 
     for (size_t text_index = 0; text_index < _text.size(); ++text_index)
     {
@@ -124,6 +125,30 @@ void Input::SetText(wstring s)
         AddText(s[i]);
 }
 
+void Input::AddStr(wstring wstr)
+{
+    for (size_t index = 0; index < wstr.size(); ++index)
+        if ((int)_text.size() < ((_rect.max.y + 1) * _rect.w))
+            _text.push_back(wstr[index]);
+}
+
+void Input::AddText(wint_t wch)
+{
+    if ((int)_text.size() < ((_rect.max.y + 1) * _rect.w))
+        _text.push_back(wch);
+}
+
+void Input::DelText()
+{
+    if (!_text.empty())
+        _text.pop_back();
+}
+
+void Input::ClearText()
+{
+    _text.clear();
+}
+
 void Input::Draw()
 {
     if (!_visible)
@@ -170,23 +195,6 @@ void Input::Draw()
         Rune r(style, ' ');
         AddCh(pos.y, pos.x++, r);
     }
-}
-
-void Input::AddText(int ch)
-{
-    if ((int)_text.size() < ((_rect.max.y + 1) * _rect.w))
-        _text.push_back(ch);
-}
-
-void Input::DelText()
-{
-    if (!_text.empty())
-        _text.pop_back();
-}
-
-void Input::ClearText()
-{
-    _text.clear();
 }
 
 void Input::KeyDefault(KeyboardArgs args)
@@ -487,16 +495,18 @@ void Table::Draw()
         for (size_t col = 0; col < cols.size(); ++col)
         {
             wstring text(cols[col]);
-            if (colWidth < (int)text.length() || _alignment == LEFT)
+            int win_text_len = Util::GetTextSize(text);
+
+            if (colWidth < win_text_len || _alignment == LEFT)
                 pos.x = rect.min.x + (col * colWidth);
             else if (_alignment == CENTER)
-                pos.x += (colWidth - text.length()) / 2;
+                pos.x += (colWidth - win_text_len) / 2;
             else if (_alignment == RIGHT)
             {
                 if (pos.x + colWidth < rect.max.x)
-                    pos.x += colWidth - text.length();
+                    pos.x += colWidth - win_text_len;
                 else
-                    pos.x = rect.max.x - text.length() + 1;
+                    pos.x = rect.max.x - win_text_len + 1;
             }
 
             int oneColMax = (rect.min.x + (colWidth * (col + 1)));
