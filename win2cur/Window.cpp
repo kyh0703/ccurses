@@ -49,7 +49,7 @@ void Window::AddCh(int y, int x, Rune r)
 {
     int idx = Paint::Get().GetIndex(r.s.bg, r.s.fg);
     cchar_t cch;
-    setcchar(&cch, &r.wch, r.s.opt, idx, NULL);
+    setcchar(&cch, &r.wch, r.s.opt, COLOR_PAIR(idx), NULL);
     mvadd_wch(y, x, &cch);
 }
 

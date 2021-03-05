@@ -10,32 +10,42 @@ class MyForm : public Form
 public:
     MyForm()
     {
-        ProgressBar *prs = new ProgressBar;
-        prs->_rect = {3, 25, 20, 20};
-        prs->_box = true;
-        prs->_title = L"제목";
-        prs->_percent = 10;
-        Add(prs);
+        // ProgressBar *prs = new ProgressBar;
+        // prs->_rect = {3, 25, 20, 20};
+        // prs->_box = true;
+        // prs->_title = L"제목";
+        // prs->_percent = 10;
+        // Add(prs);
 
-        pBtn = new Button;
-        pBtn->_rect = {3, 10, 5, 5};
-        // pBtn->_color = {COLOR_BLACK, COLOR_RED
-        pBtn->_title = L"a";
-        pBtn->_text = L"1";
-        pBtn->_enable = true;
-        pBtn->_click = bind(&MyForm::btn1_clicked, this);
-        Add(pBtn);
+        // pBtn = new Button;
+        // pBtn->_rect = {3, 10, 5, 5};
+        // // pBtn->_color = {COLOR_BLACK, COLOR_RED
+        // pBtn->_title = L"a";
+        // pBtn->_text = L"1";
+        // pBtn->_enable = true;
+        // pBtn->_click = bind(&MyForm::btn1_clicked, this);
+        // Add(pBtn);
 
-        pBtn2 = new Button;
-        pBtn2->_rect = {3, 10, 15, 15};
-        pBtn2->_title = L"a2";
-        pBtn2->_text = L"등록2";
-        pBtn2->_click = bind(&MyForm::btn2_clicked, this);
-        Add(pBtn2);
+        // pBtn2 = new Button;
+        // pBtn2->_rect = {3, 10, 15, 15};
+        // pBtn2->_title = L"a2";
+        // pBtn2->_text = L"등록2";
+        // pBtn2->_click = bind(&MyForm::btn2_clicked, this);
+        // Add(pBtn2);
 
-        Input *input = new Input;
-        input->_rect = {1 ,10, 11, 12};
-        Add(input);
+        // Input *input = new Input;
+        // input->_rect = {1 ,10, 11, 12};
+        // Add(input);
+
+        List *list = new List;
+        list->_rect = {10, 30, 2, 0};
+        list->_title = L"파일리스트";
+        list->_rows = {
+            L"1번입니다",
+            L"2번입니다",
+            L"3번입니다",
+        };
+        Add(list);
     }
 
     virtual ~MyForm() {}

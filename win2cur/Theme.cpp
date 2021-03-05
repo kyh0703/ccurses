@@ -37,7 +37,7 @@ Theme::Theme()
 
     _list.active.bg = COLOR_WHITE;
     _list.active.fg = COLOR_BLACK;
-    _list.active.opt = WA_REVERSE;
+    _list.active.opt = WA_STANDOUT;
     _list.inactive.bg = COLOR_BLACK;
     _list.inactive.fg = COLOR_WHITE;
     _list.inactive.opt = WA_NORMAL;

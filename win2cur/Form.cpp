@@ -218,7 +218,12 @@ void Form::OnKeyboardEvent(wint_t wch)
     {
     default:
         if (_curfocus && _curfocus->CanFocus())
+        {
             _curfocus->_key_default(args);
+
+            if (_curfocus->_key_press)
+                _curfocus->_key_press(args);
+        }
         break;
     }
 }
@@ -228,7 +233,6 @@ void Form::ProcEvent(wint_t &wch)
     MEVENT e;
     switch (wch)
     {
-    case KEY_DOWN:
     case KEY_MOUSE:
         if (getmouse(&e) == OK)
             OnMouseEvent(e);
