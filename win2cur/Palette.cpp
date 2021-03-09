@@ -5,12 +5,14 @@
 
 Palette::Palette()
 {
+    _tab = NULL;
     setlocale(LC_ALL, "ko_KR.utf8");
     _active_form = 0;
 }
 
 Palette::~Palette()
 {
+    delete _tab;
     clrtoeol();
     refresh();
     endwin();
@@ -56,8 +58,6 @@ bool Palette::Init()
         return false;
     if (noecho() == ERR)
         return false;
-
-    resize_term(50, 120);
 
     clear();
     keypad(stdscr, TRUE);
@@ -127,14 +127,16 @@ int Palette::ClickTab(MEVENT e)
     if (e.bstate != BUTTON1_CLICKED)
         return -1;
 
-    if (!_tab._rect.IsInclude(e.y, e.x))
+    Rect rect = _tab->GetRect();
+    if (!rect.IsInclude(e.y, e.x))
         return -1;
 
     Pos pos(0, 0);
-    for (size_t tab_index = 0; tab_index < _tab._tabs.size(); ++tab_index)
+    for (size_t tab_index = 0; tab_index < _tab->GetTabs().size(); ++tab_index)
     {
         Pos str_pos(pos);
-        wstring item(_tab._tabs[tab_index]);
+        wstring item;
+        _tab->GetTab(tab_index, item);
         for (size_t item_index = 0; item_index < item.size(); ++item_index)
             str_pos.x += (Util::IsHangle(item[item_index]) ? 2 : 1);
 
@@ -184,17 +186,19 @@ void Palette::FocusLast()
 
 void Palette::DrawTab()
 {
-    _tab._rect = { 2, COLS, 0, 0};
-    _tab._active_index = _active_form;
-    _tab._focus = false;
+    if (!_tab)
+        _tab = new Tab(2, COLS, 0, 0);
+
+    _tab->SetActiveIndex(_active_form);
+    _tab->SetFocus(false);
     vector<wstring> items;
     for (auto it = _forms.begin(); it != _forms.end(); ++it)
     {
         wstring form_text = (*it)->_text;
         items.push_back(form_text);
     }
-    _tab._tabs = items;
-    _tab.Draw();
+    _tab->SetTabs(items);
+    _tab->Draw();
 }
 
 void Palette::Draw()

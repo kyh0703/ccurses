@@ -43,6 +43,7 @@ void Window::AddCh(int y, int x, Style s, cchar_t *cch)
     cch->attr |= s.opt;
     cch->attr |= COLOR_PAIR(idx);
     mvadd_wch(y, x, cch);
+    cch->attr = WA_NORMAL;
 }
 
 void Window::AddCh(int y, int x, Rune r)

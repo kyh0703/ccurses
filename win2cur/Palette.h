@@ -1,10 +1,10 @@
 #pragma once
 #include "Form.h"
 #include "Widget.h"
+#include <chrono>
+#include <locale.h>
 #include <ncursesw/curses.h>
 #include <signal.h>
-#include <locale.h>
-#include <chrono>
 #include <string>
 #include <thread>
 #include <vector>
@@ -35,5 +35,5 @@ private:
 
     int _active_form;
     vector<unique_ptr<Form>> _forms;
-    Tab _tab;
+    Tab *_tab;
 };

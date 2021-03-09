@@ -140,7 +140,7 @@ bool Form::NextFocus(bool is_del)
 void Form::SetFocus()
 {
     for (auto it = _widgets.begin(); it != _widgets.end(); ++it)
-        (*it)->_focus = ((*it).get() == _curfocus);
+        (*it)->SetFocus(((*it).get() == _curfocus));
 }
 
 void Form::OnMouseEvent(MEVENT &e)
@@ -153,11 +153,11 @@ void Form::OnMouseEvent(MEVENT &e)
     for (auto it = _widgets.rbegin(); it != _widgets.rend(); ++it)
     {
         Widget *temp = (*it).get();
-        Rect rect = temp->_rect;
+        Rect rect = temp->GetRect();
         if (!rect.IsInclude(e.y, e.x))
             continue;
 
-        if (!(*it)->_visible || !(*it)->_enable)
+        if (!(*it)->GetVisible() || !(*it)->GetEnable())
             continue;
 
         if ((*it)->_key_default)
@@ -213,7 +213,7 @@ void Form::OnMouseEvent(MEVENT &e)
 void Form::OnKeyboardEvent(wint_t wch)
 {
     KeyboardArgs args;
-    args.ch = wch;
+    args.wch = wch;
     switch (wch)
     {
     default:

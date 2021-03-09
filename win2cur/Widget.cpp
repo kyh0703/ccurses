@@ -2,8 +2,9 @@
 #include "Theme.h"
 #include "Paint.h"
 
-TextBox::TextBox()
+TextBox::TextBox(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _style = th::Get()._textbox.style;
     _box = false;
 }
@@ -41,8 +42,9 @@ void TextBox::Draw()
     }
 }
 
-Button::Button()
+Button::Button(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _active_style = th::Get()._button.active;
     _inactive_style = th::Get()._button.inactive;
     _key_default = bind(&Button::KeyDefault, this, placeholders::_1);
@@ -86,7 +88,7 @@ void Button::Draw()
 
 void Button::KeyDefault(KeyboardArgs args)
 {
-    switch (args.ch)
+    switch (args.wch)
     {
     case ' ':
     case 10:
@@ -98,8 +100,9 @@ void Button::KeyDefault(KeyboardArgs args)
     }
 }
 
-Input::Input()
+Input::Input(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _box = false;
     _active_style = th::Get()._input.active;
     _inactive_style = th::Get()._input.inactive;
@@ -199,7 +202,7 @@ void Input::Draw()
 
 void Input::KeyDefault(KeyboardArgs args)
 {
-    switch(args.ch)
+    switch(args.wch)
     {
     case KEY_ENTER:
     case 10:
@@ -215,15 +218,16 @@ void Input::KeyDefault(KeyboardArgs args)
         ClearText();
         break;
     default:
-        if (iswalnum(args.ch) || args.ch == 95 ||
-            args.ch == 46 || args.ch == 58)
-            AddText(args.ch);
+        if (iswalnum(args.wch) || args.wch == 95 ||
+            args.wch == 46 || args.wch == 58)
+            AddText(args.wch);
         break;
     }
 }
 
-Tab::Tab()
+Tab::Tab(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _box = false;
     _active_style = th::Get()._tab.active;
     _inactive_style = th::Get()._tab.inactive;
@@ -232,6 +236,25 @@ Tab::Tab()
 
 Tab::~Tab()
 {
+}
+
+bool Tab::GetTab(int index, wstring &tab)
+{
+    tab.clear();
+    if ((int)_tabs.size() <= index)
+        return false;
+
+    tab = _tabs[index];
+    return true;
+}
+
+bool Tab::SetTab(int index, wstring tab)
+{
+    if ((int)_tabs.size() <= index)
+        return false;
+
+    _tabs[index] = tab;
+    return true;
 }
 
 void Tab::FocusLeft()
@@ -283,12 +306,13 @@ void Tab::Draw()
         AddCh(pos.y, i, WACS_D_HLINE);
 }
 
-List::List()
+List::List(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _active_style = th::Get()._list.active;
     _inactive_style = th::Get()._list.inactive;
-    _currow = 0;
-    _toprow = 0;
+    _cur_row = 0;
+    _top_row = 0;
     _key_default = bind(&List::KeyDefault, this, placeholders::_1);
 }
 
@@ -296,14 +320,22 @@ List::~List()
 {
 }
 
+wstring List::GetCurrentRow()
+{
+    if (_rows.empty())
+        return L"";
+
+    return _rows[_cur_row];
+}
+
 void List::ScrollAmount(int amount)
 {
-    if ((int)_rows.size() - _currow <= amount)
-        _currow = _rows.size() - 1;
-    else if (_currow + amount < 0)
-        _currow = 0;
+    if ((int)_rows.size() - _cur_row <= amount)
+        _cur_row = _rows.size() - 1;
+    else if (_cur_row + amount < 0)
+        _cur_row = 0;
     else
-        _currow += amount;
+        _cur_row += amount;
 }
 
 void List::ScrollUp()
@@ -318,8 +350,8 @@ void List::ScrollDown()
 
 void List::ScrollPageUp()
 {
-    if (_toprow < _currow)
-        _currow = _toprow;
+    if (_top_row < _cur_row)
+        _cur_row = _top_row;
     else
         ScrollAmount(-_rect.h);
 }
@@ -331,12 +363,12 @@ void List::ScrollPageDown()
 
 void List::ScrollTop()
 {
-    _currow = 0;
+    _cur_row = 0;
 }
 
 void List::ScrollBottom()
 {
-    _currow = _rows.size() - 1;
+    _cur_row = _rows.size() - 1;
 }
 
 void List::Draw()
@@ -348,12 +380,12 @@ void List::Draw()
     Rect rect = GetDrawRect();
     Pos pos(rect.min.y, rect.min.x);
 
-    if (rect.h + _toprow <= _currow)
-        _toprow = _currow - rect.h + 1;
-    else if (_currow < _toprow)
-        _toprow = _currow;
+    if (rect.h + _top_row <= _cur_row)
+        _top_row = _cur_row - rect.h + 1;
+    else if (_cur_row < _top_row)
+        _top_row = _cur_row;
 
-    for (size_t row_index = _toprow; row_index < _rows.size(); ++row_index)
+    for (size_t row_index = _top_row; row_index < _rows.size(); ++row_index)
     {
         wstring text(_rows[row_index]);
         for (size_t text_index = 0; text_index < text.size(); ++text_index)
@@ -362,7 +394,7 @@ void List::Draw()
                 break;
 
             Style style;
-            if ((int)row_index == _currow)
+            if ((int)row_index == _cur_row)
                 style = _active_style;
             else
                 style = _inactive_style;
@@ -378,16 +410,22 @@ void List::Draw()
             break;
     }
 
-    if (0 < _toprow)
-        AddCh(rect.min.y, rect.max.x, WACS_UARROW);
+    if (0 < _top_row)
+    {
+        Rune r(L'\u2191');
+        AddCh(rect.min.y, rect.max.x - 1, r);
+    }
 
-    if (_toprow + rect.h < (int)_rows.size())
-        AddCh(rect.max.y, rect.max.x, WACS_DARROW);
+    if (_top_row + rect.h < (int)_rows.size())
+    {
+        Rune r(L'\u2193');
+        AddCh(rect.max.y, rect.max.x, r);
+    }
 }
 
 void List::KeyDefault(KeyboardArgs args)
 {
-    switch(args.ch)
+    switch(args.wch)
     {
     case KEY_UP:
         ScrollUp();
@@ -412,8 +450,9 @@ void List::KeyDefault(KeyboardArgs args)
     }
 }
 
-ProgressBar::ProgressBar()
+ProgressBar::ProgressBar(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _bar_color = th::Get()._progress.bar;
     _percent = 0;
 }
@@ -431,9 +470,9 @@ void ProgressBar::Draw()
     Rect rect = GetDrawRect();
     Pos pos(rect.min.y, rect.min.x);
 
-    string label;
+    wstring label;
     if (_label.empty())
-        label = to_string(_percent) + "%";
+        label = to_wstring(_percent) + L"%";
     else
         label = _label;
 
@@ -453,8 +492,9 @@ void ProgressBar::Draw()
         pos.x = rect.min.x;
     }
 
+    int text_size = Util::GetTextSize(label);
     pos.y = rect.min.y + (rect.h / 2);
-    pos.x = rect.min.x + (rect.w / 2) - (label.length() / 2);
+    pos.x = rect.min.x + (rect.w / 2) - (text_size / 2);
     if (rect.max.y < pos.y)
         return;
 
@@ -468,8 +508,9 @@ void ProgressBar::Draw()
     }
 }
 
-Table::Table()
+Table::Table(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _alignment = LEFT;
 }
 
@@ -536,11 +577,12 @@ void Table::Draw()
     }
 }
 
-BarChart::BarChart()
+BarChart::BarChart(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _num_color = th::Get()._bar.number;
-    _bar_color.push_back(th::Get()._bar.bar);
-    _label_style.push_back(th::Get()._bar.label);
+    _bar_colors.push_back(th::Get()._bar.bar);
+    _label_styles.push_back(th::Get()._bar.label);
     _bar_gap = 1;
     _bar_width = 3;
     _max_val = 0;
@@ -560,12 +602,12 @@ void BarChart::Draw()
 
     int max_val = _max_val;
     if (max_val == 0)
-        max_val = *max_element(_data.begin(), _data.end());
+        max_val = *max_element(_datas.begin(), _datas.end());
 
     int bar_x = rect.min.x + 1;
-    for (size_t col = 0; col < _data.size(); ++col)
+    for (size_t col = 0; col < _datas.size(); ++col)
     {
-        float val = _data[col];
+        float val = _datas[col];
         int h = (((float)(val / max_val)) * (rect.h - 2));
         int w = 0;
         if (bar_x + _bar_width < rect.max.x)
@@ -583,9 +625,9 @@ void BarChart::Draw()
             }
         }
 
-        if (col < _label.size())
+        if (col < _labels.size())
         {
-            string label(_label[col]);
+            wstring label(_labels[col]);
             int labalX = bar_x + (float)(_bar_width / 2) - (float)(label.size() / 2);
 
             for (size_t i = 0; i < label.size(); ++i)
@@ -615,15 +657,15 @@ void BarChart::Draw()
 Rune BarChart::GetBarColor(int index)
 {
     Rune r;
-    r.s.fg = _bar_color[index % _bar_color.size()];
-    r.s.bg = _bar_color[index % _bar_color.size()];
+    r.s.fg = _bar_colors[index % _bar_colors.size()];
+    r.s.bg = _bar_colors[index % _bar_colors.size()];
     return r;
 }
 
 Rune BarChart::GetLabelStyle(int index)
 {
     Rune r;
-    r.s = _label_style[index % _label_style.size()];
+    r.s = _label_styles[index % _label_styles.size()];
     return r;
 }
 
@@ -635,11 +677,12 @@ Rune BarChart::GetNumberStyle(int index)
     return r;
 }
 
-Radio::Radio()
+Radio::Radio(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _box = false;
-    _active = th::Get()._radio.active;
-    _inactive = th::Get()._radio.inactive;
+    _active_style = th::Get()._radio.active;
+    _inactive_style = th::Get()._radio.inactive;
 }
 
 Radio::~Radio()
@@ -656,12 +699,12 @@ void Radio::Draw()
     Pos pos(rect.min.y, rect.min.x);
 
     Style style;
-    if (_is_check)
-        style = _active;
+    if (_checked)
+        style = _active_style;
     else
-        style = _inactive;
+        style = _inactive_style;
 
-    Rune r(style, _is_check ? 'o' : ' ');
+    Rune r(style, _checked ? 'o' : ' ');
     pos.x += 2;
 
     for (size_t text_index = 0; text_index < _text.size(); ++text_index)
@@ -669,12 +712,15 @@ void Radio::Draw()
         if (rect.max.x < pos.x)
             break;
 
-        AddCh(pos.y, pos.x++, _text[text_index]);
+        wchar_t wch = _text[text_index];
+        AddCh(pos.y, pos.x, wch);
+        pos.x += (Util::IsHangle(wch) ? 2 : 1);
     }
 }
 
-CheckBox::CheckBox()
+CheckBox::CheckBox(int h, int w, int y, int x)
 {
+    _rect = {h, w, y, x};
     _box = false;
     _style = th::Get()._checkbox.style;
     _key_default = bind(&CheckBox::KeyDefault, this, placeholders::_1);
@@ -710,7 +756,7 @@ void CheckBox::Draw()
 
 void CheckBox::KeyDefault(KeyboardArgs args)
 {
-    switch (args.ch)
+    switch (args.wch)
     {
     case ' ':
     case 10:

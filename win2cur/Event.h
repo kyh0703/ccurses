@@ -26,7 +26,7 @@ struct MouseArgs : public EventArgs
 
 struct KeyboardArgs : public EventArgs
 {
-    int ch;
+    wint_t wch;
 };
 
 using Event = function<void(EventArgs)>;

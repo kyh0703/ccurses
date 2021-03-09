@@ -37,14 +37,35 @@ public:
         // input->_rect = {1 ,10, 11, 12};
         // Add(input);
 
-        List *list = new List;
-        list->_rect = {10, 30, 2, 0};
-        list->_title = L"파일리스트";
-        list->_rows = {
-            L"1번입니다",
+        List *list = new List(10, 30, 2, 0);
+        list->SetTitle(L"파일리스트");
+        list->SetRows({
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
+            L"1234",
             L"2번입니다",
             L"3번입니다",
-        };
+            L"3번입니다",
+            L"3번입니다",
+            L"3번입니다",
+            L"3번입니다",
+            L"3번입니다",
+            L"3번입니다",
+            L"3번입니다",
+        });
         Add(list);
     }
 
@@ -58,7 +79,7 @@ public:
 
     void btn2_clicked()
     {
-        pBtn2->_text = L"alter";
+        pBtn2->SetText(L"alter");
     }
 
 private:
@@ -71,11 +92,10 @@ class MyForm2 : public Form
 public:
     MyForm2()
     {
-        pBtn = new Button;
-        pBtn->_rect = {3, 10, 10, 10};
-        pBtn->_title = L"버튼";
-        pBtn->_text = L"등록";
-        pBtn->_enable = true;
+        pBtn = new Button(3, 10, 10, 10);
+        pBtn->SetTitle(L"버튼");
+        pBtn->SetText(L"등록");
+        pBtn->SetEnable(true);
         pBtn->_click = bind(&MyForm2::btn1_clicked, this);
         Add(pBtn);
     }
