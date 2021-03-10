@@ -50,7 +50,7 @@ void Window::AddCh(int y, int x, Rune r)
 {
     int idx = Paint::Get().GetIndex(r.s.bg, r.s.fg);
     cchar_t cch;
-    setcchar(&cch, &r.wch, r.s.opt, COLOR_PAIR(idx), NULL);
+    setcchar(&cch, &r.wch, r.s.opt, idx, NULL);
     mvadd_wch(y, x, &cch);
 }
 
@@ -81,12 +81,7 @@ Rect Window::GetDrawRect()
 
 void Window::InitCell()
 {
-    Rune r;
-    r.s.bg = COLOR_BLACK;
-    r.s.fg = COLOR_BLACK;
-    r.s.opt = WA_NORMAL;
-    r.wch = L' ';
-
+    Rune r{_color.bg, _color.fg, L' '};
     for (int y = _rect.min.y; y <= _rect.max.y; ++y)
         for (int x = _rect.min.x; x <= _rect.max.x; ++x)
             AddCh(y, x, r);

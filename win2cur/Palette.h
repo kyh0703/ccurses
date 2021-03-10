@@ -1,5 +1,6 @@
 #pragma once
 #include "Form.h"
+#include "Theme.h"
 #include "Widget.h"
 #include <chrono>
 #include <locale.h>
@@ -19,7 +20,7 @@ public:
     bool Add(Form *form_ptr);
     void Delete(const Form *form_ptr);
     void Clear();
-    bool Init();
+    bool Init(unsigned theme = Theme::DARK_WHITE);
     void PollEvent(int fps = 50);
 
 private:

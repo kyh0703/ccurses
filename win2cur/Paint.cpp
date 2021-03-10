@@ -58,15 +58,7 @@ short Paint::AddColorSet(short bg, short fg)
     _color_table[_color_count].fg = fg;
 
     if (_color_count <= 0)
-    {
         start_color();
-        init_color(COLOR_RED, 500, 0, 0);
-        init_color(COLOR_GREEN, 500, 0, 0);
-        init_color(COLOR_YELLOW, 500, 0, 0);
-        init_color(COLOR_BLUE, 500, 0, 0);
-        init_color(COLOR_MAGENTA, 500, 0, 0);
-        init_color(COLOR_CYAN, 500, 0, 0);
-    }
 
     init_pair(_color_table[_color_count].no,
               _color_table[_color_count].fg,

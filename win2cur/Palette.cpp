@@ -50,7 +50,7 @@ void Palette::Clear()
     _forms.clear();
 }
 
-bool Palette::Init()
+bool Palette::Init(unsigned theme)
 {
     if (!initscr())
         return false;
@@ -68,6 +68,7 @@ bool Palette::Init()
 
     mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 
+    th::Get().SetTheme(theme);
     Color color(th::Get()._base.color);
     short idx = Paint::Get().GetIndex(color.bg, color.fg);
     wbkgd(stdscr, COLOR_PAIR(idx));

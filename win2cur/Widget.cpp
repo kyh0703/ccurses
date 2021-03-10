@@ -137,7 +137,7 @@ void Input::AddStr(wstring wstr)
 
 void Input::AddText(wint_t wch)
 {
-    if ((int)_text.size() < ((_rect.max.y + 1) * _rect.w))
+    if ((int)_text.size() < (_rect.h * _rect.w))
         _text.push_back(wch);
 }
 
@@ -165,7 +165,7 @@ void Input::Draw()
     {
         for (int x = rect.min.x; x <= rect.max.x; ++x)
         {
-            Rune r({COLOR_BLACK, COLOR_WHITE, WA_UNDERLINE}, ' ');
+            Rune r({_color.bg, _color.fg, WA_UNDERLINE}, L' ');
             AddCh(y, x, r);
         }
     }
@@ -192,9 +192,9 @@ void Input::Draw()
         pos.x += (Util::IsHangle(_text[text_index]) ? 2 : 1);
     }
 
-    if (pos.x < rect.max.x && _focus)
+    if (pos.x < rect.max.x && pos.y <= rect.max.y && _focus)
     {
-        Style style(COLOR_BLACK, COLOR_WHITE, WA_UNDERLINE | WA_STANDOUT);
+        Style style(_color.bg, _color.fg, WA_UNDERLINE | WA_STANDOUT);
         Rune r(style, ' ');
         AddCh(pos.y, pos.x++, r);
     }
@@ -412,13 +412,13 @@ void List::Draw()
 
     if (0 < _top_row)
     {
-        Rune r(L'\u2191');
+        Rune r(_color.bg, _color.fg, L'\u2191');
         AddCh(rect.min.y, rect.max.x - 1, r);
     }
 
     if (_top_row + rect.h < (int)_rows.size())
     {
-        Rune r(L'\u2193');
+        Rune r(_color.bg, _color.fg, L'\u2193');
         AddCh(rect.max.y, rect.max.x, r);
     }
 }
@@ -454,6 +454,7 @@ ProgressBar::ProgressBar(int h, int w, int y, int x)
 {
     _rect = {h, w, y, x};
     _bar_color = th::Get()._progress.bar;
+    _label_style = th::Get()._progress.label;
     _percent = 0;
 }
 
@@ -479,7 +480,7 @@ void ProgressBar::Draw()
     int bar_width = int(float(_percent * 0.01) * rect.w);
     while (pos.y <= rect.max.y)
     {
-        Rune r(_bar_color, COLOR_BLACK, ' ');
+        Rune r(_bar_color, _color.bg, L' ');
         while (pos.x <= rect.min.x + bar_width)
         {
             if (rect.max.x < pos.x)
@@ -502,7 +503,7 @@ void ProgressBar::Draw()
     {
         Style style(_label_style);
         if (pos.x + (int)label_index <= rect.min.x + bar_width)
-            style = {COLOR_BLACK, _bar_color, WA_REVERSE};
+            style = {_color.bg, _bar_color, WA_REVERSE};
         Rune r(style, label[label_index]);
         AddCh(pos.y, pos.x + label_index, r);
     }
@@ -511,7 +512,7 @@ void ProgressBar::Draw()
 Table::Table(int h, int w, int y, int x)
 {
     _rect = {h, w, y, x};
-    _alignment = LEFT;
+    _alignment = CENTER;
 }
 
 Table::~Table()
@@ -527,40 +528,44 @@ void Table::Draw()
     Rect rect = GetDrawRect();
     Pos pos(rect.min.y, rect.min.x);
 
-    int colCnt = _rows[0].size();
-    int colWidth = rect.w / colCnt;
+    if (_rows.empty())
+        return;
 
-    for (size_t row = 0; row < _rows.size(); ++row)
+    int col_cnt = _rows[0].size();
+    int col_width = rect.w / col_cnt;
+
+    for (size_t row_index = 0; row_index < _rows.size(); ++row_index)
     {
-        vector<wstring> cols(_rows[row]);
-        for (size_t col = 0; col < cols.size(); ++col)
+        vector<wstring> cols(_rows[row_index]);
+        for (size_t col_index = 0; col_index < cols.size(); ++col_index)
         {
-            wstring text(cols[col]);
+            wstring text(cols[col_index]);
             int win_text_len = Util::GetTextSize(text);
-
-            if (colWidth < win_text_len || _alignment == LEFT)
-                pos.x = rect.min.x + (col * colWidth);
+            if (col_width < win_text_len || _alignment == LEFT)
+                pos.x = rect.min.x + (col_index * col_width);
             else if (_alignment == CENTER)
-                pos.x += (colWidth - win_text_len) / 2;
+                pos.x += (col_width - win_text_len) / 2;
             else if (_alignment == RIGHT)
             {
-                if (pos.x + colWidth < rect.max.x)
-                    pos.x += colWidth - win_text_len;
+                if (pos.x + col_width < rect.max.x)
+                    pos.x += col_width - win_text_len;
                 else
                     pos.x = rect.max.x - win_text_len + 1;
             }
 
-            int oneColMax = (rect.min.x + (colWidth * (col + 1)));
-            for (size_t strIdx = 0; pos.x < oneColMax;)
+            int one_col_max = (rect.min.x + (col_width * (col_index + 1)));
+            for (size_t str_index = 0; pos.x < one_col_max; ++pos.x)
             {
-                if (text[strIdx] == 0x00)
+                if (text[str_index] == 0x00)
                     continue;
-                wchar_t wch = text[strIdx++];
-                AddCh(pos.y, pos.x, wch);
-                pos.x += (Util::IsHangle(wch) ? 2 : 1);
+
+                Rune r(_color.bg, _color.fg, text[str_index++]);
+                AddCh(pos.y, pos.x, r);
+                if (Util::IsHangle(r.wch))
+                    pos.x++;
             }
 
-            if (col != cols.size() - 1)
+            if (col_index != cols.size() - 1)
                 AddCh(pos.y, pos.x - 1, WACS_VLINE);
             else
                 pos.y++;
@@ -602,7 +607,10 @@ void BarChart::Draw()
 
     int max_val = _max_val;
     if (max_val == 0)
-        max_val = *max_element(_datas.begin(), _datas.end());
+    {
+        if (!_datas.empty())
+            max_val = *max_element(_datas.begin(), _datas.end());
+    }
 
     int bar_x = rect.min.x + 1;
     for (size_t col = 0; col < _datas.size(); ++col)
@@ -672,7 +680,7 @@ Rune BarChart::GetLabelStyle(int index)
 Rune BarChart::GetNumberStyle(int index)
 {
     Rune r(GetBarColor(index));
-    r.s.bg = COLOR_BLACK;
+    r.s.bg = _num_color;
     r.s.opt = WA_REVERSE;
     return r;
 }
@@ -680,9 +688,9 @@ Rune BarChart::GetNumberStyle(int index)
 Radio::Radio(int h, int w, int y, int x)
 {
     _rect = {h, w, y, x};
+    _checked = false;
     _box = false;
-    _active_style = th::Get()._radio.active;
-    _inactive_style = th::Get()._radio.inactive;
+    _style = th::Get()._radio.style;
 }
 
 Radio::~Radio()
@@ -698,13 +706,9 @@ void Radio::Draw()
     Rect rect = GetDrawRect();
     Pos pos(rect.min.y, rect.min.x);
 
-    Style style;
-    if (_checked)
-        style = _active_style;
-    else
-        style = _inactive_style;
-
-    Rune r(style, _checked ? 'o' : ' ');
+    Style style = _style;
+    Rune r(style, _checked ? L'\u25C9' : L'\u25CB');
+    AddCh(pos.y, pos.x, r);
     pos.x += 2;
 
     for (size_t text_index = 0; text_index < _text.size(); ++text_index)
@@ -712,9 +716,12 @@ void Radio::Draw()
         if (rect.max.x < pos.x)
             break;
 
-        wchar_t wch = _text[text_index];
-        AddCh(pos.y, pos.x, wch);
-        pos.x += (Util::IsHangle(wch) ? 2 : 1);
+        if (_focus)
+            style.opt = WA_BOLD;
+
+        Rune r(style, _text[text_index]);
+        AddCh(pos.y, pos.x, r);
+        pos.x += (Util::IsHangle(r.wch) ? 2 : 1);
     }
 }
 
@@ -739,7 +746,8 @@ void CheckBox::Draw()
     Rect rect = GetDrawRect();
     Pos pos(rect.min.y, rect.min.x);
 
-    Rune r(_style, _checked ? 'v' : ' ');
+    Style style = _style;
+    Rune r(style, _checked ? L'\u2611' : L'\u2610');
     AddCh(pos.y, pos.x, r);
     pos.x += 2;
 
@@ -748,9 +756,12 @@ void CheckBox::Draw()
         if (rect.max.x < pos.x)
             break;
 
-        wchar_t wch = _text[text_index];
-        AddCh(pos.y, pos.x, wch);
-        pos.x += (Util::IsHangle(wch) ? 2 : 1);
+        if (_focus)
+            style.opt = WA_BOLD;
+
+        Rune r(style, _text[text_index]);
+        AddCh(pos.y, pos.x, r);
+        pos.x += (Util::IsHangle(r.wch) ? 2 : 1);
     }
 }
 

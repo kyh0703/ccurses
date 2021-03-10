@@ -245,6 +245,7 @@ private:
     vector<float> _datas;
 };
 
+// TODO 라디오 버튼 그룹 필요
 class Radio : public Widget
 {
 public:
@@ -252,21 +253,18 @@ public:
     virtual ~Radio();
 
     inline const bool GetChecked() { return _checked; }
-    inline const Style GetActiveStyle() { return _active_style; }
-    inline const Style GetInactiveStyle() { return _inactive_style; }
+    inline const Style GetStyle() { return _style; }
     inline const wstring GetText() { return _text; }
 
     inline void SetChecked(bool checked) { _checked = checked; }
-    inline void SetActiveStyle(Style active_style) { _active_style = active_style; }
-    inline void SetInactiveStyle(Style inactive_style) { _inactive_style = inactive_style; }
+    inline void SetStyle(Style style) { _style = style; }
     inline void SetText(wstring text) { _text = text; }
 
     void Draw() override;
 
 private:
     bool _checked;
-    Style _active_style;
-    Style _inactive_style;
+    Style _style;
     wstring _text;
 };
 

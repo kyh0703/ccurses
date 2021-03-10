@@ -72,6 +72,9 @@ const int MessageBoxOk(wstring title, wstring text)
 
     DrawTitle(window, title);
     DrawText(window, win_rect, text);
+    Color c = th::Get()._base.color;
+    int index = Paint::Get().GetIndex(c.bg, c.fg);
+    wbkgd(window, COLOR_PAIR(index));
 
     const wstring ok = L"< 확인 >";
     Pos pos;
@@ -130,7 +133,9 @@ const int MessageBoxYes(wstring title, wstring text)
 
     DrawTitle(window, title);
     DrawText(window, win_rect, text);
-
+    Color c = th::Get()._base.color;
+    int index = Paint::Get().GetIndex(c.bg, c.fg);
+    wbkgd(window, COLOR_PAIR(index));
     bool is_yes = true;
 
 draw_button:

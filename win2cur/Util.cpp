@@ -2,9 +2,14 @@
 
 bool Util::IsHangle(const wchar_t wch)
 {
-    const wchar_t start_ch = L'가';
-    const wchar_t end_ch = L'힣';
-    return (start_ch <= wch && wch <= end_ch);
+    bool is_hangle = false;
+    const wchar_t start_hangle = L'가';
+    const wchar_t end_hangle = L'힣';
+    const wchar_t start_jamo = L'ㄱ';
+    const wchar_t end_jamo = L'ㆎ';
+    is_hangle |= (start_hangle <= wch && wch <= end_hangle);
+    is_hangle |= (start_jamo <= wch && wch <= end_jamo);
+    return is_hangle;
 }
 
 int Util::GetTextSize(wstring wstr)

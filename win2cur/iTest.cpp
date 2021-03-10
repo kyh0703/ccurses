@@ -10,32 +10,56 @@ class MyForm : public Form
 public:
     MyForm()
     {
-        // ProgressBar *prs = new ProgressBar;
-        // prs->_rect = {3, 25, 20, 20};
-        // prs->_box = true;
-        // prs->_title = L"제목";
-        // prs->_percent = 10;
-        // Add(prs);
+        TextBox *box = new TextBox(3, 30, 15, 80);
+        box->SetText(L"hkhkhkhkhk");
+        box->SetBox(true);
+        Add(box);
 
-        // pBtn = new Button;
-        // pBtn->_rect = {3, 10, 5, 5};
-        // // pBtn->_color = {COLOR_BLACK, COLOR_RED
-        // pBtn->_title = L"a";
-        // pBtn->_text = L"1";
-        // pBtn->_enable = true;
-        // pBtn->_click = bind(&MyForm::btn1_clicked, this);
-        // Add(pBtn);
+        ProgressBar *prs = new ProgressBar(3, 25, 20, 20);
+        prs->SetTitle(L"제목");
+        prs->SetPercent(45);
+        Add(prs);
 
-        // pBtn2 = new Button;
-        // pBtn2->_rect = {3, 10, 15, 15};
-        // pBtn2->_title = L"a2";
-        // pBtn2->_text = L"등록2";
-        // pBtn2->_click = bind(&MyForm::btn2_clicked, this);
-        // Add(pBtn2);
+        pBtn = new Button(3, 10, 21, 5);
+        pBtn->SetTitle(L"a");
+        pBtn->SetText(L"1");
+        pBtn->_click = bind(&MyForm::btn1_clicked, this);
+        Add(pBtn);
 
-        // Input *input = new Input;
-        // input->_rect = {1 ,10, 11, 12};
-        // Add(input);
+        CheckBox *check = new CheckBox(1, 10, 5, 30);
+        check->SetText(L"hihihihi");
+        Add(check);
+
+        Radio *radio = new Radio(1, 10, 6, 30);
+        radio->SetText(L"hihihihi222");
+        Add(radio);
+
+        BarChart *bar = new BarChart(10, 20, 2, 80);
+        bar->SetTitle(L"하이");
+        bar->SetDatas({
+            1.0,
+            2.0,
+            3.0,
+            2.0,
+        });
+        bar->SetLabels({
+            L"1번",
+            L"2번",
+            L"3번",
+            L"4번",
+        });
+        Add(bar);
+
+        Table *table = new Table(20, 30, 5, 50);
+        table->SetTitle(L"햐햐햐햐");
+        table->SetRows({
+            {L"하이", L"하이2"},
+            {L"하이", L"하이2"},
+        });
+        Add(table);
+
+        Input *input = new Input(1, 10, 30, 12);
+        Add(input);
 
         List *list = new List(10, 30, 2, 0);
         list->SetTitle(L"파일리스트");
@@ -113,7 +137,7 @@ private:
 int main(void)
 {
     Palette ui;
-    if (!ui.Init())
+    if (!ui.Init(Theme::VSCODE_DARK))
     {
         cout << "ncurses init Fail" << endl;
         return 1;

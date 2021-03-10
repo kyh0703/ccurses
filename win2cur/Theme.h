@@ -1,10 +1,24 @@
 #pragma once
 #include "Attribute.h"
+#include "Paint.h"
+#include <ncursesw/curses.h>
+#include <string>
+using namespace std;
 
 typedef class Theme th;
 class Theme
 {
 public:
+    enum
+    {
+        DARK_WHITE,
+        WHITE_DARK,
+        GITHUB_LIGHT,
+        GITHUB_DARK,
+        WINTER_IS_COMMING,
+        VSCODE_DARK,
+    };
+
     struct Base
     {
         Color color;
@@ -73,8 +87,7 @@ public:
 
     struct Radio
     {
-        Style active;
-        Style inactive;
+        Style style;
     };
 
     struct MessageBox
@@ -85,15 +98,8 @@ public:
 
 public:
     static Theme &Get();
+    void SetTheme(unsigned theme);
 
-protected:
-    Theme();
-    Theme(Theme const &) = delete;
-    Theme(Theme &&) = delete;
-    Theme &operator=(Theme const &&) = delete;
-    Theme &operator=(Theme &&) = delete;
-
-public:
     Base _base;
     TextBox _textbox;
     Button _button;
@@ -104,4 +110,19 @@ public:
     BarChart _bar;
     Radio _radio;
     CheckBox _checkbox;
+
+protected:
+    Theme();
+    Theme(Theme const &) = delete;
+    Theme(Theme &&) = delete;
+    Theme &operator=(Theme const &&) = delete;
+    Theme &operator=(Theme &&) = delete;
+
+private:
+    void DarkWhite();
+    void WhiteDark();
+    void WinterIsComming();
+    void GitHubLight();
+    void GitHubDark();
+    void VSCodeDark();
 };
