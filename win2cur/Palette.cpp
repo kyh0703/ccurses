@@ -1,7 +1,6 @@
 #include "Palette.h"
 #include "Paint.h"
 #include "Theme.h"
-#include <unistd.h>
 
 Palette::Palette()
 {
@@ -59,12 +58,11 @@ bool Palette::Init(unsigned theme)
     if (noecho() == ERR)
         return false;
 
-    clear();
-    keypad(stdscr, TRUE);
-    curs_set(0);
-
     printf("\033[?1000h");
     fflush(stdout);
+
+    keypad(stdscr, TRUE);
+    curs_set(0);
 
     mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 

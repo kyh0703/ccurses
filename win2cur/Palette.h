@@ -5,9 +5,8 @@
 #include <chrono>
 #include <locale.h>
 #include <ncursesw/curses.h>
-#include <signal.h>
 #include <string>
-#include <thread>
+#include <unistd.h>
 #include <vector>
 using namespace std;
 
