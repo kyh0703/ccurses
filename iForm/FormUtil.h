@@ -18,34 +18,36 @@ namespace fu
         return temp;
     }
 
-    inline const std::string LTrim(std::string str)
+    inline std::string &LTrim(std::string &str)
     {
-        return str.erase(0, str.find_first_not_of(" \t\n\v"));
+        return str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
     }
 
-    inline const std::string RTrim(std::string str)
+    inline std::string &RTrim(std::string &str)
     {
-        return str.erase(str.find_last_not_of(" \t\n\v") + 1);
+        return str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
     }
 
-    inline const std::string Trim(std::string str)
+    inline std::string &Trim(std::string &str)
     {
         return RTrim(LTrim(str));
     }
 
-    inline const std::wstring LTrim(std::wstring wstr)
+    inline std::wstring &LTrim(std::wstring &wstr)
     {
-        return wstr.erase(0, wstr.find_first_not_of(L" \t\n\v"));
+        wstr.erase(0, wstr.find_first_not_of(L" \t\n\r\f\v"));
+        return wstr;
     }
 
-    inline const std::wstring RTrim(std::wstring wstr)
+    inline std::wstring &RTrim(std::wstring &wstr)
     {
-        return wstr.erase(wstr.find_last_not_of(L" \t\n\v") + 1);
+        wstr.erase(wstr.find_last_not_of(L" \t\n\r\f\v") + 1);
+        return wstr;
     }
 
-    inline const std::wstring Trim(std::wstring wstr)
+    inline std::wstring &Trim(std::wstring &wstr)
     {
-        return RTrim(LTrim(wstr));
+        return LTrim(RTrim(wstr));
     }
 
     inline const bool IsHangle(wchar_t wch)

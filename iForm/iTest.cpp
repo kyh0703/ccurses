@@ -137,7 +137,7 @@ private:
 int main(void)
 {
     Palette ui;
-    if (!ui.Init(Theme::GITHUB_LIGHT))
+    if (!ui.Init(Theme::DARK_WHITE))
     {
         cout << "ncurses init Fail" << endl;
         return 1;
