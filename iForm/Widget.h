@@ -70,8 +70,8 @@ public:
     inline void SetActiveStyle(Style active_style) { _active_style = active_style; }
     inline void SetInactiveStyle(Style inactive_style) { _inactive_style = inactive_style; }
 
-    inline const wstring GetText();
-    inline void SetText(wstring s);
+    const wstring GetText();
+    void SetText(wstring s);
     void AddStr(wstring wstr);
     void AddText(wint_t wch);
     void DelText();

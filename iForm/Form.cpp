@@ -20,6 +20,39 @@ void Form::Draw()
         (*it)->Draw();
 }
 
+void Form::ProcEvent(wint_t &wch)
+{
+    MEVENT e;
+    switch (wch)
+    {
+    case KEY_MOUSE:
+        if (getmouse(&e) == OK)
+            OnMouseEvent(e);
+        break;
+    case 9:
+        NextFocus();
+        break;
+    case KEY_BTAB:
+        PrevFocus();
+        break;
+    default:
+        OnKeyboardEvent(wch);
+        break;
+    }
+}
+
+bool Form::SetFocus(Widget *widget_ptr)
+{
+    if (widget_ptr->CanFocus())
+    {
+        _curfocus = widget_ptr;
+        SetFocus();
+        return true;
+    }
+
+    return false;
+}
+
 void Form::Add(Widget *widget_ptr)
 {
     auto const &it = find_if(_widgets.begin(), _widgets.end(), [&](unique_ptr<Widget> &p) {
@@ -224,27 +257,6 @@ void Form::OnKeyboardEvent(wint_t wch)
             if (_curfocus->_key_press)
                 _curfocus->_key_press(args);
         }
-        break;
-    }
-}
-
-void Form::ProcEvent(wint_t &wch)
-{
-    MEVENT e;
-    switch (wch)
-    {
-    case KEY_MOUSE:
-        if (getmouse(&e) == OK)
-            OnMouseEvent(e);
-        break;
-    case 9:
-        NextFocus();
-        break;
-    case KEY_BTAB:
-        PrevFocus();
-        break;
-    default:
-        OnKeyboardEvent(wch);
         break;
     }
 }

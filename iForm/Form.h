@@ -14,6 +14,7 @@ public:
     inline int GetId() { return _id; }
     void Draw();
     void ProcEvent(wint_t &wch);
+    bool SetFocus(Widget *widget_ptr);
 
     wstring _text;
 
@@ -28,6 +29,7 @@ private:
     bool PrevFocus(bool is_del = false);
     bool NextFocus(bool is_del = false);
     void SetFocus();
+
     void OnMouseEvent(MEVENT &e);
     void OnKeyboardEvent(wint_t ch);
 

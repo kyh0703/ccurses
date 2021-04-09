@@ -17,7 +17,7 @@ public:
 
         ProgressBar *prs = new ProgressBar(3, 25, 20, 20);
         prs->SetTitle(L"제목");
-        prs->SetPercent(45);
+        prs->SetPercent(100);
         Add(prs);
 
         pBtn = new Button(3, 10, 21, 5);

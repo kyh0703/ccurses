@@ -1,6 +1,7 @@
 #pragma once
 #include "Attribute.h"
 #include <string>
+#include <vector>
 
 namespace fu
 {
@@ -28,7 +29,7 @@ namespace fu
         return str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
     }
 
-    inline std::string &Trim(std::string &str)
+    inline std::string &Trim(std::string str)
     {
         return RTrim(LTrim(str));
     }
@@ -45,9 +46,25 @@ namespace fu
         return wstr;
     }
 
-    inline std::wstring &Trim(std::wstring &wstr)
+    inline std::wstring &Trim(std::wstring wstr)
     {
         return LTrim(RTrim(wstr));
+    }
+
+    inline std::vector<std::wstring> ToWVector(std::vector<std::string> strs)
+    {
+        std::vector<std::wstring> wstrs;
+        for (auto it : strs)
+            wstrs.push_back(ToWstring(it));
+        return wstrs;
+    }
+
+    inline std::vector<std::string> ToVector(std::vector<std::wstring> wstrs)
+    {
+        std::vector<std::string> strs;
+        for (auto it : wstrs)
+            strs.push_back(ToString(it));
+        return strs;
     }
 
     inline const bool IsHangle(wchar_t wch)

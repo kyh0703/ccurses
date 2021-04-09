@@ -14,12 +14,13 @@ class Palette
 {
 public:
     Palette();
-    ~Palette();
+    virtual ~Palette();
 
     bool Add(Form *form_ptr);
     void Delete(const Form *form_ptr);
     void Clear();
     bool Init(unsigned theme = Theme::DARK_WHITE);
+    void Destroy();
     void PollEvent(int fps = 50);
 
 private:

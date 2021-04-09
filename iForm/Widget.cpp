@@ -481,7 +481,7 @@ void ProgressBar::Draw()
     while (pos.y <= rect.max.y)
     {
         Rune r(_bar_color, _color.bg, L' ');
-        while (pos.x <= rect.min.x + bar_width)
+        while (pos.x < rect.min.x + bar_width)
         {
             if (rect.max.x < pos.x)
                 break;

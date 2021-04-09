@@ -11,13 +11,7 @@ Palette::Palette()
 
 Palette::~Palette()
 {
-    delete _tab;
-    clrtoeol();
-    refresh();
-    endwin();
-    Clear();
-    printf("\e[?1000h");
-    fflush(stdout);
+    Destroy();
 }
 
 bool Palette::Add(Form *form_ptr)
@@ -32,6 +26,17 @@ bool Palette::Add(Form *form_ptr)
     unique_ptr<Form> temp(form_ptr);
     _forms.push_back(move(temp));
     return true;
+}
+
+void Palette::Destroy()
+{
+    printf("\e[?1000h");
+    fflush(stdout);
+    delete _tab;
+    Clear();
+    clrtoeol();
+    refresh();
+    endwin();
 }
 
 void Palette::Delete(const Form *form_ptr)
@@ -58,7 +63,7 @@ bool Palette::Init(unsigned theme)
     if (noecho() == ERR)
         return false;
 
-    printf("\033[?1000h");
+    printf("\033[?1003h");
     fflush(stdout);
 
     keypad(stdscr, TRUE);
