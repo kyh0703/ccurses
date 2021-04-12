@@ -136,7 +136,7 @@ private:
 
 int main(void)
 {
-    Palette ui;
+    Palette ui(50, 120);
     if (!ui.Init(Theme::DARK_WHITE))
     {
         cout << "ncurses init Fail" << endl;

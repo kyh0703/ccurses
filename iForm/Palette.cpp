@@ -2,8 +2,10 @@
 #include "Paint.h"
 #include "Theme.h"
 
-Palette::Palette()
+Palette::Palette(int max_height, int max_width)
 {
+    _max_height = max_height;
+    _max_width = max_width;
     _tab = NULL;
     setlocale(LC_ALL, "ko_KR.utf8");
     _active_form = 0;
@@ -63,12 +65,11 @@ bool Palette::Init(unsigned theme)
     if (noecho() == ERR)
         return false;
 
+    resize_term(_max_height, _max_width);
     printf("\033[?1003h");
     fflush(stdout);
-
     keypad(stdscr, TRUE);
     curs_set(0);
-
     mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 
     th::Get().SetTheme(theme);
@@ -94,6 +95,7 @@ void Palette::PollEvent(int fps)
             {
             case KEY_RESIZE:
                 erase();
+                resize_term(_max_height, _max_width);
                 continue;
             case KEY_SLEFT:
                 erase();

@@ -13,7 +13,7 @@ using namespace std;
 class Palette
 {
 public:
-    Palette();
+    explicit Palette(int max_height, int max_width);
     virtual ~Palette();
 
     bool Add(Form *form_ptr);
@@ -29,11 +29,11 @@ private:
     void FocusFirst();
     void FocusLast();
     int ClickTab(MEVENT e);
-
     void DrawTab();
     void Draw();
     bool KbHit();
 
+    int _max_height, _max_width;
     int _active_form;
     vector<unique_ptr<Form>> _forms;
     Tab *_tab;
