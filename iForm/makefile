@@ -4,25 +4,9 @@ CC              = gcc
 CXX             = $(CC)
 
 ################################################
-# IPRON Source Directory & Environment Setting #
+# Source Directory & Environment Setting       #
 #----------------------------------------------#
-ifdef IPRBASE
-IPRON_BASE      = $(IPRBASE)
-else
-IPRON_BASE      = /bridgetec/ipron
-endif
-
-# CI build 환경 대응용
-ifdef BUILD_PATH
-IPRON_SRC       = $(BUILD_PATH)
-else
-IPRON_SRC       = $(IPRON_BASE)/src
-endif
-
-CO_INC					= $(CO_SRC)/inc
-CO_LIB					= $(CO_SRC)/lib
-IL_SRC          = $(IPRON_SRC)/LIB
-TL_BIN          = $(IPRON_BASE)/tools
+IL_SRC          = ./LIB
 IL_INC          = $(IL_SRC)/inc
 IL_LIB          = $(IL_SRC)/lib
 
@@ -33,13 +17,11 @@ INC_FILES       = $(wildcard *.h)
 INC_CPATH       = $(IL_INC)/iForm
 LIB_FILES       = $(TARGET)
 LIB_CPATH       = $(IL_LIB)
-BIN_FILES       =
-BIN_CPATH       =
 
 ###################################
 # Include & Library Paths Setting #
 #---------------------------------#
-INC_PATHS       = -I$(CO_INC) -I$(CO_INC)/iCore -I$(IL_INC) -I$(IL_SRC)
+INC_PATHS       = -I$(IL_INC) -I$(IL_SRC)
 LIB_PATHS       = -L$(CO_LIB) -L$(IL_LIB)
 
 ##########################################
@@ -92,20 +74,6 @@ $(UTBIN)		: $(OBJS) $(UTOBJ)
 				@$(CC) $(CFLAGS) -c $< -o $@ $(INC_PATHS) $(DEFINE) $(PKGDEF)
 
 install			: $(INSTALLS)
-ifdef BIN_FILES
-ifdef BIN_CPATH
-				@mkdir -p $(BIN_CPATH)
-				@mv $(BIN_FILES) $(BIN_CPATH)/
-				@echo "[$(TARGET)] [33mMove Binary Files($(BIN_FILES)) to $(BIN_CPATH)[0m ..."
-endif
-endif
-ifdef INC_FILES
-ifdef INC_CPATH
-				@mkdir -p $(INC_CPATH)
-				@cp $(INC_FILES) $(INC_CPATH)/
-				@echo "[$(TARGET)] [33mCopy Include Files($(INC_FILES)) to $(INC_CPATH)[0m ..."
-endif
-endif
 ifdef LIB_FILES
 ifdef LIB_CPATH
 				@mkdir -p $(LIB_CPATH)
