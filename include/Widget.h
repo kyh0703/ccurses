@@ -245,7 +245,7 @@ private:
     vector<float> _datas;
 };
 
-// TODO 라디오 버튼 그룹 필요
+// TODO radio button group
 class Radio : public Widget
 {
 public:

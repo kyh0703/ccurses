@@ -3,89 +3,69 @@
 CC              = gcc
 CXX             = $(CC)
 
-################################################
-# Source Directory & Environment Setting       #
-#----------------------------------------------#
-IL_SRC          = ./LIB
-IL_INC          = $(IL_SRC)/inc
-IL_LIB          = $(IL_SRC)/lib
+IL_SRC = $(wildcard $(PWD)/include)
 
-#####################################
-# Copy/Moving files when installing #
-#-----------------------------------#
-INC_FILES       = $(wildcard *.h)
-INC_CPATH       = $(IL_INC)/iForm
+# Copy/Moving files when installing
+INC_FILES       =
 LIB_FILES       = $(TARGET)
-LIB_CPATH       = $(IL_LIB)
+LIB_CPATH       = ./lib
 
-###################################
-# Include & Library Paths Setting #
-#---------------------------------#
-INC_PATHS       = -I$(IL_INC) -I$(IL_SRC)
-LIB_PATHS       = -L$(CO_LIB) -L$(IL_LIB)
+# Include & Library Paths Setting
+INC_PATHS       = -I$(IL_SRC)
+LIB_PATHS       =
 
-##########################################
-# Define / Compile flags / Linking flags #
-#----------------------------------------#
-DEFINE					=
-CFLAGS					= -g -O0 -fPIC -Wall -std=c++11
-LFLAGS					= -lstdc++ -lncursesw
+# Define -D
+DEFINE			=
 
-############################
-# Unit Testing for library #
-#--------------------------#
-UTSRC           = iTest.cpp
+#cCompile flags
+CFLAGS			= -g -O0 -fPIC -Wall -std=c++11
+
+# Linking flasgs
+LFLAGS			= -lstdc++ -lncursesw
+
+# Unit Testing for library
+UTSRC           = $(PWD)/example/Test.cpp
 UTOBJ           = $(UTSRC:.cpp=.o)
-UTBIN           = iTest
+UTBIN           = $(PWD)/bin/Test
 
-############################
 # Main Sources and Objects #
 # (Edit your TARGET name.) #
-#--------------------------#
-SRCS            = $(subst $(UTSRC),,$(wildcard *.cpp))
+SRCS            = $(subst $(UTSRC),,$(wildcard $(PWD)/src/*.cpp))
 OBJS            = $(SRCS:.cpp=.o)
-TARGET          = libiForm.a
-ifdef IRELEASE
-INSTALLS				= $(TARGET)
-else
-DEFINE 					+= -DIDEBUG
-INSTALLS				= $(TARGET) $(UTBIN)
-endif
+TARGET          = libccurses.a
+INSTALLS		= $(TARGET)
 
-##################################################
-# Linking Part                                   #
-# (Select linking option on your TARGET purpose) #
-#------------------------------------------------#
-all					: $(INSTALLS)
-$(TARGET)		: $(OBJS)
-				@$(AR) -r $(TARGET) $(OBJS)
+# Linking Part
+# (Select linking option on your TARGET purpose)
+all				: $(INSTALLS) test install
+$(TARGET)		: $(OBJS) $(UTOBJ)
+				@$(AR) -r $(TARGET) $(OBJS) $(UTOBJ)
 				@echo "==============================================================="
 				@echo "[35m$(TARGET) Compile Complete !![0m"
 
-##########################
-# DON'T edit below lines #
-#------------------------#
-$(UTBIN)		: $(OBJS) $(UTOBJ)
+# STOP! DON'T edit below lines
+.cpp.o			:
+				@echo "[$(TARGET)] Compiling [33m$<[0m ..."
+				@$(CC) $(CFLAGS) -c $< -o $@ $(INC_PATHS) $(DEFINE)
+
+.PHONY: test
+test			: $(OBJS) $(UTOBJ)
 				@$(CC) -o $(UTBIN) $(OBJS) $(UTOBJ) $(LFLAGS) $(LIB_PATHS)
 				@echo "==============================================================="
 				@echo "[35m$(UTBIN) Compile Complete !![0m"
-.cpp.o			:
-				@echo "[$(TARGET)] Compiling [33m$<[0m ..."
-				@$(CC) $(CFLAGS) -c $< -o $@ $(INC_PATHS) $(DEFINE) $(PKGDEF)
+
+
 
 install			: $(INSTALLS)
 ifdef LIB_FILES
 ifdef LIB_CPATH
 				@mkdir -p $(LIB_CPATH)
-				@cp $(LIB_FILES) $(LIB_CPATH)/
+				@mv $(LIB_FILES) $(LIB_CPATH)/
 				@echo "[$(TARGET)] [33mCopy Library Files($(LIB_FILES)) to $(LIB_CPATH)[0m ..."
 endif
 endif
 				@echo "==============================================================="
 				@echo "[34m$(TARGET) Install Complete !![0m"
-dep				:
-				@gccmakedep $(INC_PATHS) $(SRCS)
-				@echo "# Make Source Dependencies Success !!"
 clean			:
 				@echo "[$(TARGET)] Delete Object Files !!"
 				@$(RM) $(OBJS) $(TARGET) $(UTOBJ) $(UTBIN)

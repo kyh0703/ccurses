@@ -7,7 +7,7 @@ Palette::Palette(int max_height, int max_width)
     _max_height = max_height;
     _max_width = max_width;
     _tab = NULL;
-    setlocale(LC_ALL, "ko_KR.utf8");
+    setlocale(LC_ALL, "");
     _active_form = 0;
 }
 
