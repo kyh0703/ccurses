@@ -1,4 +1,4 @@
-# CCurses
+# CCurses(C++ Curses)
 
 ![image-20220109225429777](image/image-20220109225429777.png)
 
