@@ -11,7 +11,7 @@ ccurses is a library made of ncurses library. The basic base was implemented by 
 * Theme
 * Wide Character
 
-## Pre-preparements
+## requirement
 
 #### Centos
 
