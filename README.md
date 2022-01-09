@@ -35,9 +35,9 @@ sudo apt-get install libncurses5-dev libncursesw5-dev
 >LANG=ko_KR.UTF-8
 >```
 
-## Use Curses!
+## Use
 
-#### Just Make🧑‍🔧!
+#### Just Make🧑‍🔧
 
 ```bash
 make
