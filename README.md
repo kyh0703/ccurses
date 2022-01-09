@@ -46,7 +46,7 @@ make
 #### test
 
 ```bash
-$> ./bin/Test
+./bin/Test
 ```
 
 ## Widget
