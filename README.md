@@ -4,6 +4,10 @@
 
 ccurses is a library made of ncurses library. The basic base was implemented by designing a window form.
 
+#### Reference
+
+* https://tldp.org/HOWTO/NCURSES-Programming-HOWTO/
+
 ## Feature
 
 * Easy
