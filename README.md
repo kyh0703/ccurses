@@ -2,7 +2,7 @@
 
 ![image-20220109225429777](image/image-20220109225429777.png)
 
-ccurses is a library made of ncurses library. The basic base was implemented by designing a window form.
+ccurses is a library made of ncurses library. The basic base was implemented by designing a c# window form.
 
 #### Reference
 
