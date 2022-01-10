@@ -7,7 +7,6 @@ ccurses is a library made of ncurses library. The basic base was implemented by 
 #### Reference
 
 * https://tldp.org/HOWTO/NCURSES-Programming-HOWTO/
-* https://github.com/gizak/termui
 
 ## Feature
 
