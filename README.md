@@ -53,6 +53,14 @@ make
 ./bin/Test
 ```
 
+#### Cursor
+
+move tab:   ``shift`` + ◀️,``shift`` + ▶️
+
+move forcus: ``tab``
+
+select:  ``mouse``, ``enter``
+
 ## Widget
 
 * TextBox
