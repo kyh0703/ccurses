@@ -76,7 +76,7 @@ const int MessageBoxOk(wstring title, wstring text)
     int index = Paint::Get().GetIndex(c.bg, c.fg);
     wbkgd(window, COLOR_PAIR(index));
 
-    const wstring ok = L"< 확인 >";
+    const wstring ok = L"< OK >";
     Pos pos;
     pos.y = win_rect.max.y - 1;
     pos.x = ((WIDTH - ok.size()) / 2) - 1;
@@ -139,7 +139,7 @@ const int MessageBoxYes(wstring title, wstring text)
     bool is_yes = true;
 
 draw_button:
-    const wstring yes = L"< 예 >";
+    const wstring yes = L"< YES >";
     int w = (win_rect.w / 2);
     Pos pos;
     pos.y = win_rect.max.y - 1;
@@ -153,7 +153,7 @@ draw_button:
         pos.x += (fu::IsHangle(wch) ? 2 : 1);
     }
 
-    const wstring no = L"< 아니오 >";
+    const wstring no = L"< NO >";
     pos.x = win_rect.max.x - ((w + no.size()) / 2);
     Rect no_rect(1, no.size(), rect.max.y - 2, pos.x + rect.min.x);
     for (size_t no_index = 0; no_index < no.size(); ++no_index)
