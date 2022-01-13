@@ -207,7 +207,6 @@ void Input::KeyDefault(KeyboardArgs args)
     case KEY_ENTER:
     case 10:
         break;
-        break;
     case KEY_BACKSPACE:
         DelText();
         break;
