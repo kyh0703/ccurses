@@ -1,6 +1,6 @@
 # CCurses(C++ Curses)
 
-![image-20220109225429777](image/image-20220109225429777.png)
+<img width="80%" src="https://user-images.githubusercontent.com/38195137/150798336-239cc819-039e-48d5-8b5b-4409f59a0c20.gif"/>
 
 ccurses(c++ curses) is a library made of ncurses library. The basic base was implemented by designing a c# window form.
 
