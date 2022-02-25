@@ -272,20 +272,16 @@ int main(void)
         return 1;
     }
 
-    KolangForm1 *my_form = new KolangForm1;
-    my_form->_text = L"test";
-    ui.Add(my_form);
-
-    KolangForm2 *my_form2 = new KolangForm2;
-    ui.Add(my_form2);
-
-    EngForm1 *my_form = new EngForm1;
-    my_form->_text = L"test";
-    ui.Add(my_form);
-
-    EngForm2 *my_form2 = new EngForm2;
-    ui.Add(my_form2);
-
-    // ui.Delete(my_form2);
+    KolangForm1 *ko_form1 = new KolangForm1;
+    ko_form1->_text = L"test";
+    ui.Add(ko_form1);
+    KolangForm2 *ko_form2 = new KolangForm2;
+    ui.Add(ko_form2);
+    EngForm1 *eng_form1 = new EngForm1;
+    eng_form1->_text = L"test";
+    ui.Add(eng_form1);
+    EngForm2 *eng_form2 = new EngForm2;
+    ui.Add(eng_form2);
+    // ui.Delete(eng_form2);
     ui.PollEvent();
 }
