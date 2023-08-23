@@ -43,3 +43,8 @@ install: $(INSTALLS)
 test: $(OBJS) $(UTOBJ)
 	@echo "test:"
 	@$(CC) -o $(UTBIN) $(OBJS) $(UTOBJ) $(LFLAGS) $(LIB_PATHS)
+
+.PHONY: clean
+clean:
+	@echo "clean:"
+	@$(RM) $(OBJS) $(TARGET) $(UTOBJ) $(UTBIN)
