@@ -30,7 +30,7 @@ $(TARGET) : $(OBJS)
 	@$(AR) -r $(TARGET) $(OBJS)
 
 .cpp.o:
-	@echo "compile: $(TARGET)"
+	@echo "compile: $<"
 	@$(CC) $(CFLAGS) -c $< -o $@ $(INC_PATHS) $(DEFINE)
 
 .PHONY: install
